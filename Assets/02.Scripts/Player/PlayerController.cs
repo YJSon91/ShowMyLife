@@ -62,6 +62,8 @@ public class PlayerController : MonoBehaviour
     private float _height;
     private float _radius;
     private Vector3 _center;
+    private bool _isGroundCheckDisabled;
+    private float _groundCheckDisabledTimer;
 
     // 프로퍼티
     public bool IsGrounded => _isGrounded;
@@ -98,6 +100,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // 지면 체크 타이머 업데이트
+        UpdateGroundCheckTimer();
+        
         // 지면 체크
         CheckGround();
         
@@ -112,6 +117,22 @@ public class PlayerController : MonoBehaviour
         
         // 최종 이동 적용
         ApplyMovement();
+    }
+    
+    /// <summary>
+    /// 지면 체크 비활성화 타이머 업데이트
+    /// </summary>
+    private void UpdateGroundCheckTimer()
+    {
+        if (_isGroundCheckDisabled)
+        {
+            _groundCheckDisabledTimer -= Time.fixedDeltaTime;
+            
+            if (_groundCheckDisabledTimer <= 0)
+            {
+                _isGroundCheckDisabled = false;
+            }
+        }
     }
 
     /// <summary>
@@ -177,6 +198,12 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         _wasGrounded = _isGrounded;
+        
+        // 지면 체크가 비활성화된 경우 스킵
+        if (_isGroundCheckDisabled)
+        {
+            return;
+        }
         
         // 캐릭터의 발 위치 계산 (중심에서 아래로 이동)
         Vector3 footPosition = transform.position + _center - new Vector3(0, _height * 0.48f, 0);
@@ -313,10 +340,8 @@ public class PlayerController : MonoBehaviour
             {
                 _velocity.y = _jumpForce;
                 _isGrounded = false;
-                // 점프 시 지면 체크를 잠시 비활성화하기 위한 타이머 설정
-                
-                // 점프 시 약간의 추가 높이 부스트 (더 높은 점프감)
-                StartCoroutine(DelayGroundCheck());
+                // 점프 시 지면 체크를 잠시 비활성화
+                DisableGroundCheck(0.2f);
             }
         }
         else
@@ -335,21 +360,13 @@ public class PlayerController : MonoBehaviour
     }
     
     /// <summary>
-    /// 점프 후 지면 체크를 잠시 비활성화
+    /// 지면 체크를 일정 시간 동안 비활성화
     /// </summary>
-    private IEnumerator DelayGroundCheck()
+    /// <param name="duration">비활성화 지속 시간(초)</param>
+    private void DisableGroundCheck(float duration)
     {
-        // 지면 체크를 위한 레이어 임시 저장
-        LayerMask originalLayer = _groundLayer;
-        
-        // 지면 체크 비활성화 (레이어 마스크를 0으로 설정)
-        _groundLayer = 0;
-        
-        // 0.2초 대기
-        yield return new WaitForSeconds(0.2f);
-        
-        // 지면 체크 다시 활성화
-        _groundLayer = originalLayer;
+        _isGroundCheckDisabled = true;
+        _groundCheckDisabledTimer = duration;
     }
 
     /// <summary>
