@@ -43,6 +43,12 @@ public class PlayerController : MonoBehaviour
     [Tooltip("벽 충돌 반동 계수")]
     [SerializeField] private float _wallBounceModifier = 0.1f;
 
+    [Header("애니메이션 설정")]
+    [Tooltip("랜덤 Idle 애니메이션 최소 대기 시간")]
+    [SerializeField] private float _minIdleTime = 5f;
+    [Tooltip("랜덤 Idle 애니메이션 최대 대기 시간")]
+    [SerializeField] private float _maxIdleTime = 10f;
+
     // 내부 변수
     private Vector3 _moveDirection;
     private Vector3 _velocity;
@@ -64,6 +70,14 @@ public class PlayerController : MonoBehaviour
     private Vector3 _center;
     private bool _isGroundCheckDisabled;
     private float _groundCheckDisabledTimer;
+    
+    // 애니메이션 관련 변수
+    private Animator _animator;
+    private float _idleAnimTimer;
+    private bool _isMoving;
+    private static readonly int Walking = Animator.StringToHash("Walking");
+    private static readonly int Running = Animator.StringToHash("Running");
+    private static readonly int RandomIdle = Animator.StringToHash("RandomIdle");
 
     // 프로퍼티
     public bool IsGrounded => _isGrounded;
@@ -74,6 +88,7 @@ public class PlayerController : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
         _playerInput = GetComponent<PlayerInput>();
+        _animator = GetComponent<Animator>();
         _cameraTransform = Camera.main.transform;
         _raycastHits = new RaycastHit[_maxCollisionCount];
         
@@ -90,12 +105,18 @@ public class PlayerController : MonoBehaviour
         
         // 캐릭터 크기 계산
         CalculateCharacterDimensions();
+        
+        // 랜덤 Idle 타이머 초기화
+        ResetIdleTimer();
     }
 
     private void Update()
     {
         // 입력 처리
         HandleInput();
+        
+        // 애니메이션 업데이트
+        UpdateAnimations();
     }
 
     private void FixedUpdate()
@@ -180,16 +201,78 @@ public class PlayerController : MonoBehaviour
             
             // 최종 이동 방향 계산
             _moveDirection = (forward * verticalInput + right * horizontalInput).normalized;
+            _isMoving = true;
         }
         else
         {
             _moveDirection = Vector3.zero;
+            _isMoving = false;
         }
         
         // 달리기 입력 처리
         _isSprinting = _playerInput.GetSprintInput();
         
         // 최종 이동 방향 설정 완료
+    }
+    
+    /// <summary>
+    /// 애니메이션 상태 업데이트
+    /// </summary>
+    private void UpdateAnimations()
+    {
+        if (_animator == null) return;
+        
+        // 이동 애니메이션 설정
+        _animator.SetBool(Walking, _isMoving && !_isSprinting);
+        _animator.SetBool(Running, _isMoving && _isSprinting);
+        
+        // 랜덤 Idle 애니메이션 처리
+        if (!_isMoving)
+        {
+            UpdateIdleAnimation();
+        }
+        else
+        {
+            // 이동 중이면 타이머 리셋
+            ResetIdleTimer();
+        }
+    }
+    
+    /// <summary>
+    /// Idle 애니메이션 업데이트
+    /// </summary>
+    private void UpdateIdleAnimation()
+    {
+        _idleAnimTimer -= Time.deltaTime;
+        
+        if (_idleAnimTimer <= 0)
+        {
+            // 랜덤 Idle 애니메이션 재생
+            TriggerRandomIdleAnimation();
+            
+            // 타이머 리셋
+            ResetIdleTimer();
+        }
+    }
+    
+    /// <summary>
+    /// 랜덤 Idle 애니메이션 트리거
+    /// </summary>
+    private void TriggerRandomIdleAnimation()
+    {
+        // 랜덤 값 생성 (1: idle2, 2: idle3)
+        int randomIdle = Random.Range(1, 3);
+        
+        // 애니메이터 파라미터 설정
+        _animator.SetInteger(RandomIdle, randomIdle);
+    }
+    
+    /// <summary>
+    /// Idle 타이머 리셋
+    /// </summary>
+    private void ResetIdleTimer()
+    {
+        _idleAnimTimer = Random.Range(_minIdleTime, _maxIdleTime);
     }
 
     /// <summary>
