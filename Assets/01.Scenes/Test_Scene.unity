@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 5
-  _sprintMultiplier: 1.4
+  _sprintMultiplier: 1.8
   _rotationSpeed: 10
   _jumpForce: 5
   _gravityMagnitude: 9.8
@@ -263,7 +263,7 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.2, z: 0}
 --- !u!114 &190495473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -555,9 +555,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 190495471}
-  _distance: 5
-  _height: 2
-  _rotationSpeed: 3
+  _distance: 3
+  _height: 1
+  _rotationSpeed: 2
   _minVerticalAngle: -30
   _maxVerticalAngle: 60
   _zoomSpeed: 1

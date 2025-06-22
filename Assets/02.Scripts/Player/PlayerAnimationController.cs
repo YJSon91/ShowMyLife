@@ -20,11 +20,17 @@ public class PlayerAnimationController : MonoBehaviour
     private float _idleAnimTimer;
     private bool _isMoving;
     private bool _wasMoving; // 이전 프레임의 이동 상태
+    private bool _jumpInputDetected; // 점프 입력 감지 플래그
+    private bool _isJumping; // 점프 중인지 여부
+   
     
     // 애니메이션 파라미터 해시값
     private static readonly int Walking = Animator.StringToHash("Walking");
     private static readonly int Running = Animator.StringToHash("Running");
     private static readonly int RandomIdle = Animator.StringToHash("RandomIdle");
+    private static readonly int Jumping = Animator.StringToHash("Jumping");
+    private static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
+    private static readonly int Landing = Animator.StringToHash("Landing");
 
     private void Awake()
     {
@@ -61,15 +67,27 @@ public class PlayerAnimationController : MonoBehaviour
         // 초기 상태 설정
         _wasMoving = false;
         _isMoving = false;
+        _jumpInputDetected = false;
+        _isJumping = false;
+        
     }
 
     private void Update()
     {
+        
+        
         // 이전 프레임의 이동 상태 저장
         _wasMoving = _isMoving;
         
         // 이동 상태 확인
         CheckMovementState();
+        
+        // 점프 입력 감지 (직접 감지)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _jumpInputDetected = true;
+            Debug.Log("점프 키 입력 감지됨");
+        }
         
         // 애니메이션 업데이트
         UpdateAnimations();
@@ -94,6 +112,20 @@ public class PlayerAnimationController : MonoBehaviour
             _animator.SetInteger(RandomIdle, 0);
             Debug.Log("이동 시작: RandomIdle 초기화");
         }
+        
+        // 지면 상태 확인 및 착지 감지
+        bool isGrounded = _playerController.IsGrounded;
+        
+        // 공중에서 지면으로 착지한 경우 (점프 중이었을 때만)
+        if (isGrounded && _isJumping)
+        {
+            // 착지 애니메이션 트리거
+            _animator.SetTrigger(Landing);
+            Debug.Log("착지 감지: 랜딩 애니메이션 트리거");
+            
+            // 점프 상태 종료
+            _isJumping = false;
+        }
     }
     
     /// <summary>
@@ -106,12 +138,31 @@ public class PlayerAnimationController : MonoBehaviour
         // 달리기 상태 확인
         bool isSprinting = _playerInput.GetSprintInput();
         
-        // 이동 애니메이션 설정
+        // 지면 상태 확인
+        bool isGrounded = _playerController.IsGrounded;
+        
+        // 디버그 로그
+        Debug.Log($"지면 상태: {isGrounded},  점프 입력: {_jumpInputDetected}, 점프 중: {_isJumping}, 이동 중: {_isMoving}");
+        
+        // 지면 상태 설정
+        _animator.SetBool(IsGrounded, isGrounded);
+        
+        // 점프 애니메이션 트리거
+        if (_jumpInputDetected)
+        {
+            _animator.SetTrigger(Jumping);
+            Debug.Log("점프 애니메이션 트리거됨");
+            _jumpInputDetected = false; // 점프 입력 플래그 초기화
+            _isJumping = true; // 점프 상태 활성화
+        }
+        
+        // 이동 애니메이션 설정 - isGrounded 조건 제거
+        // 점프 중에도 이동 상태 유지
         _animator.SetBool(Walking, _isMoving && !isSprinting);
         _animator.SetBool(Running, _isMoving && isSprinting);
         
-        // 랜덤 Idle 애니메이션 처리
-        if (!_isMoving)
+        // 랜덤 Idle 애니메이션 처리 - 점프 중이 아닐 때만
+        if (!_isMoving && isGrounded && !_isJumping)
         {
             UpdateIdleAnimation();
         }
