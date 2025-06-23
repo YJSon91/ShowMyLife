@@ -13,7 +13,7 @@ public class PlayerAnimationController : MonoBehaviour
     [Tooltip("디버그 로그 활성화")]
     [SerializeField] private bool _debugMode = true;
     [Tooltip("착지 감지 최소 공중 시간")]
-    [SerializeField] private float _minAirTimeForLanding = 0.1f;
+    [SerializeField] private float _minAirTimeForLanding = 0.0f;
 
     // 컴포넌트 참조
     private Animator _animator;
@@ -116,7 +116,7 @@ public class PlayerAnimationController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && _playerController.IsGrounded && !_isJumping && _jumpCooldown <= 0)
         {
             _jumpInputDetected = true;
-            if (_debugMode) Debug.Log("점프 입력 감지");
+            
         }
         
         // 애니메이션 업데이트
@@ -174,7 +174,7 @@ public class PlayerAnimationController : MonoBehaviour
             if (_currentAnimState == AnimState.Jumping && stateInfo.normalizedTime > 0.8f)
             {
                 _currentAnimState = AnimState.Falling;
-                if (_debugMode) Debug.Log("점프에서 낙하 상태로 전환");
+                
             }
         }
         else
@@ -192,7 +192,7 @@ public class PlayerAnimationController : MonoBehaviour
         // 이전에 공중에 있었고 현재 지면에 있는 경우 (착지)
         if (!_wasGrounded)
         {
-            if (_debugMode) Debug.Log($"착지 감지: 이전 상태 = 공중, 현재 상태 = 지면, 공중 시간 = {_airTime:F2}초");
+            
             
             // 공중에서 지면으로 착지한 경우 무조건 착지 애니메이션 재생
             if (_isJumping || _currentAnimState == AnimState.Jumping || _currentAnimState == AnimState.Falling)
@@ -207,7 +207,7 @@ public class PlayerAnimationController : MonoBehaviour
         {
             // 이미 지면에 있었지만 여전히 점프 상태인 경우 (버그 상황)
             // 강제로 착지 상태로 전환
-            if (_debugMode) Debug.Log("버그 상황 감지: 지면에 있지만 여전히 점프 상태임. 강제 착지 처리.");
+            
             TriggerLandingAnimation();
         }
     }
@@ -227,7 +227,7 @@ public class PlayerAnimationController : MonoBehaviour
         _animator.SetTrigger(Landing);
         _landingTriggered = true;
         
-        if (_debugMode) Debug.Log("착지 애니메이션 트리거 발동");
+       
         
         // 점프 상태 종료
         _isJumping = false;
@@ -262,18 +262,18 @@ public class PlayerAnimationController : MonoBehaviour
             
             if (stateInfo.IsName("player_jump1"))
             {
-                Debug.Log($"현재 점프 애니메이션 진행도: {stateInfo.normalizedTime:F2}, IsGrounded: {isGrounded}");
+                
                 
                 // 점프 애니메이션 중에 지면에 닿았다면 강제로 착지 애니메이션 재생
                 if (isGrounded && stateInfo.normalizedTime > 0.5f && !_landingTriggered && _landingCooldown <= 0)
                 {
-                    if (_debugMode) Debug.Log("점프 애니메이션 중 지면 감지: 강제 착지 애니메이션 재생");
+                    
                     TriggerLandingAnimation();
                 }
             }
             else if (stateInfo.IsName("Player_landing"))
             {
-                Debug.Log($"현재 착지 애니메이션 진행도: {stateInfo.normalizedTime:F2}, IsGrounded: {isGrounded}");
+                
             }
         }
         
@@ -292,7 +292,7 @@ public class PlayerAnimationController : MonoBehaviour
             _isJumping = true; // 점프 상태 활성화
             _landingTriggered = false; // 착지 트리거 초기화
             
-            if (_debugMode) Debug.Log("점프 애니메이션 트리거 발동");
+            
         }
         
         // 이동 애니메이션 설정 - 점프나 착지 중이 아닐 때만
@@ -330,7 +330,7 @@ public class PlayerAnimationController : MonoBehaviour
             // 0.5초 이상 지면에 있으면 강제로 점프 상태 해제
             if (_airTime <= 0f)
             {
-                if (_debugMode) Debug.Log("버그 감지: 점프 상태인데 지면에 있음. 강제 상태 수정");
+                
                 _isJumping = false;
                 _landingTriggered = false;
                 
@@ -389,7 +389,7 @@ public class PlayerAnimationController : MonoBehaviour
     /// </summary>
     public void OnLandingAnimationComplete()
     {
-        if (_debugMode) Debug.Log("착지 애니메이션 완료");
+        
         _isJumping = false;
         _landingTriggered = false;
         
