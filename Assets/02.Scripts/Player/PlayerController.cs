@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using PlayerInputComponent = PlayerInput; // 클래스 이름 충돌 방지를 위한 별칭
 
 /// <summary>
 /// 플레이어 캐릭터의 이동을 담당하는 컨트롤러
@@ -58,7 +59,7 @@ public class PlayerController : MonoBehaviour
     private bool _wasGrounded;
     private float _verticalVelocity;
     private Rigidbody _rigidbody;
-    private PlayerInput _playerInput;
+    private PlayerInputComponent _playerInput;
     private Transform _cameraTransform;
     private Vector3 _groundNormal;
     private RaycastHit _groundRaycastHit;
@@ -87,7 +88,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _playerInput = GetComponent<PlayerInput>();
+        _playerInput = GetComponent<PlayerInputComponent>();
         _animator = GetComponent<Animator>();
         _cameraTransform = Camera.main.transform;
         _raycastHits = new RaycastHit[_maxCollisionCount];

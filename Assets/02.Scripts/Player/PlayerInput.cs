@@ -1,24 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
-/// 플레이어 입력을 처리하는 클래스
+/// 플레이어 입력을 처리하는 클래스 (새로운 Input System 사용)
 /// </summary>
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerInput : MonoBehaviour
 {
-    [Header("키 설정")]
-    [Tooltip("앞으로 이동 키")]
-    [SerializeField] private KeyCode _forwardKey = KeyCode.W;
-    [Tooltip("뒤로 이동 키")]
-    [SerializeField] private KeyCode _backwardKey = KeyCode.S;
-    [Tooltip("왼쪽으로 이동 키")]
-    [SerializeField] private KeyCode _leftKey = KeyCode.A;
-    [Tooltip("오른쪽으로 이동 키")]
-    [SerializeField] private KeyCode _rightKey = KeyCode.D;
-    [Tooltip("점프 키")]
-    [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
-    [Tooltip("달리기 키")]
-    [SerializeField] private KeyCode _sprintKey = KeyCode.LeftShift;
-
     [Header("입력 설정")]
     [Tooltip("입력 감도")]
     [SerializeField] private float _inputSensitivity = 1f;
@@ -26,17 +14,23 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private float _inputDamping = 0.1f;
 
     // 내부 변수
-    private float _horizontalInput;
-    private float _verticalInput;
-    private float _currentHorizontal;
-    private float _currentVertical;
+    private Vector2 _moveInput;
+    private Vector2 _currentMoveInput;
+    private bool _jumpInput;
+    private bool _sprintInput;
+    private UnityEngine.InputSystem.PlayerInput _playerInputSystem;
+
+    private void Awake()
+    {
+        _playerInputSystem = GetComponent<UnityEngine.InputSystem.PlayerInput>();
+    }
 
     /// <summary>
     /// 수평 입력값 반환 (-1 ~ 1)
     /// </summary>
     public float GetHorizontalInput()
     {
-        return _currentHorizontal;
+        return _currentMoveInput.x;
     }
 
     /// <summary>
@@ -44,7 +38,7 @@ public class PlayerInput : MonoBehaviour
     /// </summary>
     public float GetVerticalInput()
     {
-        return _currentVertical;
+        return _currentMoveInput.y;
     }
 
     /// <summary>
@@ -52,7 +46,9 @@ public class PlayerInput : MonoBehaviour
     /// </summary>
     public bool GetJumpInput()
     {
-        return Input.GetKeyDown(_jumpKey);
+        bool jump = _jumpInput;
+        _jumpInput = false; // 한 번 사용하면 초기화
+        return jump;
     }
 
     /// <summary>
@@ -60,36 +56,40 @@ public class PlayerInput : MonoBehaviour
     /// </summary>
     public bool GetSprintInput()
     {
-        return Input.GetKey(_sprintKey);
+        return _sprintInput;
     }
 
     private void Update()
     {
-        // WASD 키 입력 처리
-        ProcessKeyInput();
-        
         // 입력값 부드럽게 처리
         SmoothInput();
     }
 
     /// <summary>
-    /// 키보드 입력 처리
+    /// 이동 입력 처리 (InputSystem에서 호출)
     /// </summary>
-    private void ProcessKeyInput()
+    public void OnMove(InputAction.CallbackContext context)
     {
-        // 수평 입력 (A, D)
-        _horizontalInput = 0;
-        if (Input.GetKey(_rightKey))
-            _horizontalInput += 1;
-        if (Input.GetKey(_leftKey))
-            _horizontalInput -= 1;
+        _moveInput = context.ReadValue<Vector2>();
+    }
 
-        // 수직 입력 (W, S)
-        _verticalInput = 0;
-        if (Input.GetKey(_forwardKey))
-            _verticalInput += 1;
-        if (Input.GetKey(_backwardKey))
-            _verticalInput -= 1;
+    /// <summary>
+    /// 점프 입력 처리 (InputSystem에서 호출)
+    /// </summary>
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            _jumpInput = true;
+        }
+    }
+
+    /// <summary>
+    /// 달리기 입력 처리 (InputSystem에서 호출)
+    /// </summary>
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        _sprintInput = context.ReadValueAsButton();
     }
 
     /// <summary>
@@ -98,13 +98,13 @@ public class PlayerInput : MonoBehaviour
     private void SmoothInput()
     {
         // 부드러운 입력 처리 (선형 보간)
-        _currentHorizontal = Mathf.Lerp(_currentHorizontal, _horizontalInput * _inputSensitivity, 1f - _inputDamping);
-        _currentVertical = Mathf.Lerp(_currentVertical, _verticalInput * _inputSensitivity, 1f - _inputDamping);
+        _currentMoveInput.x = Mathf.Lerp(_currentMoveInput.x, _moveInput.x * _inputSensitivity, 1f - _inputDamping);
+        _currentMoveInput.y = Mathf.Lerp(_currentMoveInput.y, _moveInput.y * _inputSensitivity, 1f - _inputDamping);
         
         // 미세한 입력값 제거
-        if (Mathf.Abs(_currentHorizontal) < 0.01f)
-            _currentHorizontal = 0;
-        if (Mathf.Abs(_currentVertical) < 0.01f)
-            _currentVertical = 0;
+        if (Mathf.Abs(_currentMoveInput.x) < 0.01f)
+            _currentMoveInput.x = 0;
+        if (Mathf.Abs(_currentMoveInput.y) < 0.01f)
+            _currentMoveInput.y = 0;
     }
 } 

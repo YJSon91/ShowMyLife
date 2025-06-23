@@ -1,7 +1,8 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
-/// 3인칭 카메라 컨트롤러
+/// 3인칭 카메라 컨트롤러 - 플레이어를 화면 정중앙에 고정 (인풋 시스템 사용)
 /// </summary>
 public class CameraController : MonoBehaviour
 {
@@ -28,12 +29,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] private LayerMask _collisionLayers;
     [Tooltip("카메라 충돌 오프셋")]
     [SerializeField] private float _collisionOffset = 0.2f;
-    [Tooltip("카메라 위치 보간 속도")]
-    [SerializeField] private float _positionSmoothSpeed = 15f;
     [Tooltip("카메라 회전 보간 속도")]
     [SerializeField] private float _rotationSmoothSpeed = 15f;
     [Tooltip("카메라 입력 보간 속도")]
     [SerializeField] private float _inputSmoothSpeed = 10f;
+    [Tooltip("카메라 위치 고정 강도 (높을수록 더 정확히 고정)")]
+    [SerializeField] private float _positionFixStrength = 1000f;
 
     [Header("입력 설정")]
     [Tooltip("마우스 감도")]
@@ -48,14 +49,17 @@ public class CameraController : MonoBehaviour
     private float _currentHeight;
     private float _horizontalAngle;
     private float _verticalAngle;
-    private Vector3 _smoothPosition;
     private Vector3 _targetPosition;
     private Quaternion _targetRotation;
     private float _smoothHorizontalInput;
     private float _smoothVerticalInput;
-    private Vector3 _previousTargetPosition;
-    private Vector3 _targetVelocity;
     private Camera _camera;
+    private Vector3 _lastTargetPosition;
+    
+    // 인풋 시스템 변수
+    private Vector2 _lookInput;
+    private float _zoomInput;
+    private UnityEngine.InputSystem.PlayerInput _playerInputSystem;
 
     /// <summary>
     /// 카메라가 따라갈 대상 설정
@@ -66,7 +70,8 @@ public class CameraController : MonoBehaviour
         
         if (_target != null)
         {
-            transform.position = CalculateCameraPosition();
+            _lastTargetPosition = _target.position;
+            transform.position = CalculateCameraPosition(_target.position);
             transform.LookAt(_target.position + Vector3.up * _height);
         }
     }
@@ -79,6 +84,9 @@ public class CameraController : MonoBehaviour
         {
             _camera = Camera.main;
         }
+        
+        // 플레이어 인풋 시스템 찾기
+        _playerInputSystem = FindObjectOfType<UnityEngine.InputSystem.PlayerInput>();
         
         // 카메라 설정 최적화
         Application.targetFrameRate = 60; // 프레임 레이트 고정
@@ -98,12 +106,21 @@ public class CameraController : MonoBehaviour
         // 초기 위치 설정
         if (_target != null)
         {
-            _targetPosition = CalculateCameraPosition();
+            _lastTargetPosition = _target.position;
+            _targetPosition = CalculateCameraPosition(_target.position);
             transform.position = _targetPosition;
             transform.LookAt(_target.position + Vector3.up * _height);
             _targetRotation = transform.rotation;
-            _previousTargetPosition = _target.position;
         }
+    }
+
+    private void Update()
+    {
+        // 마우스 입력 처리
+        HandleMouseInput();
+        
+        // 줌 입력 처리
+        HandleZoomInput();
     }
 
     private void LateUpdate()
@@ -111,17 +128,25 @@ public class CameraController : MonoBehaviour
         if (_target == null)
             return;
         
-        // 타임스케일이 0일 때도 카메라가 작동하도록 함
-        float deltaTime = Time.unscaledDeltaTime;
-        
-        // 마우스 입력 처리
-        HandleMouseInput();
-        
-        // 줌 입력 처리
-        HandleZoomInput();
-        
-        // 카메라 위치 및 회전 업데이트
-        UpdateCameraTransform();
+        // 플레이어 위치 추적과 회전을 분리하여 더 정확하게 처리
+        UpdateCameraPosition();
+        UpdateCameraRotation();
+    }
+
+    /// <summary>
+    /// Look 입력 처리 (인풋 시스템에서 호출)
+    /// </summary>
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        _lookInput = context.ReadValue<Vector2>();
+    }
+    
+    /// <summary>
+    /// Zoom 입력 처리 (인풋 시스템에서 호출)
+    /// </summary>
+    public void OnZoom(InputAction.CallbackContext context)
+    {
+        _zoomInput = context.ReadValue<float>();
     }
 
     /// <summary>
@@ -129,9 +154,9 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void HandleMouseInput()
     {
-        // 마우스 입력 받기
-        float mouseX = Input.GetAxis("Mouse X") * _mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * _mouseSensitivity;
+        // 마우스 입력 받기 (인풋 시스템 사용)
+        float mouseX = _lookInput.x * _mouseSensitivity * Time.deltaTime;
+        float mouseY = _lookInput.y * _mouseSensitivity * Time.deltaTime;
         
         // 반전 적용
         if (_invertXAxis) mouseX = -mouseX;
@@ -154,47 +179,47 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void HandleZoomInput()
     {
-        // 마우스 휠 입력
-        float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
+        // 마우스 휠 입력 (인풋 시스템 사용)
+        float scrollWheel = _zoomInput * _zoomSpeed * Time.deltaTime;
         
         // 줌 조절
-        _currentDistance -= scrollWheel * _zoomSpeed;
+        _currentDistance -= scrollWheel;
         _currentDistance = Mathf.Clamp(_currentDistance, _minDistance, _maxDistance);
     }
 
     /// <summary>
-    /// 카메라 위치 및 회전 업데이트
+    /// 카메라 위치 업데이트 (플레이어 추적)
     /// </summary>
-    private void UpdateCameraTransform()
+    private void UpdateCameraPosition()
     {
         if (_target == null) return;
         
-        // 타겟 속도 계산 (예측 이동에 사용)
-        Vector3 targetDelta = _target.position - _previousTargetPosition;
-        _targetVelocity = targetDelta / Time.deltaTime;
-        _previousTargetPosition = _target.position;
+        // 타겟의 현재 위치를 정확히 사용
+        Vector3 currentTargetPosition = _target.position;
         
-        // 목표 카메라 위치 계산 (약간의 예측 이동 포함)
-        Vector3 predictedTargetPosition = _target.position + _targetVelocity * 0.025f;
-        _targetPosition = CalculateCameraPosition(predictedTargetPosition);
+        // 목표 카메라 위치 계산
+        _targetPosition = CalculateCameraPosition(currentTargetPosition);
         
         // 카메라 충돌 처리
         HandleCameraCollision();
         
+        // 카메라 위치를 즉시 업데이트 (완전히 고정)
+        transform.position = _targetPosition;
+        
+        // 마지막 타겟 위치 업데이트
+        _lastTargetPosition = currentTargetPosition;
+    }
+    
+    /// <summary>
+    /// 카메라 회전 업데이트
+    /// </summary>
+    private void UpdateCameraRotation()
+    {
+        if (_target == null) return;
+        
         // 목표 회전 계산
         Vector3 lookAtPosition = _target.position + Vector3.up * _height;
-        _targetRotation = Quaternion.LookRotation(lookAtPosition - _targetPosition);
-        
-        // 카메라 위치 부드럽게 이동 (SmoothDamp 사용)
-        Vector3 velocity = Vector3.zero;
-        transform.position = Vector3.SmoothDamp(
-            transform.position, 
-            _targetPosition, 
-            ref velocity, 
-            1f / _positionSmoothSpeed, 
-            Mathf.Infinity, 
-            Time.deltaTime
-        );
+        _targetRotation = Quaternion.LookRotation(lookAtPosition - transform.position);
         
         // 카메라 회전 부드럽게 적용
         transform.rotation = Quaternion.Slerp(
@@ -247,5 +272,40 @@ public class CameraController : MonoBehaviour
             // 충돌 지점에 카메라 위치 조정 (오프셋 적용)
             _targetPosition = hit.point + hit.normal * _collisionOffset;
         }
+    }
+
+    /// <summary>
+    /// 카메라가 타겟을 정확히 중앙에 보고 있는지 확인
+    /// </summary>
+    private bool IsCameraLookingAtTarget()
+    {
+        if (_target == null || _camera == null) return false;
+        
+        // 타겟의 스크린 좌표 계산
+        Vector3 screenPos = _camera.WorldToScreenPoint(_target.position + Vector3.up * _height);
+        
+        // 화면 중앙 좌표
+        Vector2 screenCenter = new Vector2(_camera.pixelWidth * 0.5f, _camera.pixelHeight * 0.5f);
+        
+        // 타겟이 화면 중앙에 있는지 확인 (약간의 오차 허용)
+        float distance = Vector2.Distance(screenCenter, new Vector2(screenPos.x, screenPos.y));
+        
+        return distance < 10f; // 10픽셀 이내면 중앙에 있다고 판단
+    }
+
+    /// <summary>
+    /// OnDrawGizmos - 디버깅용 시각화
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        if (_target == null) return;
+        
+        // 타겟 위치 표시
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(_target.position + Vector3.up * _height, 0.2f);
+        
+        // 카메라 시선 방향 표시
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, _target.position + Vector3.up * _height);
     }
 } 
