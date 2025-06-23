@@ -16,6 +16,10 @@ public class UIManager : MonoBehaviour
     [Tooltip("새 게임 또는 재시작 시 불러올 씬의 이름입니다.")]
     [SerializeField] private string _startSceneName = "SampleScene";
 
+    [Header("Dialogue Settings")]
+    [Tooltip("대사가 화면에 표시되는 시간(초)입니다.")]
+    [SerializeField] private float _dialogueDisplayTime = 3f;
+
     public static UIManager Instance { get; private set; }
 
     private bool _isPaused = false;
@@ -104,7 +108,7 @@ public class UIManager : MonoBehaviour
         _dialoguePanel.SetActive(true);
         _dialogueText.text = message;
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(_dialogueDisplayTime);
 
         _dialoguePanel.SetActive(false);
     }
