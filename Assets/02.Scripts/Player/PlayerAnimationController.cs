@@ -86,7 +86,6 @@ public class PlayerAnimationController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _jumpInputDetected = true;
-            Debug.Log("점프 키 입력 감지됨");
         }
         
         // 애니메이션 업데이트
@@ -110,7 +109,6 @@ public class PlayerAnimationController : MonoBehaviour
         {
             // 이동 시작 시 RandomIdle 값을 0으로 초기화
             _animator.SetInteger(RandomIdle, 0);
-            Debug.Log("이동 시작: RandomIdle 초기화");
         }
         
         // 지면 상태 확인 및 착지 감지
@@ -121,7 +119,6 @@ public class PlayerAnimationController : MonoBehaviour
         {
             // 착지 애니메이션 트리거
             _animator.SetTrigger(Landing);
-            Debug.Log("착지 감지: 랜딩 애니메이션 트리거");
             
             // 점프 상태 종료
             _isJumping = false;
@@ -141,8 +138,6 @@ public class PlayerAnimationController : MonoBehaviour
         // 지면 상태 확인
         bool isGrounded = _playerController.IsGrounded;
         
-        // 디버그 로그
-        Debug.Log($"지면 상태: {isGrounded},  점프 입력: {_jumpInputDetected}, 점프 중: {_isJumping}, 이동 중: {_isMoving}");
         
         // 지면 상태 설정
         _animator.SetBool(IsGrounded, isGrounded);
@@ -151,7 +146,6 @@ public class PlayerAnimationController : MonoBehaviour
         if (_jumpInputDetected)
         {
             _animator.SetTrigger(Jumping);
-            Debug.Log("점프 애니메이션 트리거됨");
             _jumpInputDetected = false; // 점프 입력 플래그 초기화
             _isJumping = true; // 점프 상태 활성화
         }
@@ -203,9 +197,6 @@ public class PlayerAnimationController : MonoBehaviour
         
         // 애니메이터 파라미터 설정
         _animator.SetInteger(RandomIdle, randomIdle);
-        
-        // 디버그 로그
-        Debug.Log($"랜덤 Idle 애니메이션 재생: {randomIdle}");
     }
     
     /// <summary>

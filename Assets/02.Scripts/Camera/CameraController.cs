@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// 3인칭 카메라 컨트롤러 - 플레이어를 화면 정중앙에 고정 (인풋 시스템 사용)
+/// 3인칭 카메라 컨트롤러 - 플레이어를 화면 정중앙에 완전히 고정 (Hard Look At)
 /// </summary>
 public class CameraController : MonoBehaviour
 {
@@ -29,12 +29,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] private LayerMask _collisionLayers;
     [Tooltip("카메라 충돌 오프셋")]
     [SerializeField] private float _collisionOffset = 0.2f;
-    [Tooltip("카메라 회전 보간 속도")]
-    [SerializeField] private float _rotationSmoothSpeed = 15f;
     [Tooltip("카메라 입력 보간 속도")]
     [SerializeField] private float _inputSmoothSpeed = 10f;
     [Tooltip("카메라 위치 고정 강도 (높을수록 더 정확히 고정)")]
     [SerializeField] private float _positionFixStrength = 1000f;
+    [Tooltip("Hard Look At 활성화")]
+    [SerializeField] private bool _hardLookAt = true;
 
     [Header("입력 설정")]
     [Tooltip("마우스 감도")]
@@ -72,7 +72,7 @@ public class CameraController : MonoBehaviour
         {
             _lastTargetPosition = _target.position;
             transform.position = CalculateCameraPosition(_target.position);
-            transform.LookAt(_target.position + Vector3.up * _height);
+            LookAtTarget();
         }
     }
 
@@ -109,7 +109,7 @@ public class CameraController : MonoBehaviour
             _lastTargetPosition = _target.position;
             _targetPosition = CalculateCameraPosition(_target.position);
             transform.position = _targetPosition;
-            transform.LookAt(_target.position + Vector3.up * _height);
+            LookAtTarget();
             _targetRotation = transform.rotation;
         }
     }
@@ -130,7 +130,16 @@ public class CameraController : MonoBehaviour
         
         // 플레이어 위치 추적과 회전을 분리하여 더 정확하게 처리
         UpdateCameraPosition();
-        UpdateCameraRotation();
+        
+        // Hard Look At이 활성화된 경우 매 프레임 타겟을 정확히 바라봄
+        if (_hardLookAt)
+        {
+            LookAtTarget();
+        }
+        else
+        {
+            UpdateCameraRotation();
+        }
     }
 
     /// <summary>
@@ -211,7 +220,7 @@ public class CameraController : MonoBehaviour
     }
     
     /// <summary>
-    /// 카메라 회전 업데이트
+    /// 카메라 회전 업데이트 (부드러운 회전)
     /// </summary>
     private void UpdateCameraRotation()
     {
@@ -225,8 +234,22 @@ public class CameraController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(
             transform.rotation, 
             _targetRotation, 
-            Time.deltaTime * _rotationSmoothSpeed
+            Time.deltaTime * _positionFixStrength
         );
+    }
+    
+    /// <summary>
+    /// 타겟을 정확히 바라보도록 카메라 회전 (Hard Look At)
+    /// </summary>
+    private void LookAtTarget()
+    {
+        if (_target == null) return;
+        
+        // 타겟의 시선 위치 (머리 높이)
+        Vector3 lookAtPosition = _target.position + Vector3.up * _height;
+        
+        // 카메라가 타겟을 정확히 바라보도록 회전
+        transform.LookAt(lookAtPosition);
     }
 
     /// <summary>
@@ -290,7 +313,15 @@ public class CameraController : MonoBehaviour
         // 타겟이 화면 중앙에 있는지 확인 (약간의 오차 허용)
         float distance = Vector2.Distance(screenCenter, new Vector2(screenPos.x, screenPos.y));
         
-        return distance < 10f; // 10픽셀 이내면 중앙에 있다고 판단
+        return distance < 5f; // 5픽셀 이내면 중앙에 있다고 판단 (더 엄격하게 조정)
+    }
+
+    /// <summary>
+    /// Hard Look At 모드 설정
+    /// </summary>
+    public void SetHardLookAt(bool enabled)
+    {
+        _hardLookAt = enabled;
     }
 
     /// <summary>
