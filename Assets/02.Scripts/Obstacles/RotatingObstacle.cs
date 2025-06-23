@@ -34,4 +34,20 @@ public class RotatingObstacle : MonoBehaviour
             }
         }
     }
+
+    private void OnCollisionEnter(Collision collision) //플레이어 자식객체로 변경
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.transform.SetParent(this.transform);
+        }
+    }
+
+    private void OnCollisionExit(Collision collision) //플레이어 자식객체 해제
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.transform.SetParent(null);
+        }
+    }
 }
