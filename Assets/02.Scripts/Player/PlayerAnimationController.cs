@@ -18,8 +18,6 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField] private float _jumpDelay = 0.1f;
     [Tooltip("착지 감지 최소 공중 시간")]
     [SerializeField] private float _minAirTimeForLanding = 0.2f;
-    [Tooltip("디버그 로그 활성화")]
-    [SerializeField] private bool _debugMode = false;
 
     // 컴포넌트 참조
     private Animator _animator;
@@ -100,6 +98,20 @@ public class PlayerAnimationController : MonoBehaviour
         
         // 애니메이션 초기화
         InitializeAnimator();
+        
+        // 플레이어 컨트롤러 이벤트 구독
+        _playerController.OnJump += HandleJump;
+        _playerController.OnLand += HandleLand;
+    }
+
+    private void OnDestroy()
+    {
+        // 이벤트 구독 해제
+        if (_playerController != null)
+        {
+            _playerController.OnJump -= HandleJump;
+            _playerController.OnLand -= HandleLand;
+        }
     }
 
     private void InitializeAnimator()
@@ -115,21 +127,20 @@ public class PlayerAnimationController : MonoBehaviour
 
     private void Update()
     {
-        // 이동 상태 확인
-        bool isMoving = IsPlayerMoving();
-        bool isSprinting = _playerInput.GetSprintInput();
+        // 플레이어 상태 가져오기
+        bool isMoving = _playerController.IsMoving;
+        bool isSprinting = _playerController.IsSprinting;
         bool isGrounded = _playerController.IsGrounded;
         
         // 점프 입력 감지
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (_playerInput.GetJumpInputRaw())
         {
             if (isGrounded && !_isJumping && !_jumpRequested && !_transitioningToJump)
             {
                 if (!_isLanding)
                 {
-                    // 일반적인 점프 처리
-                    _jumpRequested = true;
-                    StartCoroutine(HandleJumpCoroutine());
+                    // 일반적인 점프 처리는 PlayerController에서 처리되므로 여기서는 처리하지 않음
+                    // 필요한 경우 점프 애니메이션 관련 상태만 설정
                 }
                 else
                 {
@@ -157,16 +168,6 @@ public class PlayerAnimationController : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어의 이동 상태 확인
-    /// </summary>
-    private bool IsPlayerMoving()
-    {
-        float horizontalInput = _playerInput.GetHorizontalInput();
-        float verticalInput = _playerInput.GetVerticalInput();
-        return Mathf.Abs(horizontalInput) > 0.1f || Mathf.Abs(verticalInput) > 0.1f;
-    }
-
-    /// <summary>
     /// 지면 상태 추적
     /// </summary>
     private void TrackGroundState(bool isGrounded)
@@ -187,12 +188,6 @@ public class PlayerAnimationController : MonoBehaviour
         }
         else
         {
-            // 공중에서 지면으로 착지한 경우
-            if (_airTime > _minAirTimeForLanding && !_isLanding)
-            {
-                StartCoroutine(HandleLandingCoroutine());
-            }
-            
             // 공중 시간 초기화
             _airTime = 0f;
         }
@@ -272,6 +267,25 @@ public class PlayerAnimationController : MonoBehaviour
     }
 
     /// <summary>
+    /// PlayerController의 점프 이벤트 처리
+    /// </summary>
+    private void HandleJump()
+    {
+        StartCoroutine(HandleJumpCoroutine());
+    }
+
+    /// <summary>
+    /// PlayerController의 착지 이벤트 처리
+    /// </summary>
+    private void HandleLand()
+    {
+        if (_airTime > _minAirTimeForLanding)
+        {
+            StartCoroutine(HandleLandingCoroutine());
+        }
+    }
+
+    /// <summary>
     /// 점프 처리 (코루틴)
     /// </summary>
     private IEnumerator HandleJumpCoroutine()
@@ -335,8 +349,8 @@ public class PlayerAnimationController : MonoBehaviour
         else
         {
             // 착지 후 상태 업데이트
-            bool isMoving = IsPlayerMoving();
-            bool isSprinting = _playerInput.GetSprintInput();
+            bool isMoving = _playerController.IsMoving;
+            bool isSprinting = _playerController.IsSprinting;
             
             if (isMoving)
             {

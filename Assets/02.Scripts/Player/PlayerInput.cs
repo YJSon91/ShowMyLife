@@ -46,9 +46,18 @@ public class PlayerInput : MonoBehaviour
     /// </summary>
     public bool GetJumpInput()
     {
+        // 점프 입력 확인 후 초기화
         bool jump = _jumpInput;
         _jumpInput = false; // 한 번 사용하면 초기화
         return jump;
+    }
+
+    /// <summary>
+    /// 점프 입력 여부 반환 (초기화하지 않음)
+    /// </summary>
+    public bool GetJumpInputRaw()
+    {
+        return _jumpInput;
     }
 
     /// <summary>
