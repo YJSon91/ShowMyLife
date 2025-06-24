@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using PlayerInputComponent = PlayerInput; // 클래스 이름 충돌 방지를 위한 별칭
 
 /// <summary>
 /// 플레이어 캐릭터의 이동을 담당하는 컨트롤러
@@ -43,12 +44,6 @@ public class PlayerController : MonoBehaviour
     [Tooltip("벽 충돌 반동 계수")]
     [SerializeField] private float _wallBounceModifier = 0.1f;
 
-    [Header("애니메이션 설정")]
-    [Tooltip("랜덤 Idle 애니메이션 최소 대기 시간")]
-    [SerializeField] private float _minIdleTime = 5f;
-    [Tooltip("랜덤 Idle 애니메이션 최대 대기 시간")]
-    [SerializeField] private float _maxIdleTime = 10f;
-
     // 내부 변수
     private Vector3 _moveDirection;
     private Vector3 _velocity;
@@ -58,7 +53,7 @@ public class PlayerController : MonoBehaviour
     private bool _wasGrounded;
     private float _verticalVelocity;
     private Rigidbody _rigidbody;
-    private PlayerInput _playerInput;
+    private PlayerInputComponent _playerInput;
     private Transform _cameraTransform;
     private Vector3 _groundNormal;
     private RaycastHit _groundRaycastHit;
@@ -70,25 +65,26 @@ public class PlayerController : MonoBehaviour
     private Vector3 _center;
     private bool _isGroundCheckDisabled;
     private float _groundCheckDisabledTimer;
-    
-    // 애니메이션 관련 변수
-    private Animator _animator;
-    private float _idleAnimTimer;
     private bool _isMoving;
-    private static readonly int Walking = Animator.StringToHash("Walking");
-    private static readonly int Running = Animator.StringToHash("Running");
-    private static readonly int RandomIdle = Animator.StringToHash("RandomIdle");
-
+    
     // 프로퍼티
     public bool IsGrounded => _isGrounded;
     public Vector3 Velocity => _velocity;
     public bool IsSprinting => _isSprinting;
+    public bool IsMoving => _isMoving;
+    public bool WasGrounded => _wasGrounded;
+    public float VerticalVelocity => _velocity.y;
+    public Vector3 MoveDirection => _moveDirection;
+
+    // 이벤트
+    public delegate void PlayerStateChangedHandler();
+    public event PlayerStateChangedHandler OnJump;
+    public event PlayerStateChangedHandler OnLand;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _playerInput = GetComponent<PlayerInput>();
-        _animator = GetComponent<Animator>();
+        _playerInput = GetComponent<PlayerInputComponent>();
         _cameraTransform = Camera.main.transform;
         _raycastHits = new RaycastHit[_maxCollisionCount];
         
@@ -105,18 +101,12 @@ public class PlayerController : MonoBehaviour
         
         // 캐릭터 크기 계산
         CalculateCharacterDimensions();
-        
-        // 랜덤 Idle 타이머 초기화
-        ResetIdleTimer();
     }
 
     private void Update()
     {
         // 입력 처리
         HandleInput();
-        
-        // 애니메이션 업데이트
-        UpdateAnimations();
     }
 
     private void FixedUpdate()
@@ -211,70 +201,8 @@ public class PlayerController : MonoBehaviour
         
         // 달리기 입력 처리
         _isSprinting = _playerInput.GetSprintInput();
-        
-        // 최종 이동 방향 설정 완료
     }
     
-    /// <summary>
-    /// 애니메이션 상태 업데이트
-    /// </summary>
-    private void UpdateAnimations()
-    {
-        if (_animator == null) return;
-        
-        // 이동 애니메이션 설정
-        _animator.SetBool(Walking, _isMoving && !_isSprinting);
-        _animator.SetBool(Running, _isMoving && _isSprinting);
-        
-        // 랜덤 Idle 애니메이션 처리
-        if (!_isMoving)
-        {
-            UpdateIdleAnimation();
-        }
-        else
-        {
-            // 이동 중이면 타이머 리셋
-            ResetIdleTimer();
-        }
-    }
-    
-    /// <summary>
-    /// Idle 애니메이션 업데이트
-    /// </summary>
-    private void UpdateIdleAnimation()
-    {
-        _idleAnimTimer -= Time.deltaTime;
-        
-        if (_idleAnimTimer <= 0)
-        {
-            // 랜덤 Idle 애니메이션 재생
-            TriggerRandomIdleAnimation();
-            
-            // 타이머 리셋
-            ResetIdleTimer();
-        }
-    }
-    
-    /// <summary>
-    /// 랜덤 Idle 애니메이션 트리거
-    /// </summary>
-    private void TriggerRandomIdleAnimation()
-    {
-        // 랜덤 값 생성 (1: idle2, 2: idle3)
-        int randomIdle = Random.Range(1, 3);
-        
-        // 애니메이터 파라미터 설정
-        _animator.SetInteger(RandomIdle, randomIdle);
-    }
-    
-    /// <summary>
-    /// Idle 타이머 리셋
-    /// </summary>
-    private void ResetIdleTimer()
-    {
-        _idleAnimTimer = Random.Range(_minIdleTime, _maxIdleTime);
-    }
-
     /// <summary>
     /// 지면 체크
     /// </summary>
@@ -349,7 +277,7 @@ public class PlayerController : MonoBehaviour
         if (!_wasGrounded && _isGrounded)
         {
             // 착지 이벤트 발생
-            // 착지 효과 등을 여기에 추가
+            OnLand?.Invoke();
         }
     }
 
@@ -425,6 +353,9 @@ public class PlayerController : MonoBehaviour
                 _isGrounded = false;
                 // 점프 시 지면 체크를 잠시 비활성화
                 DisableGroundCheck(0.2f);
+                
+                // 점프 이벤트 발생
+                OnJump?.Invoke();
             }
         }
         else
@@ -438,8 +369,6 @@ public class PlayerController : MonoBehaviour
                 _velocity.y = -20f;
             }
         }
-        
-        // 중력 적용 완료
     }
     
     /// <summary>
