@@ -3,12 +3,11 @@ using UnityEngine.Events;
 
 public class FallTracker : MonoBehaviour
 {
+    [Header("낙하 감지 설정")]
     [SerializeField] private float fallYThreshold = -10f;
     [SerializeField] private int fallLimit = 3;
-    [SerializeField] private string groundTag = "Ground";
     [SerializeField] private UnityEvent onFallLimitReached;
 
-    private Vector3 lastGroundedPosition;
     private int fallCount = 0;
 
     private void Update()
@@ -23,16 +22,6 @@ public class FallTracker : MonoBehaviour
                 onFallLimitReached?.Invoke();
                 fallCount = 0;
             }
-
-            transform.position = lastGroundedPosition;
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.CompareTag(groundTag))
-        {
-            lastGroundedPosition = transform.position;
         }
     }
 }
