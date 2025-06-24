@@ -6,48 +6,68 @@ using Unity.VisualScripting;
 
 public class RotatingObstacle : MonoBehaviour
 {
-    [SerializeField] private Vector3 rotAmount = new Vector3(0f, 90f, 0f); // 회전량
-    [SerializeField] private float rotTime = 1f;                           // 회전 시간
-    [SerializeField] private float pauseTime = 1f;                         // 멈춤 시간
+    [SerializeField] private Vector3 _rotAxis = Vector3.up;
+    [SerializeField] private float _rotSpeed = 90f; // degrees per second
+    [SerializeField] private bool _clockwise = true;
+
+    private Quaternion _lastRotation;
+    private float _currentAngle = 0f;
 
     private void Start()
     {
-        StartCoroutine(RotLoop());
+        _lastRotation = transform.rotation;
+        StartRotation();
     }
 
-    private IEnumerator RotLoop()
+    private void FixedUpdate()
     {
-        while (true)
-        {
-            // 한 번 회전량만큼 추가 회전 (누적 회전은 Unity가 처리)
-            transform.DOLocalRotate(rotAmount, rotTime, RotateMode.WorldAxisAdd)
-                .SetEase(Ease.InOutQuad)
-                .SetUpdate(UpdateType.Fixed);
+        Quaternion currentRotation = transform.rotation;
+        Quaternion deltaRotation = currentRotation * Quaternion.Inverse(_lastRotation);
 
-            if (pauseTime > 0f)
+        Collider[] hits = Physics.OverlapBox(
+            transform.position + Vector3.up * 0.5f,
+            transform.localScale / 2f + new Vector3(0f, 0.1f, 0f),
+            transform.rotation);
+
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Player"))
             {
-                yield return new WaitForSeconds(rotTime + pauseTime);
-            }
-            else
-            {
-                yield return new WaitForSeconds(rotTime);
+                Transform player = hit.transform;
+
+                Vector3 dir = player.position - transform.position;
+                dir = deltaRotation * dir;
+                Vector3 newPos = transform.position + dir;
+
+                Rigidbody rb = player.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.MovePosition(newPos);
+                }
+                else
+                {
+                    player.position = newPos;
+                }
             }
         }
+
+        _lastRotation = currentRotation;
     }
 
-    private void OnCollisionEnter(Collision collision) //플레이어 자식객체로 변경
+    private void StartRotation()
     {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            collision.gameObject.transform.SetParent(this.transform);
-        }
-    }
+        float direction = _clockwise ? 1f : -1f;
 
-    private void OnCollisionExit(Collision collision) //플레이어 자식객체 해제
-    {
-        if (collision.gameObject.CompareTag("Player"))
+        // 회전 각도를 추적해서 직접 회전 적용
+        DOTween.To(() => _currentAngle, x =>
         {
-            collision.gameObject.transform.SetParent(null);
-        }
+            _currentAngle = x;
+            transform.localRotation = Quaternion.AngleAxis(_currentAngle, _rotAxis.normalized);
+        },
+        360f * 1000f, // 충분히 큰 회전
+        (360f * 1000f) / (_rotSpeed * Mathf.Abs(direction)))
+        .SetEase(Ease.Linear)
+        .SetLoops(-1, LoopType.Restart)
+        .SetUpdate(UpdateType.Fixed);
     }
 }
