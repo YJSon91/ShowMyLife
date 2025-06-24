@@ -48,12 +48,10 @@ public class PlayerAnimationController : MonoBehaviour
     private float _airTime;
     private bool _isJumping;
     private bool _isLanding;
-    private bool _jumpRequested;
     private bool _transitioningToJump;
     private bool _landingAnimationCompleted;
     private bool _jumpInputDuringLanding; // 착지 중 점프 입력 감지
     private float _jumpAnimTimer; // 점프 애니메이션 타이머
-    private bool _jumpAnimationLocked; // 점프 애니메이션 잠금 상태
     private Coroutine _currentJumpCoroutine; // 현재 실행 중인 점프 코루틴
     private Coroutine _currentLandingCoroutine; // 현재 실행 중인 착지 코루틴
     private float _lastJumpTime; // 마지막 점프 시간
@@ -101,12 +99,10 @@ public class PlayerAnimationController : MonoBehaviour
         _airTime = 0f;
         _isJumping = false;
         _isLanding = false;
-        _jumpRequested = false;
         _transitioningToJump = false;
         _landingAnimationCompleted = false;
         _jumpInputDuringLanding = false;
         _jumpAnimTimer = 0f;
-        _jumpAnimationLocked = false;
         _currentJumpCoroutine = null;
         _currentLandingCoroutine = null;
         _lastJumpTime = -10f; // 초기값은 충분히 이전 시간으로 설정
@@ -167,8 +163,6 @@ public class PlayerAnimationController : MonoBehaviour
             _jumpAnimTimer -= Time.deltaTime;
             if (_jumpAnimTimer <= 0)
             {
-                _jumpAnimationLocked = false;
-                
                 // 점프 애니메이션이 끝났고 지면에 있다면 상태 초기화
                 if (isGrounded && _isJumping)
                 {
@@ -373,7 +367,6 @@ public class PlayerAnimationController : MonoBehaviour
         {
             // 짧은 점프였다면 바로 상태 초기화
             _isJumping = false;
-            _jumpAnimationLocked = false;
             
             // 애니메이션 상태 업데이트
             bool isMoving = _playerController.IsMoving;
@@ -391,9 +384,7 @@ public class PlayerAnimationController : MonoBehaviour
         ResetAllTriggers();
         
         _transitioningToJump = true;
-        _jumpAnimationLocked = true;
         _isJumping = true;
-        _jumpRequested = false;
         _jumpAnimTimer = _maxJumpAnimTime;
         
         // 현재 애니메이션이 완전히 끝날 때까지 약간 대기
@@ -410,7 +401,7 @@ public class PlayerAnimationController : MonoBehaviour
         // 최소 점프 애니메이션 시간 동안 대기
         yield return new WaitForSeconds(_minJumpAnimTime);
         
-        // 지면에 있고 다른 점프 요청이 없으면 점프 상태 종료 준비
+        // 지면에 있으면 점프 상태 종료 준비
         if (_playerController.IsGrounded)
         {
             _jumpAnimTimer = _animationTransitionTime; // 전환 시간 설정
@@ -431,7 +422,6 @@ public class PlayerAnimationController : MonoBehaviour
         _isJumping = false;
         _isLanding = true;
         _landingAnimationCompleted = false;
-        _jumpAnimationLocked = true;
         
         // 모든 트리거 리셋
         ResetAllTriggers();
@@ -452,7 +442,6 @@ public class PlayerAnimationController : MonoBehaviour
         }
         
         _isLanding = false;
-        _jumpAnimationLocked = false;
         
         // 착지 중 점프 입력이 있었다면 즉시 점프 실행
         if (_jumpInputDuringLanding)
