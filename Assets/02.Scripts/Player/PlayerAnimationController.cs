@@ -12,8 +12,6 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField] private float _minIdleTime = 5f;
     [Tooltip("랜덤 Idle 애니메이션 최대 대기 시간")]
     [SerializeField] private float _maxIdleTime = 10f;
-    [Tooltip("애니메이션 전환 블렌딩 시간")]
-    [SerializeField] private float _transitionDuration = 0.15f;
     [Tooltip("점프 애니메이션 지연 시간")]
     [SerializeField] private float _jumpDelay = 0.1f;
     [Tooltip("착지 감지 최소 공중 시간")]
