@@ -5,8 +5,8 @@ using DG.Tweening;
 
 public class MovingObstacle : MonoBehaviour
 {
-    [SerializeField] Vector3 MoveTo = Vector3.zero; //이동거리 설정
-    [SerializeField] float MoveTime = 1f; //걸리는 시간 설정
+    [SerializeField] private Vector3 _moveTo = Vector3.zero; //이동거리 설정
+    [SerializeField] private float _moveTime = 1f; //걸리는 시간 설정
 
     private Vector3 _lastPos; // 마지막 위치
 
@@ -19,7 +19,7 @@ public class MovingObstacle : MonoBehaviour
     private void Move()
     {
         //Ease.InOutQuad 시작,끝 느리게 중간 빠르게  SetLoops루프 -1은 무한 반복 LoopType.Yoyo 끝나면 반대로 실행
-        transform.DOMove(transform.position + MoveTo, MoveTime)
+        transform.DOMove(transform.position + _moveTo, _moveTime)
             .SetEase(Ease.InOutQuad)
             .SetLoops(-1, LoopType.Yoyo)
             .SetUpdate(UpdateType.Fixed);
