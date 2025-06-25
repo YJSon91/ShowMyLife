@@ -191,18 +191,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &520584035 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4232203089524929534, guid: 05365dfd0b037e848900b7084462a27c,
-    type: 3}
-  m_PrefabInstance: {fileID: 4962771416791801963}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 656d3f8e7d95e3f4c8003f31f063aa3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &792620421
 GameObject:
   m_ObjectHideFlags: 0
@@ -570,6 +558,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 7011136701030033502, guid: 7142bd33e9e1c2c4f8b92104d62301fe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -587,131 +580,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 520584035}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnMouseSensitivityChanged
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SettingsMenu, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1046179669702157716, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 1064084227855165785, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_text
-      value: OkButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 1287588901971414405, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1287588901971414405, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1287588901971414405, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 520584035}
-    - target: {fileID: 1287588901971414405, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1287588901971414405, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnSFXVolumeChanged
-      objectReference: {fileID: 0}
-    - target: {fileID: 1287588901971414405, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SettingsMenu, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1287588901971414405, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 1330018741817962187, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_text
-      value: VolumeTabButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 1640426334846037394, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1640426334846037394, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1640426334846037394, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 520584035}
-    - target: {fileID: 1640426334846037394, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1640426334846037394, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnCameraSensitivityChanged
-      objectReference: {fileID: 0}
-    - target: {fileID: 1640426334846037394, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SettingsMenu, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1640426334846037394, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1845355096237537655, guid: 05365dfd0b037e848900b7084462a27c,
         type: 3}
@@ -733,86 +601,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4307267263651656492, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_text
-      value: ApplyButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 5508205005177170561, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5508205005177170561, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5508205005177170561, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 520584035}
-    - target: {fileID: 5508205005177170561, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5508205005177170561, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnMasterVolumeChanged
-      objectReference: {fileID: 0}
-    - target: {fileID: 5508205005177170561, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SettingsMenu, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 5508205005177170561, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 5568094146523458442, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_text
-      value: GamePlayTabButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 5919156204445474235, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5919156204445474235, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5919156204445474235, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 520584035}
-    - target: {fileID: 5919156204445474235, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5919156204445474235, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnBGMVolumeChanged
-      objectReference: {fileID: 0}
-    - target: {fileID: 5919156204445474235, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SettingsMenu, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 5919156204445474235, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 6119024829690503956, guid: 05365dfd0b037e848900b7084462a27c,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -827,11 +615,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7550549241202807277, guid: 05365dfd0b037e848900b7084462a27c,
-        type: 3}
-      propertyPath: m_text
-      value: CancleButton
       objectReference: {fileID: 0}
     - target: {fileID: 7706840867374476419, guid: 05365dfd0b037e848900b7084462a27c,
         type: 3}
