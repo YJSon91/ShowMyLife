@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://dk3mmvhxqaxkv"]
+
+[ext_resource type="PackedScene" uid="uid://dqbiusyvdu3wk" path="res://Assets/LoafbrrAssets/PlaygroundEquipment/gltf/PlayGroundEquipments.gltf" id="1_0e4u2"]
+[ext_resource type="Material" uid="uid://c2f1qcod6w2j8" path="res://Assets/LoafbrrAssets/PlaygroundEquipment/Materials/Paint_Trim.material" id="2_cson8"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_igj5o"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ro7pm"]
+size = Vector2(50, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4hm5d"]
+albedo_color = Color(0.45098, 0.45098, 0.45098, 1)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="PlayGroundEquipments" parent="." instance=ExtResource("1_0e4u2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4132, 0, -8.455)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.2632, 0, -0.482285)
+mesh = SubResource("PlaneMesh_igj5o")
+surface_material_override/0 = ExtResource("2_cson8")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.977, -9.53674e-07, -4.52121)
+mesh = SubResource("PlaneMesh_ro7pm")
+surface_material_override/0 = SubResource("StandardMaterial3D_4hm5d")
