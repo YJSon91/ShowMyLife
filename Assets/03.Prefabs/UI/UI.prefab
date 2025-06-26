@@ -252,11 +252,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02138312ab2eb7a4488e548c83f221ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pausePanel: {fileID: 3582248958271320403}
-  _dialoguePanel: {fileID: 1602123530908994555}
-  _dialogueText: {fileID: 920218569803437505}
-  _startSceneName: SampleScene
-  _dialogueDisplayTime: 3
 --- !u!1 &843471003992471303
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,8 +717,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5264843331733320044}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+      - m_Target: {fileID: 1663563994585346313}
+        m_TargetAssemblyTypeName: PauseMenuUI, Assembly-CSharp
         m_MethodName: OnRestartButton
         m_Mode: 1
         m_Arguments:
@@ -745,6 +740,7 @@ GameObject:
   - component: {fileID: 7260997792847013344}
   - component: {fileID: 2962103050024133022}
   - component: {fileID: 8192923023803548262}
+  - component: {fileID: 1663563994585346313}
   m_Layer: 5
   m_Name: PausePanel
   m_TagString: Untagged
@@ -813,6 +809,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1663563994585346313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3582248958271320403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 868bc3984c9a84248bc609a6c0f9f88a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5603438131050530720
 GameObject:
   m_ObjectHideFlags: 0
@@ -1068,9 +1076,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5264843331733320044}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnSettingButton
+      - m_Target: {fileID: 1663563994585346313}
+        m_TargetAssemblyTypeName: PauseMenuUI, Assembly-CSharp
+        m_MethodName: OnSettingsButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1201,9 +1209,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5264843331733320044}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: ResumeGame
+      - m_Target: {fileID: 1663563994585346313}
+        m_TargetAssemblyTypeName: PauseMenuUI, Assembly-CSharp
+        m_MethodName: OnResumeButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1334,8 +1342,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5264843331733320044}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+      - m_Target: {fileID: 1663563994585346313}
+        m_TargetAssemblyTypeName: PauseMenuUI, Assembly-CSharp
         m_MethodName: OnQuitGameButton
         m_Mode: 1
         m_Arguments:

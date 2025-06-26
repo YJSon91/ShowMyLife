@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsMenu : MonoBehaviour
+public class SettingsMenu : UiBase
 {
     [Header("탭 버튼 및 콘텐츠 패널")]
     [SerializeField] private GameObject _gameplaySettingsPanel;
@@ -15,6 +15,13 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Slider _masterVolumeSlider;
     [SerializeField] private Slider _bgmVolumeSlider;
     [SerializeField] private Slider _sfxVolumeSlider;
+
+    public override void Init()
+    {
+        // 3. UIManager에 자기 자신을 등록합니다.
+        //    이때, 자신의 클래스 타입을 제네릭으로 넘겨줍니다.
+        GameManager.Instance.UIManager.Add<SettingsMenu>(this);
+    }
 
     // 설정창이 켜질 때마다 호출되는 Unity 생명주기 함수입니다.
     private void OnEnable()
@@ -105,14 +112,15 @@ public class SettingsMenu : MonoBehaviour
 
     public void OnOKButton()
     {
-        OnApplyButton(); // 설정을 적용하고
-        gameObject.SetActive(false); // 창을 닫습니다.
+        OnApplyButton();
+        // 4. 자기 자신을 닫을 때도 UIManager를 통해 요청합니다.
+        GameManager.Instance.UIManager.Show<SettingsMenu>(false);
     }
 
     public void OnCancelButton()
     {
         // 아무것도 저장하지 않고 그냥 창을 닫습니다.
         // 다음에 창을 다시 열면 OnEnable에서 기존에 저장된 값을 다시 불러오므로 '취소' 효과가 납니다.
-        gameObject.SetActive(false);
+        GameManager.Instance.UIManager.Show<SettingsMenu>(false);
     }
 }
