@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class ObstacleManager : MonoBehaviour
 {
-    private static ObstacleManager _instance;
-    public static ObstacleManager Instance => _instance;
-
     private BaseObstacle[] _obstacles;
 
     private void Awake()
@@ -31,14 +28,4 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
-    // 실행 전에 자동 생성
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void CreateManagerIfMissing()
-    {
-        if (_instance == null)
-        {
-            GameObject obj = new GameObject("ObstacleManager");
-            obj.AddComponent<ObstacleManager>();
-        }
-    }
 }
