@@ -1,27 +1,36 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
-{   
+// 1. MonoBehaviour 대신 UiBase를 상속받습니다.
+public class MainMenu : UiBase
+{
+    public override void Init()
+    {
+        // 2. UIManager에 자기 자신을 'MainMenu' 타입으로 정확하게 등록합니다.
+        GameManager.Instance.UIManager.Add<MainMenu>(this);
+    }
+
+    // '새 게임' 버튼을 위한 함수
     public void OnNewGameButton()
     {
         // GameManager에게 게임 시작을 요청합니다.
         GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
     }
 
+    // '이어하기' 버튼을 위한 함수
     public void OnContinueButton()
     {
-        // 이어하기 기능은 MVP 이후 구현이므로, 우선 새 게임과 동일하게 처리합니다.
+        // MVP에서는 우선 새 게임과 동일하게 처리합니다.
         OnNewGameButton();
     }
 
+    // '설정' 버튼을 위한 함수
     public void OnSettingsButton()
     {
-        // GameManager를 통해 UIManager에게 설정창을 열도록 요청합니다.
-        // UIManager가 null이 아닐 때만 실행되도록 안전장치를 추가할 수 있습니다.
+        // 3. UIManager의 범용 Show<T> 함수를 사용하여 'SettingsMenu'를 보여달라고 요청합니다.
         if (GameManager.Instance != null && GameManager.Instance.UIManager != null)
         {
-            GameManager.Instance.UIManager.ShowSettingsPanel(true);
+            GameManager.Instance.UIManager.Show<SettingsMenu>(true);
         }
         else
         {
@@ -29,12 +38,14 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    // '게임 종료' 버튼을 위한 함수
     public void OnQuitGameButton()
     {
         Application.Quit();
         Debug.Log("게임 종료 버튼 클릭됨! (빌드에서만 작동)");
     }
 
+    // '크레딧' 버튼을 위한 함수
     public void OnCreditButton()
     {
         Debug.Log("크레딧 버튼 클릭됨!");
