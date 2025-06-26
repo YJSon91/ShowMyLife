@@ -26,28 +26,9 @@ public enum SfxType
 public class SoundManager : MonoBehaviour
 {
 
-    private static SoundManager instance;
-    public static SoundManager Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<SoundManager>();
-                if (instance == null)
-                {
-                    GameObject obj = new GameObject("SoundManager");
-                    instance = obj.AddComponent<SoundManager>();
-                    DontDestroyOnLoad(instance.gameObject);
-                }
-                else
-                {
-                    DontDestroyOnLoad(instance.gameObject);
-                }
-            }
-            return instance;
-        }
-    }
+    
+    
+    
 
     private AudioSource bgmSource; // 배경음 재생용 AudioSource
     private AudioSource sfxSource; // 효과음 재생용 AudioSource
@@ -67,16 +48,10 @@ public class SoundManager : MonoBehaviour
     // 오브젝트 생성 시 실행
     private void Awake()
     {
-        if (instance != null)
+        if (GameManager.Instance != null)
         {
-            Destroy(gameObject);
+            GameManager.Instance.RegisterSoundManager(this);
         }
-        else
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-
         bgmSource = gameObject.AddComponent<AudioSource>(); // 배경음 전용 오디오 소스 추가
         sfxSource = gameObject.AddComponent<AudioSource>(); // 효과음 전용 오디오 소스 추가
         Init(bgmSource, sfxSource);                         // AudioSource 설정 초기화

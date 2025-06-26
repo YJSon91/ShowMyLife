@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     // --- 하위 매니저 참조 ---
     public UIManager UIManager { get; private set; }
     public LevelManager LevelManager { get; private set; }
+    public SoundManager SoundManager { get; private set; }
     public PlayerController Player { get; private set; }
     public CameraController Cam { get; private set; }
 
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
     // --- 하위 매니저 등록 메서드 ---
     public void RegisterUIManager(UIManager manager) => UIManager = manager;
     public void RegisterLevelManager(LevelManager manager) => LevelManager = manager;
+    public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
     public void RegisterPlayer(PlayerController player) => Player = player;
     public void RegisterCamera(CameraController camera) => Cam = camera;
 
