@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public UIManager UIManager { get; private set; }
     public LevelManager LevelManager { get; private set; }
     public SoundManager SoundManager { get; private set; }
+    public ObstacleManager ObstacleManager { get; private set; }
     public PlayerController Player { get; private set; }
     public CameraController Cam { get; private set; }
 
@@ -65,6 +66,7 @@ public class GameManager : MonoBehaviour
     public void RegisterUIManager(UIManager manager) => UIManager = manager;
     public void RegisterLevelManager(LevelManager manager) => LevelManager = manager;
     public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
+    public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
     public void RegisterPlayer(PlayerController player) => Player = player;
     public void RegisterCamera(CameraController camera) => Cam = camera;
 

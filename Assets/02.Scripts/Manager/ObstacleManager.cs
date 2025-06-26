@@ -9,15 +9,15 @@ public class ObstacleManager : MonoBehaviour
 
     private void Awake()
     {
-        // 중복 생성 방지
-        if (_instance != null && _instance != this)
+        // GameManager에 자신을 등록
+        if (GameManager.Instance != null)
         {
-            Destroy(gameObject);
-            return;
+            GameManager.Instance.RegisterObstacleManager(this);
         }
-
-        _instance = this;
-        DontDestroyOnLoad(gameObject); // 씬 전환에도 유지
+        else
+        {
+            Debug.LogError("[ObstacleManager] GameManager가 씬에 존재하지 않습니다!");
+        }
 
         _obstacles = FindObjectsOfType<BaseObstacle>();
         Debug.Log($"[ObstacleManager] {_obstacles.Length}개 장애물 등록됨");
