@@ -4,10 +4,10 @@ using DG.Tweening;
 public class MovingObstacle : BaseObstacle
 {
     [Header("이동 설정")]
-    [Tooltip("이동할 거리 (월드 좌표 기준)")]
+    [Tooltip("이동할 거리")]
     [SerializeField] private Vector3 _moveTo = Vector3.zero;
 
-    [Tooltip("한 번 이동하는 데 걸리는 시간 (초)")]
+    [Tooltip("한 번 이동하는 데 걸리는 시간")]
     [SerializeField] private float _moveTime = 1f;
 
     private Vector3 _lastPosition;

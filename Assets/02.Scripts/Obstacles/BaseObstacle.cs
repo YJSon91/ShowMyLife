@@ -69,6 +69,5 @@ public class BaseObstacle : MonoBehaviour
         Gizmos.DrawWireCube(Vector3.up * castDistance / 2f, halfExtents);
 
         Debug.DrawRay(center, direction * castDistance, Color.red, 0.5f);
-        Debug.Log($"Cast from: {center}, size: {halfExtents}, dir: {direction}, dist: {castDistance}");
     }
 }
