@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[UIManager] GameManager가 씬에 존재하지 않습니다!");
+            Debug.LogError("[UIManager] UIManager가 씬에 존재하지 않습니다!");
         }
 
         // UIManager의 자식으로 있는 모든 UI들을 자동으로 찾아 초기화 및 등록
