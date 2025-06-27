@@ -71,6 +71,8 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 GetMoveDirection() => _moveDirection;
     public float GetInclineAngle() => _inclineAngle;
     public bool CannotStandUp() => _cannotStandUp;
+    public float GetShuffleDirectionX() => _shuffleDirectionX;
+    public float GetShuffleDirectionZ() => _shuffleDirectionZ;
     
     public bool CheckGrounded()
     {

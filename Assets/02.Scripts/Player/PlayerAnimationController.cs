@@ -50,6 +50,7 @@ public class PlayerAnimationController : MonoBehaviour
     
     private Vector3 _currentRotation = new Vector3(0f, 0f, 0f);
     private Vector3 _previousRotation;
+    private Vector3 _moveDirection = Vector3.zero;
     private float _rotationRate;
     private float _initialLeanValue;
     private float _initialTurnValue;
@@ -60,6 +61,8 @@ public class PlayerAnimationController : MonoBehaviour
     private float _movementStartDirection;
     private float _movementStartTimer;
     private float _fallStartTime;
+    private float _shuffleDirectionX;
+    private float _shuffleDirectionZ = 1f;
     
     // 애니메이션 변수 해쉬
     private readonly int _movementInputTappedHash = Animator.StringToHash("MovementInputTapped");
@@ -101,6 +104,9 @@ public class PlayerAnimationController : MonoBehaviour
     
     public void UpdateAnimation(Vector3 velocity, Vector3 moveDirection, bool isGrounded, bool isWalking, bool isSprinting, bool isCrouching, float inclineAngle)
     {
+        // moveDirection 저장
+        _moveDirection = moveDirection;
+        
         switch (_currentState)
         {
             case AnimationState.Movement:
@@ -130,6 +136,12 @@ public class PlayerAnimationController : MonoBehaviour
         }
         
         _isJumping = jumping;
+    }
+    
+    public void UpdateShuffleDirection(float shuffleX, float shuffleZ)
+    {
+        _shuffleDirectionX = shuffleX;
+        _shuffleDirectionZ = shuffleZ;
     }
     
     private void UpdateMovementState(Vector3 velocity, Vector3 moveDirection, bool isGrounded, bool isWalking, bool isSprinting, bool isCrouching, float inclineAngle)
@@ -467,16 +479,16 @@ public class PlayerAnimationController : MonoBehaviour
         _animator.SetFloat(_moveSpeedHash, speed);
         _animator.SetInteger(_currentGaitHash, (int) _currentGait);
         
-        _animator.SetFloat(_strafeDirectionXHash, 0f); // PlayerMovement에서 관리
-        _animator.SetFloat(_strafeDirectionZHash, 1f); // PlayerMovement에서 관리
-        _animator.SetFloat(_forwardStrafeHash, 1f); // PlayerMovement에서 관리
-        _animator.SetFloat(_cameraRotationOffsetHash, 0f); // PlayerMovement에서 관리
+        _animator.SetFloat(_strafeDirectionXHash, _shuffleDirectionX); // PlayerMovement에서 값 가져오기
+        _animator.SetFloat(_strafeDirectionZHash, _shuffleDirectionZ); // PlayerMovement에서 값 가져오기
+        _animator.SetFloat(_forwardStrafeHash, 1f); // 항상 전방 스트레이핑 활성화
+        _animator.SetFloat(_cameraRotationOffsetHash, 0f); // 카메라 회전 오프셋
         
-        _animator.SetBool(_movementInputHeldHash, false); // InputReader에서 관리
-        _animator.SetBool(_movementInputPressedHash, false); // InputReader에서 관리
-        _animator.SetBool(_movementInputTappedHash, false); // InputReader에서 관리
-        _animator.SetFloat(_shuffleDirectionXHash, 0f); // PlayerMovement에서 관리
-        _animator.SetFloat(_shuffleDirectionZHash, 1f); // PlayerMovement에서 관리
+        _animator.SetBool(_movementInputHeldHash, _moveDirection.magnitude > 0.1f); // 이동 입력 감지
+        _animator.SetBool(_movementInputPressedHash, _moveDirection.magnitude > 0.1f); // 이동 입력 감지
+        _animator.SetBool(_movementInputTappedHash, false); // 탭 입력은 별도로 처리 필요
+        _animator.SetFloat(_shuffleDirectionXHash, _shuffleDirectionX); // PlayerMovement에서 값 가져오기
+        _animator.SetFloat(_shuffleDirectionZHash, _shuffleDirectionZ); // PlayerMovement에서 값 가져오기
         
         _animator.SetBool(_isTurningInPlaceHash, _isTurningInPlace);
         _animator.SetBool(_isCrouchingHash, isCrouching);
