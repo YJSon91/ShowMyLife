@@ -39,7 +39,7 @@ public class PlayerMovementController : MonoBehaviour
 
     #endregion
 
-    #region 캡슐 설정
+    #region 케릭터 컨트롤러 캡슐 설정
 
     [Header("캡슐 값")]
     [Tooltip("플레이어 캡슐의 서있는 높이")]
