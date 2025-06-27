@@ -8,8 +8,12 @@ public class BaseObstacle : MonoBehaviour
         if (TryGetPlayerOnTop(out Transform player))
         {
             Rigidbody rb = player.GetComponent<Rigidbody>();
+            CharacterController cc = player.GetComponent<CharacterController>();
+            
             if (rb != null)
                 rb.MovePosition(rb.position + delta);
+            else if (cc != null)
+                cc.Move(delta);
             else
                 player.position += delta;
         }
@@ -22,10 +26,15 @@ public class BaseObstacle : MonoBehaviour
         {
             Vector3 dir = player.position - transform.position;
             Vector3 newPos = transform.position + deltaRotation * dir;
+            Vector3 delta = newPos - player.position;
 
             Rigidbody rb = player.GetComponent<Rigidbody>();
+            CharacterController cc = player.GetComponent<CharacterController>();
+            
             if (rb != null)
                 rb.MovePosition(newPos);
+            else if (cc != null)
+                cc.Move(delta);
             else
                 player.position = newPos;
         }
