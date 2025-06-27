@@ -67,9 +67,6 @@ using UnityEngine;
         #region Scripts/Objects
 
         [Header("외부 컴포넌트")]
-        [Tooltip("카메라 동작을 제어하는 스크립트")]
-        [SerializeField]
-        private PlayerCamera _cameraController;
         [Tooltip("InputReader는 플레이어 입력을 처리합니다")]
         [SerializeField]
         private InputReader _inputReader;
@@ -158,7 +155,7 @@ using UnityEngine;
 
         #endregion
 
-        #region Grounded 설정 
+        #region Grounded 설정
 
         [Header("지면 각도")]
         [Tooltip("지면 각도 확인을 위한 후방 레이 위치")]
@@ -295,7 +292,7 @@ using UnityEngine;
         private Vector3 _moveDirection;
         private Vector3 _previousRotation;
         private Vector3 _velocity;
-
+        private Transform _mainCameraTransform;
         #endregion
 
         #region Base State 변수
@@ -315,7 +312,10 @@ using UnityEngine;
         #region Animation Controller
 
         #region Start
-
+        private void Awake()
+        {
+            _mainCameraTransform = Camera.main.transform;
+        }
         /// <inheritdoc cref="Start" />
         private void Start()
         {
@@ -629,9 +629,19 @@ using UnityEngine;
                 _movementInputHeld = false;
             }
 
-            _moveDirection = (_cameraController.GetCameraForwardZeroedYNormalised() * _inputReader._moveComposite.y)
-                + (_cameraController.GetCameraRightZeroedYNormalised() * _inputReader._moveComposite.x);
+            Vector3 cameraForward = Camera.main.transform.forward;
+            Vector3 cameraRight = Camera.main.transform.right;
+
+            cameraForward.y = 0f;
+            cameraRight.y = 0f;
+
+            cameraForward.Normalize();
+            cameraRight.Normalize();
+
+            _moveDirection = (cameraForward * _inputReader._moveComposite.y)
+                             + (cameraRight * _inputReader._moveComposite.x);
         }
+
 
         #endregion
 
@@ -743,22 +753,23 @@ using UnityEngine;
             Vector3 characterRight = new Vector3(transform.right.x, 0f, transform.right.z).normalized;
             Vector3 directionForward = new Vector3(_moveDirection.x, 0f, _moveDirection.z).normalized;
 
-            _cameraForward = _cameraController.GetCameraForwardZeroedYNormalised();
+            Vector3 rawCameraForward = Camera.main.transform.forward;
+            _cameraForward = new Vector3(rawCameraForward.x, 0f, rawCameraForward.z).normalized;
+
             Quaternion strafingTargetRotation = Quaternion.LookRotation(_cameraForward);
 
-            _strafeAngle = characterForward != directionForward ? Vector3.SignedAngle(characterForward, directionForward, Vector3.up) : 0f;
+            _strafeAngle = characterForward != directionForward
+                ? Vector3.SignedAngle(characterForward, directionForward, Vector3.up)
+                : 0f;
 
             _isTurningInPlace = false;
 
             if (_isStrafing)
             {
-                if (_moveDirection.magnitude > 0.01)
+                if (_moveDirection.magnitude > 0.01f)
                 {
                     if (_cameraForward != Vector3.zero)
                     {
-                        // 셔플 방향 값 - 이것들은 스트레이프 값과 별개로, 보간(lerp)을 하지않음, 즉시 회전
-                        // 입력을 잃은 후에도 값이 0으로 돌아가지 않도록 값을 고정
-                        // (그래야 블렌드 트리가 애니메이션 클립의 끝까지 작동)
                         _shuffleDirectionZ = Vector3.Dot(characterForward, directionForward);
                         _shuffleDirectionX = Vector3.Dot(characterRight, directionForward);
 
@@ -766,9 +777,14 @@ using UnityEngine;
                             Vector3.Dot(characterForward, directionForward),
                             Vector3.Dot(characterRight, directionForward)
                         );
-                        _cameraRotationOffset = Mathf.Lerp(_cameraRotationOffset, 0f, _rotationSmoothing * Time.deltaTime);
 
-                        float targetValue = _strafeAngle > _forwardStrafeMinThreshold && _strafeAngle < _forwardStrafeMaxThreshold ? 1f : 0f;
+                        _cameraRotationOffset =
+                            Mathf.Lerp(_cameraRotationOffset, 0f, _rotationSmoothing * Time.deltaTime);
+
+                        float targetValue = _strafeAngle > _forwardStrafeMinThreshold &&
+                                            _strafeAngle < _forwardStrafeMaxThreshold
+                            ? 1f
+                            : 0f;
 
                         if (Mathf.Abs(_forwardStrafe - targetValue) <= 0.001f)
                         {
@@ -781,7 +797,8 @@ using UnityEngine;
                         }
                     }
 
-                    transform.rotation = Quaternion.Slerp(transform.rotation, strafingTargetRotation, _rotationSmoothing * Time.deltaTime);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, strafingTargetRotation,
+                        _rotationSmoothing * Time.deltaTime);
                 }
                 else
                 {
@@ -825,6 +842,8 @@ using UnityEngine;
                 );
             }
         }
+
+
 
         /// <summary>
         ///     플레이어가 움직임을 멈췄는지 확인
@@ -1020,8 +1039,8 @@ using UnityEngine;
 
             _initialLeanValue = leansActivated ? _rotationRate : 0f;
 
-            float leanSmoothness = 5;
-            float maxLeanRotationRate = 275.0f;
+            float leanSmoothness = 5f;
+            float maxLeanRotationRate = 275f;
 
             float referenceValue = _speed2D / _sprintSpeed;
             _leanValue = CalculateSmoothedValue(
@@ -1039,7 +1058,7 @@ using UnityEngine;
             if (headLookActivated && _isTurningInPlace)
             {
                 _initialTurnValue = _cameraRotationOffset;
-                _headLookX = Mathf.Lerp(_headLookX, _initialTurnValue / 200, 5f * Time.deltaTime);
+                _headLookX = Mathf.Lerp(_headLookX, _initialTurnValue / 200f, headTurnSmoothness * Time.deltaTime);
             }
             else
             {
@@ -1069,14 +1088,17 @@ using UnityEngine;
                 false
             );
 
-            float cameraTilt = _cameraController.GetCameraTiltX();
-            cameraTilt = (cameraTilt > 180f ? cameraTilt - 360f : cameraTilt) / -180;
+            float cameraTilt = Camera.main.transform.eulerAngles.x;
+            cameraTilt = (cameraTilt > 180f ? cameraTilt - 360f : cameraTilt) / -180f;
             cameraTilt = Mathf.Clamp(cameraTilt, -0.1f, 1.0f);
+
             _headLookY = cameraTilt;
             _bodyLookY = cameraTilt;
 
             _previousRotation = _currentRotation;
         }
+
+
 
         /// <summary>
         ///     주어진 매개변수에서 주어진 변수와 대상 변수 사이의 부드러운 값을 계산
