@@ -325,19 +325,19 @@ public class PlayerMovementController : MonoBehaviour
     {
         // _cameraForward = _cameraController.GetCameraForwardZeroedYNormalised();
         // Camera.main을 사용하여 카메라 전방 벡터 얻기
-        Vector3 cameraForward = Camera.main.transform.forward;
-        cameraForward.y = 0f;
-        cameraForward.Normalize();
+        Vector3 characterForward = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
+        Vector3 characterRight = new Vector3(transform.right.x, 0f, transform.right.z).normalized;
+        Vector3 directionForward = new Vector3(_moveDirection.x, 0f, _moveDirection.z).normalized;
 
-        _cameraForward = cameraForward;
+        Vector3 rawCameraForward = Camera.main.transform.forward;
+        _cameraForward = new Vector3(rawCameraForward.x, 0f, rawCameraForward.z).normalized;
 
         Quaternion strafingTargetRotation = Quaternion.LookRotation(_cameraForward);
 
-        Vector3 characterForward = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
-        Vector3 directionForward = new Vector3(_moveDirection.x, 0f, _moveDirection.z).normalized;
-
-        _strafeAngle = characterForward != directionForward ? Vector3.SignedAngle(characterForward, directionForward, Vector3.up) : 0f;
-
+        _strafeAngle = characterForward != directionForward
+            ? Vector3.SignedAngle(characterForward, directionForward, Vector3.up)
+            : 0f;
+            
         if (_isStrafing)
         {
             if (_moveDirection.magnitude > 0.01)
