@@ -30,8 +30,16 @@ using UnityEngine;
     
         private void Start()
         {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterPlayer(this);
+        }
+        else
+        {
+            Debug.LogError("[PlayerController] PlayerController가 씬에 존재하지 않습니다!");
+        }
         // InputReader 이벤트 구독
-            _inputReader.onWalkToggled += ToggleWalk;
+        _inputReader.onWalkToggled += ToggleWalk;
             _inputReader.onSprintActivated += ActivateSprint;
             _inputReader.onSprintDeactivated += DeactivateSprint;
             _inputReader.onCrouchActivated += ActivateCrouch;

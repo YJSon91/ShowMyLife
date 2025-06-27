@@ -10,6 +10,15 @@ public class UIManager : MonoBehaviour
     private Dictionary<Type, UiBase> _uiDictionary = new();
 
     private void Awake()
+    {      
+        // UIManager의 자식으로 있는 모든 UI들을 자동으로 찾아 초기화 및 등록
+        UiBase[] allUIs = GetComponentsInChildren<UiBase>(true); // 비활성화된 자식도 포함
+        foreach (UiBase ui in allUIs)
+        {
+            ui.Init(); // 각 UI의 초기화 함수 호출
+        }
+    }
+    private void Start()
     {
         // GameManager에 자신을 등록
         if (GameManager.Instance != null)
@@ -20,15 +29,7 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogError("[UIManager] UIManager가 씬에 존재하지 않습니다!");
         }
-
-        // UIManager의 자식으로 있는 모든 UI들을 자동으로 찾아 초기화 및 등록
-        UiBase[] allUIs = GetComponentsInChildren<UiBase>(true); // 비활성화된 자식도 포함
-        foreach (UiBase ui in allUIs)
-        {
-            ui.Init(); // 각 UI의 초기화 함수 호출
-        }
     }
-
     /// <summary>
     /// 딕셔너리에 UI를 등록합니다. 각 UI의 Init()에서 호출됩니다.
     /// </summary>

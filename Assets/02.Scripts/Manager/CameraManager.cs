@@ -34,13 +34,17 @@ public class CameraManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+       
+    }
+    private void Start()
+    {
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterCameraManager(this);
         }
         else
         {
-            Debug.LogError("[CameraManager] GameManager가 씬에 존재하지 않습니다!");
+            Debug.LogError("[CameraManager] CameraManager가 씬에 존재하지 않습니다!");
         }
     }
 

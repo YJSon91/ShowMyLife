@@ -37,9 +37,8 @@ public class GameManager : MonoBehaviour
     public SoundManager SoundManager { get; private set; }
     public ObstacleManager ObstacleManager { get; private set; }
     public PlayerController Player { get; private set; }
-
     public CameraManager CameraManager { get; private set; }
-    //public CameraController Cam { get; private set; }
+    
 
 
     // --- Unity 생명주기 메서드 ---
@@ -72,7 +71,7 @@ public class GameManager : MonoBehaviour
     public void RegisterPlayer(PlayerController player) => Player = player;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
 
-    //public void RegisterCamera(CameraController camera) => Cam = camera;
+    
 
 
     // --- 핵심 로직 메서드 ---

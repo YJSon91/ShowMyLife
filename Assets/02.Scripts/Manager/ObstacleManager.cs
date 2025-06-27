@@ -4,7 +4,7 @@ public class ObstacleManager : MonoBehaviour
 {
     private BaseObstacle[] _obstacles;
 
-    private void Awake()
+    private void Start()
     {
         // GameManager에 자신을 등록
         if (GameManager.Instance != null)
@@ -13,7 +13,7 @@ public class ObstacleManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[ObstacleManager] GameManager가 씬에 존재하지 않습니다!");
+            Debug.LogError("[ObstacleManager] ObstacleManager 씬에 존재하지 않습니다!");
         }
 
         _obstacles = FindObjectsOfType<BaseObstacle>();

@@ -38,11 +38,8 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        // --- 수정 1: GameManager에 자신을 등록 ---
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.RegisterSoundManager(this);
-        }
+       
+        
 
         // --- 수정 2: Init() 함수 내용을 Awake()로 통합하여 간소화 ---
         bgmSource = gameObject.AddComponent<AudioSource>();
@@ -54,6 +51,14 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterSoundManager(this);
+        }
+        else
+        {
+            Debug.LogError("[SoundManager] SoundManager가 씬에 존재하지 않습니다!");
+        }
         LoadSounds();
         LoadVolumeSettings();
 

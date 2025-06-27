@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    private void Awake()
+    private void Start()
     {
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterLevelManager(this);
+        }
+        else
+        {
+            Debug.LogError("[LevelManager] LevelManager가 씬에 존재하지 않습니다!");
         }
     }
 
