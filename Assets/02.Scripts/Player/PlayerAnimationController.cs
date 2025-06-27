@@ -18,7 +18,7 @@ public class PlayerAnimationController : MonoBehaviour
     private PlayerMovementController _movementController;
     private PlayerStateController _stateController;
     private InputReader _inputReader;
-    private CameraController _cameraController;
+    
 
     #endregion
 
@@ -202,7 +202,7 @@ public class PlayerAnimationController : MonoBehaviour
             _movementController = _player.MovementController;
             _stateController = _player.StateController;
             _inputReader = _player.InputReader;
-            _cameraController = _player.CameraController;
+           
         }
         else
         {
@@ -583,7 +583,7 @@ public class PlayerAnimationController : MonoBehaviour
         );
 
         // Camera.main을 사용하여 카메라 틸트 계산
-        float cameraTilt = Camera.main.transform.eulerAngles.x;
+        float cameraTilt = _player.MainCameraTransform.eulerAngles.x;
         cameraTilt = (cameraTilt > 180f ? cameraTilt - 360f : cameraTilt) / -180f;
         cameraTilt = Mathf.Clamp(cameraTilt, -0.1f, 1.0f);
 

@@ -19,8 +19,9 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerAnimationController _animationController;
     [Tooltip("플레이어 이동을 제어하는 Character Controller 컴포넌트")]
     [SerializeField] private CharacterController _characterController;
-    [Tooltip("카메라 동작을 제어하는 스크립트")]
-    [SerializeField] private CameraController _cameraController;
+    //메인카메라 트랜스폼 캐싱
+    private Transform _mainCameraTransform;
+    
     [Tooltip("InputReader는 플레이어 입력을 처리합니다")]
     [SerializeField] private InputReader _inputReader;
 
@@ -38,7 +39,7 @@ public class Player : MonoBehaviour
 
     public PlayerAnimationController AnimationController => _animationController;
     public CharacterController CharacterController => _characterController;
-    public CameraController CameraController => _cameraController;
+    public Transform MainCameraTransform => _mainCameraTransform;
     public InputReader InputReader => _inputReader;
     public PlayerMovementController MovementController => _movementController;
     public PlayerStateController StateController => _stateController;
@@ -49,7 +50,15 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        // 메인 카메라 Transform 캐싱
+        if (Camera.main != null)
+            _mainCameraTransform = Camera.main.transform;
+        else
+            Debug.LogError("Player: MainCamera를 찾을 수 없습니다!");
+            
         InitializeComponents();
+
+        
     }
     #endregion
 
@@ -95,8 +104,8 @@ public class Player : MonoBehaviour
         if (_inputReader == null)
             Debug.LogError("Player: InputReader가 할당되지 않았습니다!");
 
-        if (_cameraController == null)
-            Debug.LogError("Player: CameraController가 할당되지 않았습니다!");
+        if (_mainCameraTransform == null)
+            Debug.LogError("Player: MainCamera Transform이 할당되지 않았습니다!");
 
         if (_movementController == null)
             Debug.LogError("Player: PlayerMovementController가 할당되지 않았습니다!");

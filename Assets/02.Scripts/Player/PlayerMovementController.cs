@@ -13,7 +13,7 @@ public class PlayerMovementController : MonoBehaviour
     
     // 내부 컴포넌트 참조 (초기화 시 할당)
     private CharacterController _controller;
-    private CameraController _cameraController;
+    
     private InputReader _inputReader;
 
     #endregion
@@ -204,7 +204,7 @@ public class PlayerMovementController : MonoBehaviour
         if (_player != null)
         {
             _controller = _player.CharacterController;
-            _cameraController = _player.CameraController;
+            
             _inputReader = _player.InputReader;
         }
         else
@@ -222,9 +222,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (_controller == null)
             Debug.LogError("PlayerMovementController: CharacterController가 할당되지 않았습니다!");
-
-        if (_cameraController == null)
-            Debug.LogError("PlayerMovementController: CameraController가 할당되지 않았습니다!");
+        
 
         if (_inputReader == null)
             Debug.LogError("PlayerMovementController: InputReader가 할당되지 않았습니다!");
@@ -253,8 +251,8 @@ public class PlayerMovementController : MonoBehaviour
         // _moveDirection = (_cameraController.GetCameraForwardZeroedYNormalised() * _inputReader._moveComposite.y)
         //     + (_cameraController.GetCameraRightZeroedYNormalised() * _inputReader._moveComposite.x);
         // Camera.main을 사용하여 카메라 방향 벡터 얻기
-        Vector3 cameraForward = Camera.main.transform.forward;
-        Vector3 cameraRight = Camera.main.transform.right;
+        Vector3 cameraForward = _player.MainCameraTransform.forward;
+        Vector3 cameraRight = _player.MainCameraTransform.right;
 
         // Y축 값을 0으로 설정하고 정규화
         cameraForward.y = 0f;
@@ -329,7 +327,7 @@ public class PlayerMovementController : MonoBehaviour
         Vector3 characterRight = new Vector3(transform.right.x, 0f, transform.right.z).normalized;
         Vector3 directionForward = new Vector3(_moveDirection.x, 0f, _moveDirection.z).normalized;
 
-        Vector3 rawCameraForward = Camera.main.transform.forward;
+        Vector3 rawCameraForward = _player.MainCameraTransform.forward;
         _cameraForward = new Vector3(rawCameraForward.x, 0f, rawCameraForward.z).normalized;
 
         Quaternion strafingTargetRotation = Quaternion.LookRotation(_cameraForward);
@@ -337,7 +335,7 @@ public class PlayerMovementController : MonoBehaviour
         _strafeAngle = characterForward != directionForward
             ? Vector3.SignedAngle(characterForward, directionForward, Vector3.up)
             : 0f;
-            
+
         if (_isStrafing)
         {
             if (_moveDirection.magnitude > 0.01)
