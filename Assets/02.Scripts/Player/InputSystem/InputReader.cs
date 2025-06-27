@@ -56,6 +56,15 @@ using UnityEngine.Serialization;
         /// <param name="context">콜백의 컨텍스트입니다.</param>
         public void OnLook(InputAction.CallbackContext context)
         {
+            _mouseDelta = context.ReadValue<Vector2>();
+        }
+
+         /// <summary>
+        ///     OnLookInput 콜백이 호출될 때 수행할 동작을 정의합니다.
+        /// </summary>
+        /// <param name="context">콜백의 컨텍스트입니다.</param>
+        public void OnLookInput(InputAction.CallbackContext context)
+        {
             LookInput = context.ReadValue<Vector2>();
         }
 
