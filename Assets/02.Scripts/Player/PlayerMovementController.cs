@@ -250,8 +250,22 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void CalculateMoveDirection()
     {
-        _moveDirection = (_cameraController.GetCameraForwardZeroedYNormalised() * _inputReader._moveComposite.y)
-            + (_cameraController.GetCameraRightZeroedYNormalised() * _inputReader._moveComposite.x);
+        // _moveDirection = (_cameraController.GetCameraForwardZeroedYNormalised() * _inputReader._moveComposite.y)
+        //     + (_cameraController.GetCameraRightZeroedYNormalised() * _inputReader._moveComposite.x);
+        // Camera.main을 사용하여 카메라 방향 벡터 얻기
+        Vector3 cameraForward = Camera.main.transform.forward;
+        Vector3 cameraRight = Camera.main.transform.right;
+
+        // Y축 값을 0으로 설정하고 정규화
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // 이동 방향 계산
+        _moveDirection = (cameraForward * _inputReader._moveComposite.y)
+                       + (cameraRight * _inputReader._moveComposite.x);
 
         if (!_isGrounded)
         {
@@ -309,7 +323,14 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void FaceMoveDirection()
     {
-        _cameraForward = _cameraController.GetCameraForwardZeroedYNormalised();
+        // _cameraForward = _cameraController.GetCameraForwardZeroedYNormalised();
+        // Camera.main을 사용하여 카메라 전방 벡터 얻기
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0f;
+        cameraForward.Normalize();
+
+        _cameraForward = cameraForward;
+
         Quaternion strafingTargetRotation = Quaternion.LookRotation(_cameraForward);
 
         Vector3 characterForward = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
@@ -340,6 +361,8 @@ public class PlayerMovementController : MonoBehaviour
             );
         }
     }
+
+    
 
     /// <summary>
     /// 플레이어에게 점프 힘을 적용합니다
