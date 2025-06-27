@@ -69,10 +69,10 @@ public class GameManager : MonoBehaviour
     public void RegisterLevelManager(LevelManager manager) => LevelManager = manager;
     public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
     public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
-    //public void RegisterPlayer(PlayerController player) => Player = player;
+    public void RegisterPlayer(Player player) => Player = player;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
 
-    //public void RegisterCamera(CameraController camera) => Cam = camera;
+    public void RegisterCamera(CameraController camera) => Cam = camera;
 
 
     // --- 핵심 로직 메서드 ---
