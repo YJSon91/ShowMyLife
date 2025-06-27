@@ -144,6 +144,7 @@ public class PlayerAnimationController : MonoBehaviour
     private bool _movementInputTapped;
     private bool _movementInputPressed;
     private bool _movementInputHeld;
+    private float _cameraRotationOffset;
 
     #endregion
 
@@ -502,16 +503,11 @@ public class PlayerAnimationController : MonoBehaviour
     private void UpdateLeanAndLook()
     {
         // 회전 속도 계산
-        if (_cameraController != null)
-        {
-            _currentRotation = _cameraController.GetCameraRotation();
-            _rotationRate = Mathf.DeltaAngle(_previousRotation.y, _currentRotation.y);
-        }
-        else
-        {
-            _currentRotation = transform.eulerAngles;
-            _rotationRate = Mathf.DeltaAngle(_previousRotation.y, _currentRotation.y);
-        }
+        _currentRotation = transform.forward;
+
+        _rotationRate = _currentRotation != _previousRotation
+            ? Vector3.SignedAngle(_currentRotation, _previousRotation, Vector3.up) / Time.deltaTime * -1f
+            : 0f;
         
         // 기울기 및 시선 방향 업데이트
         UpdateLean();
@@ -545,15 +541,33 @@ public class PlayerAnimationController : MonoBehaviour
     /// </summary>
     private void UpdateLook()
     {
+       bool headLookActivated = _enableHeadTurn;
         bool bodyLookActivated = _enableBodyTurn;
-        float maxLeanRotationRate = 5f;
-        
-        if (!bodyLookActivated)
+        float maxLeanRotationRate = 275f;
+
+        // 머리 회전 처리
+        float headTurnSmoothness = 5f;
+
+        if (headLookActivated && _isTurningInPlace)
         {
-            _bodyLookX = 0f;
-            _bodyLookY = 0f;
+            _initialTurnValue = _cameraRotationOffset;
+            _headLookX = Mathf.Lerp(_headLookX, _initialTurnValue / 200f, headTurnSmoothness * Time.deltaTime);
+        }
+        else
+        {
+            _initialTurnValue = headLookActivated ? _rotationRate : 0f;
+            _headLookX = CalculateSmoothedValue(
+                _headLookX,
+                _initialTurnValue,
+                maxLeanRotationRate,
+                headTurnSmoothness,
+                _headLookXCurve,
+                _headLookX,
+                false
+            );
         }
 
+        // 몸체 회전 처리
         float bodyTurnSmoothness = 5f;
 
         _initialTurnValue = bodyLookActivated ? _rotationRate : 0f;
@@ -568,18 +582,16 @@ public class PlayerAnimationController : MonoBehaviour
             false
         );
 
-        float cameraTilt = 0f;
-        if (_cameraController != null)
-        {
-            cameraTilt = _cameraController.GetCameraTiltX();
-            cameraTilt = (cameraTilt > 180f ? cameraTilt - 360f : cameraTilt) / -180;
-            cameraTilt = Mathf.Clamp(cameraTilt, -0.1f, 1.0f);
-        }
-        
+        // Camera.main을 사용하여 카메라 틸트 계산
+        float cameraTilt = Camera.main.transform.eulerAngles.x;
+        cameraTilt = (cameraTilt > 180f ? cameraTilt - 360f : cameraTilt) / -180f;
+        cameraTilt = Mathf.Clamp(cameraTilt, -0.1f, 1.0f);
+
         _headLookY = cameraTilt;
         _bodyLookY = cameraTilt;
 
         _previousRotation = _currentRotation;
+
     }
 
     /// <summary>
