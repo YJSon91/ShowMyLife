@@ -46,15 +46,15 @@ public class CameraManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        Vector2 look = inputReader.LookInput;
+       // Vector2 look = inputReader.LookInput;
 
-        float mouseX = look.x * sensitivity;
-        float mouseY = look.y * sensitivity;
+       // float mouseX = look.x * sensitivity;
+       // float mouseY = look.y * sensitivity;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -40f, 80f);
+       // xRotation -= mouseY;
+       // xRotation = Mathf.Clamp(xRotation, -40f, 80f);
 
-        virtualCamera.transform.localEulerAngles = new Vector3(xRotation, virtualCamera.transform.localEulerAngles.y, 0f);
-        playerBody.Rotate(Vector3.up * mouseX);
+      //  virtualCamera.transform.localEulerAngles = new Vector3(xRotation, virtualCamera.transform.localEulerAngles.y, 0f);
+       // playerBody.Rotate(Vector3.up * mouseX);
     }
 }

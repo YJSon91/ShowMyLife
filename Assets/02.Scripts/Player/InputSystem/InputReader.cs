@@ -30,8 +30,6 @@ using UnityEngine.Serialization;
 
         public Action onWalkToggled;
 
-        public Vector2 LookInput { get; private set; }
-
         /// <inheritdoc cref="OnEnable" />
         private void OnEnable()
         {
@@ -56,7 +54,7 @@ using UnityEngine.Serialization;
         /// <param name="context">콜백의 컨텍스트입니다.</param>
         public void OnLook(InputAction.CallbackContext context)
         {
-            LookInput = context.ReadValue<Vector2>();
+            _mouseDelta = context.ReadValue<Vector2>();
         }
 
         /// <summary>
