@@ -36,10 +36,10 @@ public class GameManager : MonoBehaviour
     public LevelManager LevelManager { get; private set; }
     public SoundManager SoundManager { get; private set; }
     public ObstacleManager ObstacleManager { get; private set; }
-    //public PlayerController Player { get; private set; }
+    public Player Player { get; private set; }
 
     public CameraManager CameraManager { get; private set; }
-    //public CameraController Cam { get; private set; }
+    public CameraController Cam { get; private set; }
 
 
     // --- Unity 생명주기 메서드 ---
@@ -93,8 +93,8 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 플레이어의 리스폰 절차를 시작하도록 요청합니다.
     /// </summary>
-    //public void RequestPlayerRespawn()
-    //{
+    // public void RequestPlayerRespawn()
+    // {
     //    if (LevelManager != null && Player != null)
     //    {
     //        Vector3 respawnPoint = LevelManager.GetCurrentRespawnPoint();
@@ -105,5 +105,5 @@ public class GameManager : MonoBehaviour
     //    {
     //        Debug.LogError("[GameManager] LevelManager 또는 Player가 등록되지 않아 리스폰할 수 없습니다.");
     //    }
-    //}
+    // }
 }

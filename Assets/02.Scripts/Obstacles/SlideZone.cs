@@ -6,10 +6,10 @@ public class SlideZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            var controller = other.GetComponent<PlayerController>();
-            if (controller != null)
+            var player = other.GetComponent<Player>();
+            if (player != null)
             {
-                controller.ActivateSliding(); // 슬라이딩 시작
+                player.MovementController.ActivateSliding(); // 슬라이딩 시작
                 Debug.Log("슬라이딩을 시작합니다.");
             }
             Debug.Log("플레이어를 감지했습니다.");
@@ -20,10 +20,10 @@ public class SlideZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            var controller = other.GetComponent<PlayerController>();
-            if (controller != null)
+            var player = other.GetComponent<Player>();
+            if (player != null)
             {
-                controller.DeactivateSliding(); // 슬라이딩 종료
+                player.MovementController.DeactivateSliding(); // 슬라이딩 종료
                 Debug.Log("슬라이딩을 종료합니다.");
             }
             Debug.Log("플레이어가 없습니다..");
