@@ -66,4 +66,12 @@ public class UIManager : MonoBehaviour
             ui.Show(show);
         }
     }
+    /// <summary>
+    /// 특정 타입의 UI를 숨깁니다. Show<T>(false)와 동일한 기능입니다.
+    /// </summary>
+    public void Hide<T>() where T : UiBase
+    {
+        // 내부적으로는 Show<T>(false)를 호출하여 코드를 재사용합니다.
+        Show<T>(false);
+    }
 }
