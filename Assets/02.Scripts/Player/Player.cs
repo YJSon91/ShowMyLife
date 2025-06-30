@@ -58,9 +58,14 @@ public class Player : MonoBehaviour
             
         InitializeComponents();
         
+        
+    }
+    private void Start()
+    {
         // GameManager에 플레이어 등록
         GameManager.Instance.RegisterPlayer(this);
     }
+    
     #endregion
 
     #region 초기화 메서드
