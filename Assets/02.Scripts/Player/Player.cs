@@ -57,8 +57,9 @@ public class Player : MonoBehaviour
             Debug.LogError("Player: MainCamera를 찾을 수 없습니다!");
             
         InitializeComponents();
-
         
+        // GameManager에 플레이어 등록
+        GameManager.Instance.RegisterPlayer(this);
     }
     #endregion
 
