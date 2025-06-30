@@ -2,44 +2,6 @@ using UnityEngine;
 
 public class BaseObstacle : MonoBehaviour
 {
-    // 플레이어가 위에 있을 때 위치 이동
-    protected void MovePlayerIfOnTop(Vector3 delta)
-    {
-        if (TryGetPlayerOnTop(out Transform player))
-        {
-            Rigidbody rb = player.GetComponent<Rigidbody>();
-            CharacterController cc = player.GetComponentInChildren<CharacterController>();
-            
-            if (rb != null)
-                rb.MovePosition(rb.position + delta);
-            else if (cc != null)
-                cc.Move(delta);
-            else
-                player.position += delta;
-        }
-    }
-
-    // 플레이어가 위에 있을 때 회전 이동
-    protected void RotatePlayerIfOnTop(Quaternion deltaRotation)
-    {
-        if (TryGetPlayerOnTop(out Transform player))
-        {
-            Vector3 dir = player.position - transform.position;
-            Vector3 newPos = transform.position + deltaRotation * dir;
-            Vector3 delta = newPos - player.position;
-
-            Rigidbody rb = player.GetComponent<Rigidbody>();
-            CharacterController cc = player.GetComponentInChildren<CharacterController>();
-            
-            if (rb != null)
-                rb.MovePosition(newPos);
-            else if (cc != null)
-                cc.Move(delta);
-            else
-                player.position = newPos;
-        }
-    }
-
     // BoxCast를 이용해 장애물 위에 있는 플레이어 감지
     protected bool TryGetPlayerOnTop(out Transform player)
     {

@@ -38,4 +38,21 @@ public class MovingObstacle : BaseObstacle
             .SetLoops(-1, LoopType.Yoyo)
             .SetUpdate(UpdateType.Fixed);
     }
+
+    // 플레이어가 위에 있을 때 위치 이동
+    protected void MovePlayerIfOnTop(Vector3 delta)
+    {
+        if (TryGetPlayerOnTop(out Transform player))
+        {
+            Rigidbody rb = player.GetComponent<Rigidbody>();
+            CharacterController cc = player.GetComponentInChildren<CharacterController>();
+
+            if (rb != null)
+                rb.MovePosition(rb.position + delta);
+            else if (cc != null)
+                cc.Move(delta);
+            else
+                player.position += delta;
+        }
+    }
 }
