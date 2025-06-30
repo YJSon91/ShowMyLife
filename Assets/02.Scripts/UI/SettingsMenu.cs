@@ -115,7 +115,8 @@ public class SettingsMenu : UiBase
     public void OnOKButton()
     {
         OnApplyButton();
-        GameManager.Instance.UIManager.Show<SettingsMenu>(false);
+        GameManager.Instance.UIManager.Hide<SettingsMenu>();
+        GameManager.Instance.UIManager.Show<MainMenu>(true); // 메인 메뉴로 돌아갑니다.
     }
 
     /// <summary>
@@ -123,6 +124,7 @@ public class SettingsMenu : UiBase
     /// </summary>
     public void OnCancelButton()
     {
-        GameManager.Instance.UIManager.Show<SettingsMenu>(false);
+        GameManager.Instance.UIManager.Hide<SettingsMenu>();
+        GameManager.Instance.UIManager.Show<MainMenu>(true); // 메인 메뉴로 돌아갑니다.
     }
 }
