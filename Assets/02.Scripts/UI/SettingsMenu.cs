@@ -13,7 +13,6 @@ public class SettingsMenu : UiBase
     [SerializeField] private GameObject _volumeSettingsPanel;
 
     [Header("게임플레이 설정 슬라이더")]
-    [SerializeField] private Slider _mouseSensitivitySlider;
     [SerializeField] private Slider _cameraSensitivitySlider;
 
     [Header("볼륨 설정 슬라이더")]
@@ -49,9 +48,7 @@ public class SettingsMenu : UiBase
     /// </summary>
     private void LoadSettings()
     {
-        _mouseSensitivitySlider.value = PlayerPrefs.GetFloat("MouseSensitivity", 50f);
         _cameraSensitivitySlider.value = PlayerPrefs.GetFloat("CameraSensitivity", 50f);
-
         _masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolume", 1f);
         _bgmVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume", 0.8f);
         _sfxVolumeSlider.value = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
@@ -82,8 +79,15 @@ public class SettingsMenu : UiBase
     // --- 슬라이더 값 변경 시 호출될 함수들 ---
     // 실제 기능 연동은 다른 파트 리팩토링 후 진행합니다. 지금은 로그만 출력합니다.
 
-    public void OnMouseSensitivityChanged() => Debug.Log("마우스 감도 변경 시도: " + _mouseSensitivitySlider.value);
-    public void OnCameraSensitivityChanged() => Debug.Log("카메라 감도 변경 시도: " + _cameraSensitivitySlider.value);
+    public void OnCameraSensitivityChanged()
+    {
+        if (GameManager.Instance?.CameraManager != null)
+        {
+            float sensitivity = _cameraSensitivitySlider.value;
+            // CameraManager의 Sensitivity 프로퍼티에 직접 값 할당
+            GameManager.Instance.CameraManager.Sensitivity = sensitivity;
+        }
+    }
     public void OnMasterVolumeChanged() => Debug.Log("마스터 볼륨 변경 시도: " + _masterVolumeSlider.value);
     public void OnBGMVolumeChanged() => Debug.Log("배경음악 볼륨 변경 시도: " + _bgmVolumeSlider.value);
     public void OnSFXVolumeChanged() => Debug.Log("효과음 볼륨 변경 시도: " + _sfxVolumeSlider.value);
@@ -95,7 +99,6 @@ public class SettingsMenu : UiBase
     /// </summary>
     public void OnApplyButton()
     {
-        PlayerPrefs.SetFloat("MouseSensitivity", _mouseSensitivitySlider.value);
         PlayerPrefs.SetFloat("CameraSensitivity", _cameraSensitivitySlider.value);
         PlayerPrefs.SetFloat("MasterVolume", _masterVolumeSlider.value);
         PlayerPrefs.SetFloat("BGMVolume", _bgmVolumeSlider.value);
