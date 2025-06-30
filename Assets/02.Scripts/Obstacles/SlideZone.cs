@@ -6,7 +6,7 @@ public class SlideZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            var player = other.GetComponent<Player>();
+            var player = other.GetComponentInParent<Player>();
             if (player != null)
             {
                 player.MovementController.ActivateSliding(); // 슬라이딩 시작
@@ -20,7 +20,7 @@ public class SlideZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            var player = other.GetComponent<Player>();
+            var player = other.GetComponentInParent<Player>();
             if (player != null)
             {
                 player.MovementController.DeactivateSliding(); // 슬라이딩 종료
