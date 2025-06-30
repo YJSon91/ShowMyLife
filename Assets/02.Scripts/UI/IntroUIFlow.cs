@@ -67,6 +67,9 @@ public class IntroUIFlow : MonoBehaviour
     {
         Debug.Log("키 입력 감지! DOTween으로 메인 메뉴 전환을 시작합니다...");
 
+        // 연출 시작 전, 클릭을 막기 위해 raycastTarget 켜기
+        if (_fadePanel != null) _fadePanel.raycastTarget = true;
+
         // 여러 애니메이션을 순서대로 실행하기 위해 시퀀스를 생성합니다.
         Sequence transitionSequence = DOTween.Sequence();
 
@@ -81,5 +84,10 @@ public class IntroUIFlow : MonoBehaviour
 
         // 3. 다시 밝아지며 메인 메뉴를 보여줍니다 (Fade-out)
         transitionSequence.Append(_fadePanel.DOFade(0f, _fadeDuration));
+                
+        // FadePanel이 더 이상 클릭을 막지 않도록 raycastTarget을 꺼줍니다.
+        transitionSequence.OnComplete(() => {
+            if (_fadePanel != null) _fadePanel.raycastTarget = false;
+        });
     }
 }

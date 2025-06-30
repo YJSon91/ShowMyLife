@@ -15,6 +15,7 @@ public class MainMenu : UiBase
     {
         // GameManager에게 게임 시작을 요청합니다.
         GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
+        SceneManager.LoadScene("TestMapScene"); // 실제 게임 씬 이름으로 변경해야 합니다.
     }
 
     // '이어하기' 버튼을 위한 함수
@@ -30,6 +31,7 @@ public class MainMenu : UiBase
         // 3. UIManager의 범용 Show<T> 함수를 사용하여 'SettingsMenu'를 보여달라고 요청합니다.
         if (GameManager.Instance != null && GameManager.Instance.UIManager != null)
         {
+            GameManager.Instance.UIManager.Hide<MainMenu>(); // 현재 메뉴를 숨깁니다.
             GameManager.Instance.UIManager.Show<SettingsMenu>(true);
         }
         else
