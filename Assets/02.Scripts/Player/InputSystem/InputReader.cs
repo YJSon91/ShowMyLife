@@ -57,6 +57,7 @@ using UnityEngine.Serialization;
         public void OnLook(InputAction.CallbackContext context)
         {
             _mouseDelta = context.ReadValue<Vector2>();
+            LookInput = _mouseDelta;
         }
 
          /// <summary>
