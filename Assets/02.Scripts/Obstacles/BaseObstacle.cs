@@ -8,7 +8,7 @@ public class BaseObstacle : MonoBehaviour
         if (TryGetPlayerOnTop(out Transform player))
         {
             Rigidbody rb = player.GetComponent<Rigidbody>();
-            CharacterController cc = player.GetComponent<CharacterController>();
+            CharacterController cc = player.GetComponentInChildren<CharacterController>();
             
             if (rb != null)
                 rb.MovePosition(rb.position + delta);
@@ -29,7 +29,7 @@ public class BaseObstacle : MonoBehaviour
             Vector3 delta = newPos - player.position;
 
             Rigidbody rb = player.GetComponent<Rigidbody>();
-            CharacterController cc = player.GetComponent<CharacterController>();
+            CharacterController cc = player.GetComponentInChildren<CharacterController>();
             
             if (rb != null)
                 rb.MovePosition(newPos);
@@ -45,6 +45,13 @@ public class BaseObstacle : MonoBehaviour
     {
         player = null;
 
+        // GameManager에서 플레이어 참조 가져오기
+        if (GameManager.Instance == null || GameManager.Instance.Player == null)
+        {
+            return false;
+        }
+
+        Transform playerTransform = GameManager.Instance.Player.transform;
         Vector3 direction = Vector3.up;
         float castDistance = 1.0f;
 
@@ -53,9 +60,10 @@ public class BaseObstacle : MonoBehaviour
 
         if (Physics.BoxCast(center, halfExtents, direction, out RaycastHit hit, transform.rotation, castDistance))
         {
-            if (hit.collider.CompareTag("Player"))
+            // 충돌한 오브젝트가 플레이어인지 확인
+            if (hit.collider.transform == playerTransform || hit.collider.transform.IsChildOf(playerTransform))
             {
-                player = hit.collider.transform;
+                player = playerTransform;
                 return true;
             }
         }
