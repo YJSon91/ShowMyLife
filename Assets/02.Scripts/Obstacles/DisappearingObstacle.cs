@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 
-public class DisappearingObstacle : MonoBehaviour
+public class DisappearingObstacle : BaseObstacle
 {
     [Header("작동 방식 설정")]
     [Tooltip("true면 자동 사라짐 반복, false면 플레이어 밟을 때 작동")]
