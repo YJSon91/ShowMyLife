@@ -1,13 +1,16 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // 1. MonoBehaviour 대신 UiBase를 상속받습니다.
 public class MainMenu : UiBase
 {
+    private CanvasGroup _mainMenuGroup;
     public override void Init()
     {
         // 2. UIManager에 자기 자신을 'MainMenu' 타입으로 정확하게 등록합니다.
         GameManager.Instance.UIManager.Add<MainMenu>(this);
+        _mainMenuGroup = GetComponent<CanvasGroup>();
     }
 
     // '새 게임' 버튼을 위한 함수
@@ -51,5 +54,21 @@ public class MainMenu : UiBase
     public void OnCreditButton()
     {
         Debug.Log("크레딧 버튼 클릭됨!");
+    }
+    public override void Show(bool show)
+    {
+        if (show)
+        {
+            // 투명한 상태에서 시작
+            _mainMenuGroup.alpha = 0f;
+            gameObject.SetActive(true);
+
+            // 1초 동안 부드럽게 나타나도록 애니메이션 실행
+            _mainMenuGroup.DOFade(1f, 1f).SetEase(Ease.OutQuad);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 }
