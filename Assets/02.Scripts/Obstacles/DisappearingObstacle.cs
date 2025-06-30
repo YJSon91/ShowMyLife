@@ -41,9 +41,9 @@ public class DisappearingObstacle : BaseObstacle
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void FixedUpdate()
     {
-        if (!useAutoLoop && !isProcessing && collision.gameObject.CompareTag("Player"))
+        if (!useAutoLoop && !isProcessing && TryGetPlayerOnTop(out Transform _))
         {
             StartCoroutine(DisappearRoutine());
         }
