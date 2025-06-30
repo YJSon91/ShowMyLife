@@ -14,11 +14,17 @@ public class BaseObstacle : MonoBehaviour
         }
 
         Transform playerTransform = GameManager.Instance.Player.transform;
+        Collider obstacleCollider = GetComponent<Collider>();
+
+        if (obstacleCollider == null)
+            return false;
+
         Vector3 direction = Vector3.up;
         float castDistance = 1.0f;
 
-        Vector3 center = transform.position + Vector3.down * 0.1f;
-        Vector3 halfExtents = transform.localScale / 2f + new Vector3(0.05f, 0.05f, 0.05f);
+        // Collider 기준 중심과 크기를 사용
+        Vector3 center = obstacleCollider.bounds.center + Vector3.down * 0.1f;
+        Vector3 halfExtents = obstacleCollider.bounds.extents + new Vector3(0.05f, 0.05f, 0.05f);
 
         if (Physics.BoxCast(center, halfExtents, direction, out RaycastHit hit, transform.rotation, castDistance))
         {
@@ -41,8 +47,11 @@ public class BaseObstacle : MonoBehaviour
         Vector3 direction = Vector3.up;
         float castDistance = 1.0f;
 
-        Vector3 center = transform.position + Vector3.down * 0.1f;
-        Vector3 halfExtents = transform.localScale / 2f + new Vector3(0.05f, 0.05f, 0.05f);
+        Collider obstacleCollider = GetComponent<Collider>();
+        if (obstacleCollider == null) return;
+
+        Vector3 center = obstacleCollider.bounds.center + Vector3.down * 0.1f;
+        Vector3 halfExtents = obstacleCollider.bounds.extents + new Vector3(0.05f, 0.05f, 0.05f);
 
         Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
         Gizmos.DrawWireCube(Vector3.up * castDistance / 2f, halfExtents);
