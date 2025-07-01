@@ -167,12 +167,47 @@ public class GameManager : MonoBehaviour
     /// <param name="newState">변경할 새로운 게임 상태</param>
     public void UpdateGameState(GameState newState)
     {
-        if (CurrentState == newState) return; // 같은 상태로의 변경은 무시
+        if (CurrentState == newState) return;
+
         CurrentState = newState;
-       
-        OnGameStateChanged?.Invoke(newState); // 상태 변경을 전체에 '방송'
+
+        // --- 이 부분이 핵심 수정 내용입니다 ---
+        // 새로운 게임 상태에 따라 적절한 액션 맵을 활성화/비활성화하고 커서 상태를 제어합니다.
+        switch (newState)
+        {
+            case GameState.Playing:
+                // 플레이 중일 때는 플레이어 조작만 가능해야 합니다.
+                PlayerControls?.UI.Disable();
+                PlayerControls?.Player.Enable();
+                Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
+                Cursor.visible = false;
+                break;
+
+            case GameState.Paused:
+            case GameState.MainMenu:
+            case GameState.LevelClear:
+                // 메뉴, 일시정지, 클리어 상태에서는 UI 조작만 가능해야 합니다.
+                PlayerControls?.Player.Disable();
+                PlayerControls?.UI.Enable();
+                Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
+                Cursor.visible = true;
+                break;
+        }
+        // --- 수정 끝 ---
+
+        // 씬 로딩 로직
+        if (newState == GameState.Playing)
+        {
+            // 현재 씬이 IntroScene일 때만 게임 씬을 로드하도록 조건을 추가하면 더 안전합니다.
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "IntroScene")
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene("TestMapScene_JSC");
+            }
+        }
+
+        OnGameStateChanged?.Invoke(newState);
         Debug.Log($"[GameManager] Game State Changed to: {newState}");
-    }    
+    }
     /// <summary>
     /// 게임의 일시정지 상태를 토글합니다.
     /// </summary>
