@@ -3,39 +3,57 @@ using Cinemachine;
 
 public class CameraManager : MonoBehaviour
 {
-    [Tooltip("감도")]
-    [SerializeField] private float sensitivity = 0.2f;
+    [Tooltip("마우스 감도")]
+    [SerializeField] private float sensitivity = 3f;
 
-    [Tooltip("버츄얼 카메라")]
-    [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    [Tooltip("플레이어 카메라")]
+    [SerializeField] private CinemachineVirtualCamera playerCamera;
 
-    [Tooltip("플레이어 오브젝트")]
-    [SerializeField] private Transform playerBody;
+    [Tooltip("연출용 카메라")]
+    [SerializeField] private CinemachineVirtualCamera themeCamera;
 
     [Tooltip("인풋 처리 스크립트")]
     [SerializeField] private InputReader inputReader;
 
-    private Cinemachine3rdPersonFollow follow;
-    private float xRotation = 0f;
+    private CinemachinePOV pov;
 
     public float Sensitivity
     {
         get => sensitivity;
-        set => sensitivity = Mathf.Clamp(value, 0.1f, 1f);
+        set
+        {
+            sensitivity = Mathf.Clamp(value, 0.1f, 10f);
+            ApplySensitivityToPOV();
+        }
     }
 
     private void Awake()
     {
-        if (virtualCamera == null) return;
-
-        follow = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
-        if (follow == null) return;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-       
+        if (playerCamera == null || themeCamera == null)
+        {
+            Debug.LogError("[CameraManager] 필수 요소가 누락되었습니다.");
+            enabled = false;
+            return;
+        }
+
+        pov = playerCamera.GetCinemachineComponent<CinemachinePOV>();
+        if (pov == null)
+        {
+            Debug.LogError("[CameraManager] CinemachinePOV 컴포넌트가 없습니다.");
+            enabled = false;
+            return;
+        }
+
+        ApplySensitivityToPOV();
+        ApplyVerticalClamp();
+
+        playerCamera.Priority = 10;
+        themeCamera.Priority = 0;
     }
+
     private void Start()
     {
         if (GameManager.Instance != null)
@@ -44,21 +62,39 @@ public class CameraManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[CameraManager] CameraManager가 씬에 존재하지 않습니다!");
+            Debug.LogWarning("[CameraManager] GameManager 인스턴스를 찾을 수 없습니다.");
         }
     }
 
-    private void LateUpdate()
+    private void ApplySensitivityToPOV()
     {
-       Vector2 look = inputReader.LookInput;
+        if (pov != null)
+        {
+            pov.m_HorizontalAxis.m_MaxSpeed = sensitivity * 100f;
+            pov.m_VerticalAxis.m_MaxSpeed = sensitivity * 100f;
+        }
+    }
 
-       float mouseX = look.x * sensitivity;
-       float mouseY = look.y * sensitivity;
+    private void ApplyVerticalClamp()
+    {
+        if (pov != null)
+        {
+            pov.m_VerticalAxis.m_MinValue = -30f;
+            pov.m_VerticalAxis.m_MaxValue = 70f;
+        }
+    }
 
-       xRotation -= mouseY;
-       xRotation = Mathf.Clamp(xRotation, -40f, 80f);
+    public void SwitchToThemeCamera(float duration = 3f)
+    {
+        StartCoroutine(SwitchToThemeRoutine(duration));
+    }
 
-       virtualCamera.transform.localEulerAngles = new Vector3(xRotation, virtualCamera.transform.localEulerAngles.y, 0f);
-       playerBody.Rotate(Vector3.up * mouseX);
+    private System.Collections.IEnumerator SwitchToThemeRoutine(float duration)
+    {
+        themeCamera.Priority = 20;
+        playerCamera.Priority = 0;
+        yield return new WaitForSeconds(duration);
+        themeCamera.Priority = 0;
+        playerCamera.Priority = 10;
     }
 }

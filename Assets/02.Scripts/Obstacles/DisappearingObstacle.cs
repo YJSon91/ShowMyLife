@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 
-public class DisappearingObstacle : MonoBehaviour
+public class DisappearingObstacle : BaseObstacle
 {
     [Header("작동 방식 설정")]
     [Tooltip("true면 자동 사라짐 반복, false면 플레이어 밟을 때 작동")]
@@ -41,9 +41,9 @@ public class DisappearingObstacle : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void FixedUpdate()
     {
-        if (!useAutoLoop && !isProcessing && collision.gameObject.CompareTag("Player"))
+        if (!useAutoLoop && !isProcessing && TryGetPlayerOnTop(out Transform _))
         {
             StartCoroutine(DisappearRoutine());
         }
