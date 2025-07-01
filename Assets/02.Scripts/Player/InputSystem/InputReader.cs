@@ -1,4 +1,3 @@
-
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,6 +28,8 @@ using UnityEngine.Serialization;
         public Action onSprintDeactivated;
 
         public Action onWalkToggled;
+
+        public event System.Action OnPausePerformed;
 
         public Vector2 LookInput { get; private set; }
 
@@ -169,6 +170,20 @@ using UnityEngine.Serialization;
 
             onLockOnToggled?.Invoke();
             onSprintDeactivated?.Invoke();
+        }
+
+        /// <summary>
+        ///     OnPause 콜백이 호출될 때 수행할 동작을 정의합니다.
+        /// </summary>
+        /// <param name="context">콜백의 컨텍스트입니다.</param>
+        public void OnPause(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+            {
+                return;
+            }
+
+            OnPausePerformed?.Invoke();
         }
     }
 
