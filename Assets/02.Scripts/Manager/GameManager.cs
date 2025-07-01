@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     [Header("핵심 에셋")]
     [Tooltip("프로젝트의 Input Action 에셋을 연결해주세요.")]
     [SerializeField] private InputActionAsset _inputActions;
+    /// <summary>
+    /// 게임 전체에서 공유될 컨트롤러 인스턴스입니다.
+    /// </summary>
+    public Controls PlayerControls { get; private set; }
     // --- 상태 정의 ---
     /// <summary>
     /// 게임의 현재 상태를 나타내는 열거형입니다.
@@ -42,18 +46,21 @@ public class GameManager : MonoBehaviour
     public ObstacleManager ObstacleManager { get; private set; }
     public Player Player { get; private set; }
     public CameraManager CameraManager { get; private set; }
-    
+
 
 
     // --- Unity 생명주기 메서드 ---
     private void Awake()
     {
-        // 싱글톤 및 DontDestroyOnLoad 설정
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            //DontDestroyOnLoad로 지정된 후, 바로 모든 키 바인딩을 불러옵니다.
+
+            // 1. 컨트롤러 인스턴스를 생성합니다.
+            PlayerControls = new Controls();
+
+            // 2. 저장된 키 바인딩을 불러옵니다.
             LoadAllKeybindings();
         }
         else
@@ -100,19 +107,24 @@ public class GameManager : MonoBehaviour
 
     // --- 핵심 로직 메서드 ---
     /// <summary>
-    /// PlayerPrefs에 저장된 모든 키 바인딩 오버라이드를 불러와 적용합니다.
-    /// </summary>
+    private void OnEnable()
+    {
+        // Player 액션 맵을 활성화합니다.
+        PlayerControls.Player.Enable();
+    }
+    private void OnDisable()
+    {
+        // Player 액션 맵을 비활성화합니다.
+        PlayerControls.Player.Disable();
+    }
     private void LoadAllKeybindings()
     {
         if (_inputActions == null) return;
-
-        // PlayerPrefs에 저장된 전체 오버라이드 정보를 JSON 형태로 불러옵니다.
         string rebinds = PlayerPrefs.GetString("AllKeyRebinds", string.Empty);
-
         if (string.IsNullOrEmpty(rebinds)) return;
 
-        // 불러온 JSON 정보를 Input Action 에셋 전체에 적용합니다.
-        _inputActions.LoadBindingOverridesFromJson(rebinds);
+        // _inputActions 대신, 우리가 생성한 인스턴스에 오버라이드를 적용합니다.
+        PlayerControls.LoadBindingOverridesFromJson(rebinds);
         Debug.Log("[GameManager] 저장된 모든 키 설정을 불러왔습니다.");
     }
     /// <summary>
