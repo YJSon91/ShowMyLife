@@ -1,11 +1,15 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 게임의 전체 상태와 다른 모든 매니저들을 총괄하는 최상위 싱글톤 클래스입니다.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    [Header("핵심 에셋")]
+    [Tooltip("프로젝트의 Input Action 에셋을 연결해주세요.")]
+    [SerializeField] private InputActionAsset _inputActions;
     // --- 상태 정의 ---
     /// <summary>
     /// 게임의 현재 상태를 나타내는 열거형입니다.
@@ -49,6 +53,8 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad로 지정된 후, 바로 모든 키 바인딩을 불러옵니다.
+            LoadAllKeybindings();
         }
         else
         {
@@ -82,7 +88,22 @@ public class GameManager : MonoBehaviour
     }
 
     // --- 핵심 로직 메서드 ---
+    /// <summary>
+    /// PlayerPrefs에 저장된 모든 키 바인딩 오버라이드를 불러와 적용합니다.
+    /// </summary>
+    private void LoadAllKeybindings()
+    {
+        if (_inputActions == null) return;
 
+        // PlayerPrefs에 저장된 전체 오버라이드 정보를 JSON 형태로 불러옵니다.
+        string rebinds = PlayerPrefs.GetString("AllKeyRebinds", string.Empty);
+
+        if (string.IsNullOrEmpty(rebinds)) return;
+
+        // 불러온 JSON 정보를 Input Action 에셋 전체에 적용합니다.
+        _inputActions.LoadBindingOverridesFromJson(rebinds);
+        Debug.Log("[GameManager] 저장된 모든 키 설정을 불러왔습니다.");
+    }
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>

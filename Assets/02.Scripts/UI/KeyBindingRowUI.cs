@@ -75,10 +75,9 @@ public class KeyBindingRowUI : MonoBehaviour
                 operation.Dispose(); // 메모리 정리
 
                 // 변경된 키 바인딩 정보를 PlayerPrefs에 저장합니다.
-                string newBinding = _targetAction.action.SaveBindingOverridesAsJson();
-                PlayerPrefs.SetString(_rebindSaveKey, newBinding);
+                string allRebindsJson = _targetAction.action.actionMap.asset.SaveBindingOverridesAsJson();
+                PlayerPrefs.SetString("AllKeyRebinds", allRebindsJson);
                 PlayerPrefs.Save();
-
                 UpdateUI(); // UI 텍스트를 새로운 키로 업데이트
                 _rebindButton.interactable = true; // 버튼 다시 활성화
                 Debug.Log($"'{_targetAction.action.name}' 액션의 키가 변경되고 저장되었습니다.");
