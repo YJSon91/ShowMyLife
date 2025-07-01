@@ -25,22 +25,27 @@ public class PauseMenu : UiBase
     // '이어하기(Resume)' 버튼에 연결될 함수
     public void OnResumeButton()
     {
-        // 직접 Time.timeScale을 조작하는 대신, GameManager에 상태 변경을 '요청'합니다.
+        // 직접 Time.timeScale을 조작하는 대신, GameManager에 상태 변경을 '요청'합니다.        
         GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
+        // GameManager가 상태를 변경하면 UIManager가 자동으로 이 UI를 숨깁니다.
+        GameManager.Instance.UIManager.Hide<PauseMenu>();
     }
 
     // '재시작(Restart)' 버튼에 연결될 함수
     public void OnRestartButton()
     {
         // 재시작 전에는 반드시 시간을 다시 흐르게 해야 합니다.
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //Time.timeScale = 1f;
+        GameManager.Instance.UIManager.Hide<PauseMenu>();
+        SceneManager.LoadScene("IntroScene"); // 실제 게임 씬 이름으로 변경해야 합니다.
+        GameManager.Instance.UpdateGameState(GameManager.GameState.MainMenu);
     }
 
     // '설정(Settings)' 버튼에 연결될 함수
     public void OnSettingsButton()
     {
         // GameManager를 통해 UIManager에게 SettingsMenu를 보여달라고 요청합니다.
+        GameManager.Instance.UIManager.Hide<PauseMenu>(); // 현재 메뉴를 숨깁니다.
         GameManager.Instance.UIManager.Show<SettingsMenu>(true);
     }
 

@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 게임의 전체 상태와 다른 모든 매니저들을 총괄하는 최상위 싱글톤 클래스입니다.
@@ -18,7 +20,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 게임의 현재 상태를 나타내는 열거형입니다.
     /// </summary>
-    public enum GameState { MainMenu, Playing, Paused, LevelClear }
+    public enum GameState { Start, MainMenu, Playing, Paused, LevelClear }
 
 
     // --- 이벤트 ---
@@ -72,7 +74,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // 게임 시작 시 초기 상태는 '메인 메뉴'입니다.
-        UpdateGameState(GameState.MainMenu);
+        UpdateGameState(GameState.Start);
     }
 
 
@@ -111,11 +113,43 @@ public class GameManager : MonoBehaviour
     {
         // Player 액션 맵을 활성화합니다.
         PlayerControls.Player.Enable();
+        SceneManager.sceneLoaded += CheckEventSystem;
     }
     private void OnDisable()
     {
-        // Player 액션 맵을 비활성화합니다.
-        PlayerControls.Player.Disable();
+        // 내가 진짜 인스턴스가 아니면(복제품이면) 즉시 빠져나갑니다.
+        if (Instance != this) return;
+        // 진짜 인스턴스일 경우에만 아래 코드를 실행합니다.
+       PlayerControls?.Player.Disable();
+        SceneManager.sceneLoaded -= CheckEventSystem;
+    }
+
+    // OnDestroy도 동일한 안전장치를 추가해주는 것이 좋습니다.
+    private void OnDestroy()
+    {
+        if (Instance != this) return;
+
+        if (Player != null)
+        {
+            InputReader inputReader = Player.GetComponent<InputReader>();
+            if (inputReader != null)
+            {
+                inputReader.OnPausePerformed -= TogglePauseState;
+            }
+        }
+    }
+    private void CheckEventSystem(Scene scene, LoadSceneMode mode)
+    {
+        // 현재 씬에 EventSystem 타입의 오브젝트가 있는지 확인합니다.
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            // EventSystem이 없다면, 새로 생성합니다.
+            GameObject eventSystemObj = new GameObject("EventSystem");
+            eventSystemObj.AddComponent<EventSystem>();
+            eventSystemObj.AddComponent<StandaloneInputModule>(); // 키보드/마우스 입력을 위해 필수
+
+            Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
+        }
     }
     private void LoadAllKeybindings()
     {
@@ -134,23 +168,11 @@ public class GameManager : MonoBehaviour
     public void UpdateGameState(GameState newState)
     {
         if (CurrentState == newState) return; // 같은 상태로의 변경은 무시
-
         CurrentState = newState;
+       
         OnGameStateChanged?.Invoke(newState); // 상태 변경을 전체에 '방송'
         Debug.Log($"[GameManager] Game State Changed to: {newState}");
-    }
-    private void OnDestroy()
-    {
-        // 만약 플레이어와 InputReader가 존재한다면, 구독을 해제합니다.
-        if (Player != null)
-        {
-            InputReader inputReader = Player.GetComponent<InputReader>();
-            if (inputReader != null)
-            {
-                inputReader.OnPausePerformed -= TogglePauseState;
-            }
-        }
-    }
+    }    
     /// <summary>
     /// 게임의 일시정지 상태를 토글합니다.
     /// </summary>
