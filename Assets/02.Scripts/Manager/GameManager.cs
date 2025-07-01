@@ -68,11 +68,18 @@ public class GameManager : MonoBehaviour
     public void RegisterLevelManager(LevelManager manager) => LevelManager = manager;
     public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
     public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
-    public void RegisterPlayer(Player player) => Player = player;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
+    public void RegisterPlayer(Player player)
+    {
+        Player = player;
 
-    
-
+        // PlayerInput 컴포넌트를 찾아서 일시정지 이벤트를 구독합니다.
+        InputReader inputReader = player.GetComponent<InputReader>();
+        if (inputReader != null)
+        {
+            inputReader.OnPausePerformed += TogglePauseState; // OnPausePerformed 신호가 오면 TogglePauseState 함수 실행
+        }
+    }
 
     // --- 핵심 로직 메서드 ---
 
@@ -88,7 +95,34 @@ public class GameManager : MonoBehaviour
         OnGameStateChanged?.Invoke(newState); // 상태 변경을 전체에 '방송'
         Debug.Log($"[GameManager] Game State Changed to: {newState}");
     }
-
+    private void OnDestroy()
+    {
+        // 만약 플레이어와 InputReader가 존재한다면, 구독을 해제합니다.
+        if (Player != null)
+        {
+            InputReader inputReader = Player.GetComponent<InputReader>();
+            if (inputReader != null)
+            {
+                inputReader.OnPausePerformed -= TogglePauseState;
+            }
+        }
+    }
+    /// <summary>
+    /// 게임의 일시정지 상태를 토글합니다.
+    /// </summary>
+    private void TogglePauseState()
+    {
+        // 현재 게임 상태가 '플레이 중'일 때만 일시정지할 수 있습니다.
+        if (CurrentState == GameState.Playing)
+        {
+            UpdateGameState(GameState.Paused);
+        }
+        // 현재 게임 상태가 '일시정지 중'일 때만 게임을 재개할 수 있습니다.
+        else if (CurrentState == GameState.Paused)
+        {
+            UpdateGameState(GameState.Playing);
+        }
+    }
     /// <summary>
     /// 플레이어의 리스폰 절차를 시작하도록 요청합니다.
     /// </summary>
