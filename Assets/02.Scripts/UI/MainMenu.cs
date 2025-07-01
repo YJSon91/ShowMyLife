@@ -16,9 +16,9 @@ public class MainMenu : UiBase
     // '새 게임' 버튼을 위한 함수
     public void OnNewGameButton()
     {
-        // GameManager에게 게임 시작을 요청합니다.
+        // GameManager에게 게임 시작을 요청합니다.        
+        SceneManager.LoadScene("Test_Scene_JSC"); // 실제 게임 씬 이름으로 변경해야 합니다.
         GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
-        SceneManager.LoadScene("TestMapScene"); // 실제 게임 씬 이름으로 변경해야 합니다.
     }
 
     // '이어하기' 버튼을 위한 함수

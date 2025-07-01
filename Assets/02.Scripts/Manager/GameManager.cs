@@ -1,16 +1,26 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 게임의 전체 상태와 다른 모든 매니저들을 총괄하는 최상위 싱글톤 클래스입니다.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    [Header("핵심 에셋")]
+    [Tooltip("프로젝트의 Input Action 에셋을 연결해주세요.")]
+    [SerializeField] private InputActionAsset _inputActions;
+    /// <summary>
+    /// 게임 전체에서 공유될 컨트롤러 인스턴스입니다.
+    /// </summary>
+    public Controls PlayerControls { get; private set; }
     // --- 상태 정의 ---
     /// <summary>
     /// 게임의 현재 상태를 나타내는 열거형입니다.
     /// </summary>
-    public enum GameState { MainMenu, Playing, Paused, LevelClear }
+    public enum GameState { Start, MainMenu, Playing, Paused, LevelClear }
 
 
     // --- 이벤트 ---
@@ -38,17 +48,22 @@ public class GameManager : MonoBehaviour
     public ObstacleManager ObstacleManager { get; private set; }
     public Player Player { get; private set; }
     public CameraManager CameraManager { get; private set; }
-    
+
 
 
     // --- Unity 생명주기 메서드 ---
     private void Awake()
     {
-        // 싱글톤 및 DontDestroyOnLoad 설정
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // 1. 컨트롤러 인스턴스를 생성합니다.
+            PlayerControls = new Controls();
+
+            // 2. 저장된 키 바인딩을 불러옵니다.
+            LoadAllKeybindings();
         }
         else
         {
@@ -59,7 +74,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // 게임 시작 시 초기 상태는 '메인 메뉴'입니다.
-        UpdateGameState(GameState.MainMenu);
+        UpdateGameState(GameState.Start);
     }
 
 
@@ -69,35 +84,51 @@ public class GameManager : MonoBehaviour
     public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
     public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
-    public void RegisterPlayer(Player player)
+    public void RegisterPlayer(Player newPlayer)
     {
-        Player = player;
-
-        // PlayerInput 컴포넌트를 찾아서 일시정지 이벤트를 구독합니다.
-        InputReader inputReader = player.GetComponent<InputReader>();
-        if (inputReader != null)
+        // 1. 만약 이전에 등록된 플레이어가 있었다면, 그 플레이어의 이벤트 구독을 먼저 해제합니다.
+        if (Player != null)
         {
-            inputReader.OnPausePerformed += TogglePauseState; // OnPausePerformed 신호가 오면 TogglePauseState 함수 실행
+            InputReader oldInputReader = Player.GetComponent<InputReader>();
+            if (oldInputReader != null)
+            {
+                oldInputReader.OnPausePerformed -= TogglePauseState;
+            }
+        }
+
+        // 2. 새로운 플레이어를 현재 플레이어로 등록합니다.
+        Player = newPlayer;
+
+        // 3. 이제 새로운 플레이어의 이벤트에 안전하게 구독합니다.
+        InputReader newInputReader = newPlayer.GetComponent<InputReader>();
+        if (newInputReader != null)
+        {
+            newInputReader.OnPausePerformed += TogglePauseState;
         }
     }
 
     // --- 핵심 로직 메서드 ---
-
     /// <summary>
-    /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
-    /// </summary>
-    /// <param name="newState">변경할 새로운 게임 상태</param>
-    public void UpdateGameState(GameState newState)
+    private void OnEnable()
     {
-        if (CurrentState == newState) return; // 같은 상태로의 변경은 무시
-
-        CurrentState = newState;
-        OnGameStateChanged?.Invoke(newState); // 상태 변경을 전체에 '방송'
-        Debug.Log($"[GameManager] Game State Changed to: {newState}");
+        // Player 액션 맵을 활성화합니다.
+        PlayerControls.Player.Enable();
+        SceneManager.sceneLoaded += CheckEventSystem;
     }
+    private void OnDisable()
+    {
+        // 내가 진짜 인스턴스가 아니면(복제품이면) 즉시 빠져나갑니다.
+        if (Instance != this) return;
+        // 진짜 인스턴스일 경우에만 아래 코드를 실행합니다.
+       PlayerControls?.Player.Disable();
+        SceneManager.sceneLoaded -= CheckEventSystem;
+    }
+
+    // OnDestroy도 동일한 안전장치를 추가해주는 것이 좋습니다.
     private void OnDestroy()
     {
-        // 만약 플레이어와 InputReader가 존재한다면, 구독을 해제합니다.
+        if (Instance != this) return;
+
         if (Player != null)
         {
             InputReader inputReader = Player.GetComponent<InputReader>();
@@ -107,6 +138,41 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    private void CheckEventSystem(Scene scene, LoadSceneMode mode)
+    {
+        // 현재 씬에 EventSystem 타입의 오브젝트가 있는지 확인합니다.
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            // EventSystem이 없다면, 새로 생성합니다.
+            GameObject eventSystemObj = new GameObject("EventSystem");
+            eventSystemObj.AddComponent<EventSystem>();
+            eventSystemObj.AddComponent<StandaloneInputModule>(); // 키보드/마우스 입력을 위해 필수
+
+            Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
+        }
+    }
+    private void LoadAllKeybindings()
+    {
+        if (_inputActions == null) return;
+        string rebinds = PlayerPrefs.GetString("AllKeyRebinds", string.Empty);
+        if (string.IsNullOrEmpty(rebinds)) return;
+
+        // _inputActions 대신, 우리가 생성한 인스턴스에 오버라이드를 적용합니다.
+        PlayerControls.LoadBindingOverridesFromJson(rebinds);
+        Debug.Log("[GameManager] 저장된 모든 키 설정을 불러왔습니다.");
+    }
+    /// <summary>
+    /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
+    /// </summary>
+    /// <param name="newState">변경할 새로운 게임 상태</param>
+    public void UpdateGameState(GameState newState)
+    {
+        if (CurrentState == newState) return; // 같은 상태로의 변경은 무시
+        CurrentState = newState;
+       
+        OnGameStateChanged?.Invoke(newState); // 상태 변경을 전체에 '방송'
+        Debug.Log($"[GameManager] Game State Changed to: {newState}");
+    }    
     /// <summary>
     /// 게임의 일시정지 상태를 토글합니다.
     /// </summary>

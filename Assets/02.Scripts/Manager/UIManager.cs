@@ -11,20 +11,104 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        // GameManager에 자신을 등록
+        // 1. GameManager에 자신을 등록
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterUIManager(this);
         }
         else
         {
-            Debug.LogError("[UIManager] UIManager가 씬에 존재하지 않습니다!");
+            Debug.LogError("[UIManager] GameManager가 씬에 존재하지 않습니다!");
+            return;
         }
-        // UIManager의 자식으로 있는 모든 UI들을 자동으로 찾아 초기화 및 등록
-        UiBase[] allUIs = GetComponentsInChildren<UiBase>(true); // 비활성화된 자식도 포함
+
+        // 2. 자식 UI들을 찾아 초기화 및 등록
+        UiBase[] allUIs = GetComponentsInChildren<UiBase>(true);
         foreach (UiBase ui in allUIs)
         {
-            ui.Init(); // 각 UI의 초기화 함수 호출
+            ui.Init();
+        }
+
+        // 3. 시작 시점의 게임 상태에 맞게 UI를 즉시 설정
+        if (GameManager.Instance != null)
+        {
+            HandleGameStateChanged(GameManager.Instance.CurrentState);
+        }
+    }
+
+    private void OnEnable()
+    {
+        // GameManager의 상태 변경 이벤트를 구독합니다.
+        GameManager.OnGameStateChanged += HandleGameStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 오브젝트가 파괴될 때, 이벤트 구독을 반드시 해제합니다.
+        GameManager.OnGameStateChanged -= HandleGameStateChanged;
+    }
+    /// <summary>
+    /// GameManager로부터 게임 상태 변경 신호를 받았을 때 호출되는 핵심 함수입니다.
+    /// </summary>
+    private void HandleGameStateChanged(GameManager.GameState newState)
+    {
+        // 일시정지 상태가 되거나 풀릴 때는 다른 UI를 끄지 않도록 예외 처리
+        if (newState == GameManager.GameState.Paused)
+        {
+            Show<PauseMenu>(true);
+            return;
+        }
+        if (GameManager.Instance.CurrentState == GameManager.GameState.Paused && newState == GameManager.GameState.Playing)
+        {
+            Hide<PauseMenu>();
+            return;
+        }
+
+        // 그 외의 상태 변경 시에는 모든 패널을 숨기고 시작합니다.
+        HideAll();
+
+        // 새로운 상태에 맞는 UI만 활성화합니다.
+        switch (newState)
+        {
+            case GameManager.GameState.Start:
+                Show<StartPanelUI>(true);
+                break;
+
+            case GameManager.GameState.MainMenu:
+                // 메인 메뉴로 전환 시, 페이드 연출을 사용합니다.
+                var fadePanel = Get<FadePanelUI>();
+                if (fadePanel != null)
+                {
+                    // 화면을 어둡게 한 뒤, 패널을 교체하고 다시 밝게 합니다.
+                    fadePanel.FadeIn(0.5f, () => {
+                        Hide<StartPanelUI>();
+                        Show<MainMenu>(true);
+                        fadePanel.FadeOut(0.5f);
+                    });
+                }
+                else
+                {
+                    // 페이드 패널이 없다면 즉시 교체
+                    Hide<StartPanelUI>();
+                    Show<MainMenu>(true);
+                }
+                break;
+
+            case GameManager.GameState.Paused:
+                // 'Paused' 상태에서는 일시정지 메뉴를 보여줍니다.
+                Show<PauseMenu>(true);
+                break;
+
+            case GameManager.GameState.Playing:
+                // 'Playing' 상태에서는 모든 메뉴 패널이 꺼지고,
+                // 인게임 HUD만 보이게 됩니다. (HUD를 별도 관리하지 않으면 아무것도 켜지 않음)
+                break;
+
+            case GameManager.GameState.LevelClear:
+                // TODO: 레벨 클리어 UI를 보여주는 로직 (LevelClearUI 스크립트 필요)
+                // Show<LevelClearUI>(true);
+                Debug.Log("레벨 클리어 UI를 표시합니다.");
+                break;
         }
     }
     /// <summary>
@@ -70,5 +154,12 @@ public class UIManager : MonoBehaviour
     {
         // 내부적으로는 Show<T>(false)를 호출하여 코드를 재사용합니다.
         Show<T>(false);
+    }
+    public void HideAll()
+    {
+        foreach (var ui in _uiDictionary.Values)
+        {
+            ui.Show(false);
+        }
     }
 }
