@@ -750,7 +750,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 1.0000001
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4506380652201679174
@@ -1298,7 +1298,7 @@ Transform:
   m_GameObject: {fileID: 7404158023314197825}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.17, y: 0, z: -1.5}
+  m_LocalPosition: {x: 57.4, y: 0, z: -66.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1548,8 +1548,8 @@ MonoBehaviour:
   _capsuleStandingCentre: 0.93
   _capsuleCrouchingHeight: 1.2
   _capsuleCrouchingCentre: 0.6
-  _jumpForce: 10
-  _gravityMultiplier: 2
+  _jumpForce: 13
+  _gravityMultiplier: 1.8
   _rearRayPos: {fileID: 4250760247602540282}
   _frontRayPos: {fileID: 2698652842034401688}
   _groundLayerMask:
