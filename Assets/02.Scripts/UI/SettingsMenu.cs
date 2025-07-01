@@ -1,5 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI; // Slider, Button 등 UI 요소를 사용하기 위해 필요합니다.
+using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// 게임의 각종 설정을 관리하는 UI입니다. UiBase를 상속받습니다.
@@ -11,6 +12,8 @@ public class SettingsMenu : UiBase
     [SerializeField] private GameObject _gameplaySettingsPanel;
     [Tooltip("볼륨 설정 UI 패널")]
     [SerializeField] private GameObject _volumeSettingsPanel;
+    [Tooltip("조작 설정 UI 패널")]
+    [SerializeField] private GameObject _controlSettingsPanel;
 
     [Header("게임플레이 설정 슬라이더")]
     [SerializeField] private Slider _cameraSensitivitySlider;
@@ -19,6 +22,13 @@ public class SettingsMenu : UiBase
     [SerializeField] private Slider _masterVolumeSlider;
     [SerializeField] private Slider _bgmVolumeSlider;
     [SerializeField] private Slider _sfxVolumeSlider;
+
+    [Header("비디오 설정")]
+    [SerializeField] private GameObject _videoSettingsPanel;
+    [SerializeField] private TextMeshProUGUI _displayModeText;
+
+    public enum DisplayMode { FullScreen, Borderless, Windowed }
+    private DisplayMode _currentDisplayMode;
 
     /// <summary>
     /// UIManager에 자기 자신을 등록하여 초기화합니다.
@@ -52,6 +62,9 @@ public class SettingsMenu : UiBase
         _masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolume", 1f);
         _bgmVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume", 0.8f);
         _sfxVolumeSlider.value = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+        _currentDisplayMode = PlayerPrefs.HasKey("DisplayMode")
+            ? (DisplayMode)PlayerPrefs.GetInt("DisplayMode", (int)DisplayMode.FullScreen)
+            : DisplayMode.FullScreen;
 
         Debug.Log("저장된 설정을 불러왔습니다.");
     }
@@ -65,6 +78,8 @@ public class SettingsMenu : UiBase
     {
         _gameplaySettingsPanel.SetActive(true);
         _volumeSettingsPanel.SetActive(false);
+        _controlSettingsPanel.SetActive(false);
+        _videoSettingsPanel.SetActive(false);
     }
 
     /// <summary>
@@ -74,6 +89,22 @@ public class SettingsMenu : UiBase
     {
         _gameplaySettingsPanel.SetActive(false);
         _volumeSettingsPanel.SetActive(true);
+        _controlSettingsPanel.SetActive(false);
+        _videoSettingsPanel.SetActive(false);  
+    }
+    public void ShowVideoTab()
+    {
+        _gameplaySettingsPanel.SetActive(false);
+        _volumeSettingsPanel.SetActive(false);
+        _controlSettingsPanel.SetActive(false);
+        _videoSettingsPanel.SetActive(true);
+    }
+    public void ShowControlTab()
+    {
+        _gameplaySettingsPanel.SetActive(false);
+        _volumeSettingsPanel.SetActive(false);
+        _controlSettingsPanel.SetActive(true);
+        _videoSettingsPanel.SetActive(false);
     }
 
     // --- 슬라이더 값 변경 시 호출될 함수들 ---
@@ -99,6 +130,22 @@ public class SettingsMenu : UiBase
     /// </summary>
     public void OnApplyButton()
     {
+        FullScreenMode mode = FullScreenMode.Windowed;
+        switch (_currentDisplayMode)
+        {
+            case DisplayMode.FullScreen:
+                mode = FullScreenMode.ExclusiveFullScreen;
+                break;
+            case DisplayMode.Borderless:
+                mode = FullScreenMode.FullScreenWindow;
+                break;
+            case DisplayMode.Windowed:
+                mode = FullScreenMode.Windowed;
+                break;
+        }
+        Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, mode);
+        // PlayerPrefs에 현재 설정 값을 저장합니다.
+        PlayerPrefs.SetInt("DisplayMode", (int)_currentDisplayMode);
         PlayerPrefs.SetFloat("CameraSensitivity", _cameraSensitivitySlider.value);
         PlayerPrefs.SetFloat("MasterVolume", _masterVolumeSlider.value);
         PlayerPrefs.SetFloat("BGMVolume", _bgmVolumeSlider.value);
@@ -129,5 +176,23 @@ public class SettingsMenu : UiBase
     {
         GameManager.Instance.UIManager.Hide<SettingsMenu>();
         GameManager.Instance.UIManager.Show<MainMenu>(true); // 메인 메뉴로 돌아갑니다.
+    }
+    public void OnDisplayModeNext()
+    {
+        _currentDisplayMode++;
+        if (_currentDisplayMode > DisplayMode.Windowed) _currentDisplayMode = DisplayMode.FullScreen;
+        UpdateDisplayModeText();
+    }
+
+    public void OnDisplayModePrevious()
+    {
+        _currentDisplayMode--;
+        if (_currentDisplayMode < DisplayMode.FullScreen) _currentDisplayMode = DisplayMode.Windowed;
+        UpdateDisplayModeText();
+    }
+
+    private void UpdateDisplayModeText()
+    {
+        _displayModeText.text = _currentDisplayMode.ToString();
     }
 }
