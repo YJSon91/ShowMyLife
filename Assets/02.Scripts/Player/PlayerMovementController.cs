@@ -90,6 +90,14 @@ public class PlayerMovementController : MonoBehaviour
     private bool _isLockedOn;
     public bool _cannotStandUp;
     private bool _isSliding;
+    
+    // 슬립 관련 변수 추가
+    private bool _isSlipping;
+    private Vector3 _slipDirection;
+    private float _slipForce;
+    private float _slipGravityMultiplier;
+    private float _slipInputReduction;
+    
     public Vector3 _velocity;
     private Vector3 _moveDirection;
     private float _speed2D;
@@ -155,6 +163,11 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어의 새 방향과의 각도 차이
     /// </summary>
     public float NewDirectionDifferenceAngle => _newDirectionDifferenceAngle;
+
+    /// <summary>
+    /// 플레이어가 슬립 중인지 여부
+    /// </summary>
+    public bool IsSlipping => _isSlipping;
 
     #endregion
 
@@ -248,8 +261,6 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void CalculateMoveDirection()
     {
-        // _moveDirection = (_cameraController.GetCameraForwardZeroedYNormalised() * _inputReader._moveComposite.y)
-        //     + (_cameraController.GetCameraRightZeroedYNormalised() * _inputReader._moveComposite.x);
         // Camera.main을 사용하여 카메라 방향 벡터 얻기
         Vector3 cameraForward = _player.MainCameraTransform.forward;
         Vector3 cameraRight = _player.MainCameraTransform.right;
@@ -262,28 +273,40 @@ public class PlayerMovementController : MonoBehaviour
         cameraRight.Normalize();
 
         // 이동 방향 계산
-        _moveDirection = (cameraForward * _inputReader._moveComposite.y)
+        Vector3 playerInputDirection = (cameraForward * _inputReader._moveComposite.y)
                        + (cameraRight * _inputReader._moveComposite.x);
 
-        if (!_isGrounded)
+        // 슬립 중인지 확인하여 이동 방향 결정
+        if (_isSlipping)
         {
-            _targetMaxSpeed = _currentMaxSpeed;
-        }
-        else if (_isCrouching)
-        {
-            _targetMaxSpeed = _walkSpeed;
-        }
-        else if (_isSprinting)
-        {
-            _targetMaxSpeed = _sprintSpeed;
-        }
-        else if (_isWalking)
-        {
-            _targetMaxSpeed = _walkSpeed;
+            // 슬립 중에는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
+            _moveDirection = Vector3.Lerp(_slipDirection, playerInputDirection, 1f - _slipInputReduction);
+            _targetMaxSpeed = _slipForce;
         }
         else
         {
-            _targetMaxSpeed = _runSpeed;
+            _moveDirection = playerInputDirection;
+            
+            if (!_isGrounded)
+            {
+                _targetMaxSpeed = _currentMaxSpeed;
+            }
+            else if (_isCrouching)
+            {
+                _targetMaxSpeed = _walkSpeed;
+            }
+            else if (_isSprinting)
+            {
+                _targetMaxSpeed = _sprintSpeed;
+            }
+            else if (_isWalking)
+            {
+                _targetMaxSpeed = _walkSpeed;
+            }
+            else
+            {
+                _targetMaxSpeed = _runSpeed;
+            }
         }
 
         const float ANIMATION_DAMP_TIME = 5f;
@@ -310,9 +333,14 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void ApplyGravity()
     {
+        // 슬립 중인 경우 중력 배수 적용
+        float gravityMultiplier = _isSlipping ? 
+            _gravityMultiplier * _slipGravityMultiplier : 
+            _gravityMultiplier;
+            
         if (_velocity.y > Physics.gravity.y)
         {
-            _velocity.y += Physics.gravity.y * _gravityMultiplier * Time.deltaTime;
+            _velocity.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
 
@@ -538,6 +566,38 @@ public class PlayerMovementController : MonoBehaviour
     public void DeactivateSliding()
     {
         _isSliding = false;
+    }
+
+    /// <summary>
+    /// 슬립 상태를 활성화합니다
+    /// </summary>
+    /// <param name="direction">슬립 방향</param>
+    /// <param name="force">슬립 힘</param>
+    /// <param name="gravityMultiplier">중력 배수</param>
+    /// <param name="inputReduction">입력 감소 정도 (0~1)</param>
+    public void ActivateSlipping(Vector3 direction, float force, float gravityMultiplier, float inputReduction = 0.8f)
+    {
+        _isSlipping = true;
+        _slipDirection = direction.normalized;
+        _slipForce = force;
+        _slipGravityMultiplier = gravityMultiplier;
+        _slipInputReduction = Mathf.Clamp01(inputReduction);
+        
+        Debug.Log($"슬립 활성화: 방향={_slipDirection}, 힘={_slipForce}, 중력배수={_slipGravityMultiplier}");
+    }
+
+    /// <summary>
+    /// 슬립 상태를 비활성화합니다
+    /// </summary>
+    public void DeactivateSlipping()
+    {
+        _isSlipping = false;
+        _slipDirection = Vector3.zero;
+        _slipForce = 0f;
+        _slipGravityMultiplier = 0f;
+        _slipInputReduction = 0f;
+        
+        Debug.Log("슬립 비활성화");
     }
 
     /// <summary>

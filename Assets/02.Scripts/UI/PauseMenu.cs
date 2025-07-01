@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// 일시정지 메뉴 UI를 제어하는 스크립트입니다. UiBase를 상속받습니다.
 /// </summary>
-public class PauseMenuUI : UiBase
+public class PauseMenu : UiBase
 {
     /// <summary>
     /// UIManager에 자기 자신을 등록하여 초기화합니다.
@@ -14,11 +14,11 @@ public class PauseMenuUI : UiBase
         // GameManager를 통해 UIManager에 접근하여, 이 UI를 등록합니다.
         if (GameManager.Instance != null && GameManager.Instance.UIManager != null)
         {
-            GameManager.Instance.UIManager.Add<PauseMenuUI>(this);
+            GameManager.Instance.UIManager.Add<PauseMenu>(this);
         }
         else
         {
-            Debug.LogError("[PauseMenuUI] GameManager 또는 UIManager가 준비되지 않았습니다!");
+            Debug.LogError("[PauseMenu] GameManager 또는 UIManager가 준비되지 않았습니다!");
         }
     }
 
