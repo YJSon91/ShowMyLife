@@ -12,6 +12,8 @@ public class SettingsMenu : UiBase
     [SerializeField] private GameObject _gameplaySettingsPanel;
     [Tooltip("볼륨 설정 UI 패널")]
     [SerializeField] private GameObject _volumeSettingsPanel;
+    [Tooltip("조작 설정 UI 패널")]
+    [SerializeField] private GameObject _controlSettingsPanel;
 
     [Header("게임플레이 설정 슬라이더")]
     [SerializeField] private Slider _cameraSensitivitySlider;
@@ -76,6 +78,8 @@ public class SettingsMenu : UiBase
     {
         _gameplaySettingsPanel.SetActive(true);
         _volumeSettingsPanel.SetActive(false);
+        _controlSettingsPanel.SetActive(false);
+        _videoSettingsPanel.SetActive(false);
     }
 
     /// <summary>
@@ -85,6 +89,22 @@ public class SettingsMenu : UiBase
     {
         _gameplaySettingsPanel.SetActive(false);
         _volumeSettingsPanel.SetActive(true);
+        _controlSettingsPanel.SetActive(false);
+        _videoSettingsPanel.SetActive(false);  
+    }
+    public void ShowVideoTab()
+    {
+        _gameplaySettingsPanel.SetActive(false);
+        _volumeSettingsPanel.SetActive(false);
+        _controlSettingsPanel.SetActive(false);
+        _videoSettingsPanel.SetActive(true);
+    }
+    public void ShowControlTab()
+    {
+        _gameplaySettingsPanel.SetActive(false);
+        _volumeSettingsPanel.SetActive(false);
+        _controlSettingsPanel.SetActive(true);
+        _videoSettingsPanel.SetActive(false);
     }
 
     // --- 슬라이더 값 변경 시 호출될 함수들 ---
