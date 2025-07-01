@@ -16,19 +16,7 @@ public class KeyBindingRowUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _actionNameText;
     [SerializeField] private Button _rebindButton;
     [SerializeField] private TextMeshProUGUI _rebindButtonText;
-
-    // PlayerPrefs에 저장할 때 사용할 고유 키
-    private string _rebindSaveKey;
-
-    private void Awake()
-    {
-        // 각 액션에 대한 고유한 저장 키를 만듭니다. (예: "Rebinds_Jump")
-        _rebindSaveKey = "Rebinds_" + _targetAction.action.name;
-
-        // 저장된 키 바인딩이 있는지 확인하고 불러옵니다.
-        LoadBinding();
-    }
-
+              
     private void OnEnable()
     {
         // UI가 켜질 때마다 버튼 텍스트를 최신 상태로 업데이트
@@ -39,18 +27,6 @@ public class KeyBindingRowUI : MonoBehaviour
     {
         // 버튼 클릭 이벤트에 함수 연결
         _rebindButton.onClick.AddListener(StartRebinding);
-    }
-
-    // 저장된 키 바인딩을 불러와 적용하는 함수
-    private void LoadBinding()
-    {
-        string rebinds = PlayerPrefs.GetString(_rebindSaveKey, string.Empty);
-
-        if (string.IsNullOrEmpty(rebinds)) return;
-
-        // 저장된 오버라이드(변경사항)를 액션에 적용합니다.
-        _targetAction.action.ApplyBindingOverride(rebinds);
-        Debug.Log($"'{_targetAction.action.name}' 액션의 키를 저장된 값으로 불러왔습니다.");
     }
 
     // 현재 바인딩된 키를 UI에 표시하는 함수

@@ -75,15 +75,26 @@ public class GameManager : MonoBehaviour
     public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
     public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
-    public void RegisterPlayer(Player player)
+    public void RegisterPlayer(Player newPlayer)
     {
-        Player = player;
-
-        // PlayerInput 컴포넌트를 찾아서 일시정지 이벤트를 구독합니다.
-        InputReader inputReader = player.GetComponent<InputReader>();
-        if (inputReader != null)
+        // 1. 만약 이전에 등록된 플레이어가 있었다면, 그 플레이어의 이벤트 구독을 먼저 해제합니다.
+        if (Player != null)
         {
-            inputReader.OnPausePerformed += TogglePauseState; // OnPausePerformed 신호가 오면 TogglePauseState 함수 실행
+            InputReader oldInputReader = Player.GetComponent<InputReader>();
+            if (oldInputReader != null)
+            {
+                oldInputReader.OnPausePerformed -= TogglePauseState;
+            }
+        }
+
+        // 2. 새로운 플레이어를 현재 플레이어로 등록합니다.
+        Player = newPlayer;
+
+        // 3. 이제 새로운 플레이어의 이벤트에 안전하게 구독합니다.
+        InputReader newInputReader = newPlayer.GetComponent<InputReader>();
+        if (newInputReader != null)
+        {
+            newInputReader.OnPausePerformed += TogglePauseState;
         }
     }
 
