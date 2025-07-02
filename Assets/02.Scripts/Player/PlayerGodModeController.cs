@@ -65,6 +65,16 @@ public class PlayerGodModeController : MonoBehaviour
     
     private void Start()
     {
+        // 카메라를 다시 찾기 시도 (Player의 Start에서 카메라 초기화가 완료된 후)
+        if (_cameraTransform == null && _player != null)
+        {
+            _cameraTransform = _player.MainCameraTransform;
+            if (_cameraTransform != null)
+            {
+                Debug.Log("PlayerGodModeController: 카메라 Transform을 찾았습니다.");
+            }
+        }
+        
         // 갓모드 토글 입력 이벤트 구독
         SubscribeToInputEvents();
     }
@@ -112,26 +122,10 @@ public class PlayerGodModeController : MonoBehaviour
             _cameraTransform = _player.MainCameraTransform;
         }
         
-        ValidateComponents();
+        
     }
     
-    /// <summary>
-    /// 모든 필수 컴포넌트가 존재하는지 확인합니다
-    /// </summary>
-    private void ValidateComponents()
-    {
-        if (_player == null)
-            Debug.LogError("PlayerGodModeController: Player 컴포넌트가 할당되지 않았습니다!");
-        
-        if (_controller == null)
-            Debug.LogError("PlayerGodModeController: CharacterController를 찾을 수 없습니다!");
-        
-        if (_movementController == null)
-            Debug.LogError("PlayerGodModeController: PlayerMovementController를 찾을 수 없습니다!");
-        
-        if (_cameraTransform == null)
-            Debug.LogError("PlayerGodModeController: Camera Transform을 찾을 수 없습니다!");
-    }
+    
     
     #endregion
     
