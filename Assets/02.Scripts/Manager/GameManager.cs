@@ -184,7 +184,17 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.Paused:
+
+                // 일시정지 상태에서는 UI 조작만 가능해야 합니다.
+                PlayerControls?.Player.Disable();
+                PlayerControls?.UI.Enable();
+                Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
+                Cursor.visible = true;
+                break;
+
             case GameState.MainMenu:
+                 break;
+
             case GameState.LevelClear:
                 // 메뉴, 일시정지, 클리어 상태에서는 UI 조작만 가능해야 합니다.
                 PlayerControls?.Player.Disable();

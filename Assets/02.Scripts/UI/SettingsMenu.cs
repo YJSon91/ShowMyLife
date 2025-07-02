@@ -158,41 +158,58 @@ public class SettingsMenu : UiBase
 
         // TODO: 변경된 값을 즉시 게임에 적용하는 로직 호출 (예: GameManager.Instance.SoundManager.SetMasterVolume(...))
     }
-
+    /// <summary>
+    /// 설정을 적용하고 창을 닫습니다.
+    /// </summary>
     /// <summary>
     /// 설정을 적용하고 창을 닫습니다.
     /// </summary>
     public void OnOKButton()
     {
         OnApplyButton();
-        GameManager.Instance.UIManager.Hide<SettingsMenu>();
-        GameManager.Instance.UIManager.Show<MainMenu>(true); // 메인 메뉴로 돌아갑니다.
+        CloseSettingsMenu(); // 창을 닫는 로직을 공통 함수로 분리
     }
-
     /// <summary>
     /// 변경사항을 저장하지 않고 창을 닫습니다.
     /// </summary>
     public void OnCancelButton()
     {
-        GameManager.Instance.UIManager.Hide<SettingsMenu>();
-        GameManager.Instance.UIManager.Show<MainMenu>(true); // 메인 메뉴로 돌아갑니다.
-    }
+        CloseSettingsMenu(); // 창을 닫는 로직을 공통 함수로 분리
+    }  
     public void OnDisplayModeNext()
     {
         _currentDisplayMode++;
         if (_currentDisplayMode > DisplayMode.Windowed) _currentDisplayMode = DisplayMode.FullScreen;
         UpdateDisplayModeText();
     }
-
     public void OnDisplayModePrevious()
     {
         _currentDisplayMode--;
         if (_currentDisplayMode < DisplayMode.FullScreen) _currentDisplayMode = DisplayMode.Windowed;
         UpdateDisplayModeText();
     }
-
     private void UpdateDisplayModeText()
     {
         _displayModeText.text = _currentDisplayMode.ToString();
+    }
+    /// <summary>
+    /// 설정창을 닫고, 이전 메뉴로 돌아가는 로직을 처리합니다.
+    /// </summary>
+    private void CloseSettingsMenu()
+    {
+        // 1. 먼저 설정창을 숨깁니다.
+        GameManager.Instance.UIManager.Hide<SettingsMenu>();
+
+        // 2. GameManager의 현재 게임 상태를 확인합니다.
+        if (GameManager.Instance.CurrentState == GameManager.GameState.MainMenu)
+        {
+            // 3a. 게임 상태가 '메인 메뉴'였다면, 메인 메뉴 UI를 다시 보여줍니다.
+            GameManager.Instance.UIManager.Show<MainMenu>(true);
+        }
+        else
+        {
+            // 3b. 그 외의 상태(Paused 등)였다면, 일시정지 메뉴 UI를 다시 보여줍니다.
+            GameManager.Instance.UIManager.Show<PauseMenu>(true);
+        }
     }
 }
