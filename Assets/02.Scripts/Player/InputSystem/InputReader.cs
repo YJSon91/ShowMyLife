@@ -29,6 +29,8 @@ using UnityEngine.Serialization;
 
         public Action onWalkToggled;
 
+        public Action onGodModeToggled;
+
         public event System.Action OnPausePerformed;
 
         public Vector2 LookInput { get; private set; }
@@ -184,6 +186,20 @@ using UnityEngine.Serialization;
             }
 
             OnPausePerformed?.Invoke();
+        }
+
+        /// <summary>
+        ///     OnGodMode 콜백이 호출될 때 수행할 동작을 정의합니다.
+        /// </summary>
+        /// <param name="context">콜백의 컨텍스트입니다.</param>
+        public void OnGodMode(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+            {
+                return;
+            }
+
+            onGodModeToggled?.Invoke();
         }
     }
 

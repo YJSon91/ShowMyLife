@@ -10,6 +10,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMovementController))]
 [RequireComponent(typeof(PlayerStateController))]
 [RequireComponent(typeof(InputReader))]
+[RequireComponent(typeof(PlayerGodModeController))]
 public class Player : MonoBehaviour
 {
     #region 컴포넌트 참조
@@ -33,6 +34,8 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerMovementController _movementController;
     [Tooltip("플레이어 상태를 관리하는 컴포넌트")]
     [SerializeField] private PlayerStateController _stateController;
+    [Tooltip("플레이어 갓모드를 제어하는 컴포넌트")]
+    [SerializeField] private PlayerGodModeController _godModeController;
     #endregion
 
     #region 속성
@@ -43,6 +46,7 @@ public class Player : MonoBehaviour
     public InputReader InputReader => _inputReader;
     public PlayerMovementController MovementController => _movementController;
     public PlayerStateController StateController => _stateController;
+    public PlayerGodModeController GodModeController => _godModeController;
 
     #endregion
 
@@ -90,6 +94,9 @@ public class Player : MonoBehaviour
 
         if (_stateController == null)
             _stateController = GetComponent<PlayerStateController>();
+
+        if (_godModeController == null)
+            _godModeController = GetComponent<PlayerGodModeController>();
 
         // 카메라 컨트롤러는 다른 게임 오브젝트에 있을 수 있으므로 자동으로 찾지 않음
 
