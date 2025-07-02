@@ -105,9 +105,9 @@ public class UIManager : MonoBehaviour
                 break;
 
             case GameManager.GameState.LevelClear:
-                // TODO: 레벨 클리어 UI를 보여주는 로직 (LevelClearUI 스크립트 필요)
-                // Show<LevelClearUI>(true);
-                Debug.Log("레벨 클리어 UI를 표시합니다.");
+                // 레벨 클리어 UI(엔딩)를 보여줍니다.
+                Show<EndingUI>(true);
+                Debug.Log("레벨 클리어! 엔딩 UI를 표시합니다.");
                 break;
         }
     }
