@@ -52,6 +52,8 @@ public class MainMenu : UiBase
     // '크레딧' 버튼을 위한 함수
     public void OnCreditButton()
     {
+        GameManager.Instance.UIManager.Hide<MainMenu>(); // 현재 메뉴를 숨깁니다.
+        GameManager.Instance.UIManager.Show<CreditUI>(true); // 크레딧 UI를 보여달라고 요청합니다.
         Debug.Log("크레딧 버튼 클릭됨!");
     }
     public override void Show(bool show)
