@@ -10,6 +10,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMovementController))]
 [RequireComponent(typeof(PlayerStateController))]
 [RequireComponent(typeof(InputReader))]
+[RequireComponent(typeof(PlayerGodModeController))]
 public class Player : MonoBehaviour
 {
     #region 컴포넌트 참조
@@ -33,6 +34,8 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerMovementController _movementController;
     [Tooltip("플레이어 상태를 관리하는 컴포넌트")]
     [SerializeField] private PlayerStateController _stateController;
+    [Tooltip("플레이어 갓모드를 제어하는 컴포넌트")]
+    [SerializeField] private PlayerGodModeController _godModeController;
     #endregion
 
     #region 속성
@@ -43,6 +46,7 @@ public class Player : MonoBehaviour
     public InputReader InputReader => _inputReader;
     public PlayerMovementController MovementController => _movementController;
     public PlayerStateController StateController => _stateController;
+    public PlayerGodModeController GodModeController => _godModeController;
 
     #endregion
 
@@ -50,20 +54,50 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        // 메인 카메라 Transform 캐싱
-        if (Camera.main != null)
-            _mainCameraTransform = Camera.main.transform;
-        else
-            Debug.LogError("Player: MainCamera를 찾을 수 없습니다!");
-            
         InitializeComponents();
-        
-        
     }
+
     private void Start()
     {
+        // Start에서 카메라 초기화 (씬이 완전히 로드된 후)
+        InitializeCamera();
+        
         // GameManager에 플레이어 등록
-        GameManager.Instance.RegisterPlayer(this);
+        if (GameManager.Instance != null)
+            GameManager.Instance.RegisterPlayer(this);
+    }
+
+    /// <summary>
+    /// 카메라 Transform을 초기화합니다
+    /// </summary>
+    private void InitializeCamera()
+    {
+        // 여러 방법으로 카메라를 찾아보기
+        Camera mainCamera = Camera.main;
+        
+        if (mainCamera == null)
+        {
+            // MainCamera 태그로 찾기
+            GameObject cameraObject = GameObject.FindWithTag("MainCamera");
+            if (cameraObject != null)
+                mainCamera = cameraObject.GetComponent<Camera>();
+        }
+        
+        if (mainCamera == null)
+        {
+            // Camera 컴포넌트로 찾기
+            mainCamera = FindObjectOfType<Camera>();
+        }
+        
+        if (mainCamera != null)
+        {
+            _mainCameraTransform = mainCamera.transform;
+            Debug.Log($"Player: 메인 카메라를 찾았습니다: {mainCamera.name}");
+        }
+        else
+        {
+            Debug.LogWarning("Player: 메인 카메라를 찾을 수 없습니다. 갓모드에서 월드 좌표계를 사용합니다.");
+        }
     }
     
     #endregion
@@ -91,6 +125,9 @@ public class Player : MonoBehaviour
         if (_stateController == null)
             _stateController = GetComponent<PlayerStateController>();
 
+        if (_godModeController == null)
+            _godModeController = GetComponent<PlayerGodModeController>();
+
         // 카메라 컨트롤러는 다른 게임 오브젝트에 있을 수 있으므로 자동으로 찾지 않음
 
         ValidateComponents();
@@ -108,10 +145,7 @@ public class Player : MonoBehaviour
             Debug.LogError("Player: PlayerAnimationController가 할당되지 않았습니다!");
 
         if (_inputReader == null)
-            Debug.LogError("Player: InputReader가 할당되지 않았습니다!");
-
-        if (_mainCameraTransform == null)
-            Debug.LogError("Player: MainCamera Transform이 할당되지 않았습니다!");
+            Debug.LogError("Player: InputReader가 할당되지 않았습니다!");       
 
         if (_movementController == null)
             Debug.LogError("Player: PlayerMovementController가 할당되지 않았습니다!");
