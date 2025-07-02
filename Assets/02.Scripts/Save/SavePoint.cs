@@ -45,6 +45,6 @@ public class SavePoint : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawWireCube(box.center, box.size);
-        UnityEditor.Handles.Label(transform.position + Vector3.up, $"Save: {saveId}");
+       //a UnityEditor.Handles.Label(transform.position + Vector3.up, $"Save: {saveId}");
     }
 }
