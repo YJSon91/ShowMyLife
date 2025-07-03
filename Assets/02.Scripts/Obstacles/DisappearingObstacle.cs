@@ -41,7 +41,7 @@ public class DisappearingObstacle : BaseObstacle
         }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (!useAutoLoop && !isProcessing && TryGetPlayerOnTop(out Transform _))
         {
