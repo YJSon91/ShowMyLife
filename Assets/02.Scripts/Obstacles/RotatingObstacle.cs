@@ -37,7 +37,7 @@ public class RotatingObstacle : BaseObstacle
         }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         Quaternion currentRotation = transform.rotation;
         Quaternion deltaRotation = currentRotation * Quaternion.Inverse(_lastRotation);

@@ -41,7 +41,6 @@ public class SettingsMenu : UiBase
             GameManager.Instance.UIManager.Add<SettingsMenu>(this);
         }
     }
-
     /// <summary>
     /// 설정창이 활성화될 때마다 호출됩니다.
     /// </summary>
@@ -52,7 +51,6 @@ public class SettingsMenu : UiBase
         // 2. 기본적으로 게임플레이 탭을 보여줍니다.
         ShowGameplayTab();
     }
-
     /// <summary>
     /// PlayerPrefs에 저장된 설정 값을 불러와 각 슬라이더에 적용합니다.
     /// </summary>
@@ -68,7 +66,6 @@ public class SettingsMenu : UiBase
 
         Debug.Log("저장된 설정을 불러왔습니다.");
     }
-
     // --- 탭 전환 함수들 ---
 
     /// <summary>
@@ -90,7 +87,7 @@ public class SettingsMenu : UiBase
         _gameplaySettingsPanel.SetActive(false);
         _volumeSettingsPanel.SetActive(true);
         _controlSettingsPanel.SetActive(false);
-        _videoSettingsPanel.SetActive(false);  
+        _videoSettingsPanel.SetActive(false);
     }
     public void ShowVideoTab()
     {
@@ -106,31 +103,52 @@ public class SettingsMenu : UiBase
         _controlSettingsPanel.SetActive(true);
         _videoSettingsPanel.SetActive(false);
     }
-
-    // --- 슬라이더 값 변경 시 호출될 함수들 ---
-    // 실제 기능 연동은 다른 파트 리팩토링 후 진행합니다. 지금은 로그만 출력합니다.
-
     public void OnCameraSensitivityChanged()
     {
         if (GameManager.Instance?.CameraManager != null)
         {
             float sensitivity = _cameraSensitivitySlider.value;
-            // CameraManager의 Sensitivity 프로퍼티에 직접 값 할당
+            // CameraManager의 Sensitivity 프로퍼티에 직접 값 할당하여 실시간 적용
             GameManager.Instance.CameraManager.Sensitivity = sensitivity;
         }
     }
-    public void OnMasterVolumeChanged() => Debug.Log("마스터 볼륨 변경 시도: " + _masterVolumeSlider.value);
-    public void OnBGMVolumeChanged() => Debug.Log("배경음악 볼륨 변경 시도: " + _bgmVolumeSlider.value);
-    public void OnSFXVolumeChanged() => Debug.Log("효과음 볼륨 변경 시도: " + _sfxVolumeSlider.value);
-
+    public void OnMasterVolumeChanged()
+    {
+        float volume = _masterVolumeSlider.value;
+        // GameManager를 통해 SoundManager의 볼륨 설정 함수를 호출합니다.
+        if (GameManager.Instance?.SoundManager != null)
+        {
+            GameManager.Instance.SoundManager.SetMasterVolume(volume);
+        }
+        // PlayerPrefs에 저장하는 로직도 OnApplyButton에 있어야 합니다.
+    }
+    public void OnBGMVolumeChanged()
+    {
+        float volume = _bgmVolumeSlider.value;
+        // GameManager를 통해 SoundManager의 BGM 볼륨 설정 함수를 호출합니다.
+        if (GameManager.Instance?.SoundManager != null)
+        {
+            GameManager.Instance.SoundManager.SetBgmVolume(volume);
+        }
+    }
+        // PlayerPrefs에 저장하는 로직도 OnApplyButton에 있어야 합니다.}
+    public void OnSFXVolumeChanged()
+    {
+        float volume = _sfxVolumeSlider.value;
+        // GameManager를 통해 SoundManager의 SFX 볼륨 설정 함수를 호출합니다.
+        if (GameManager.Instance?.SoundManager != null)
+        {
+            GameManager.Instance.SoundManager.SetSfxVolume(volume);
+        }
+    }
     // --- 하단 버튼 함수들 ---
 
     /// <summary>
-    /// 현재 슬라이더의 값들을 PlayerPrefs에 저장합니다.
+    /// 현재 UI의 값들을 PlayerPrefs에 저장하고, 게임에 즉시 적용합니다.
     /// </summary>
     public void OnApplyButton()
     {
-        FullScreenMode mode = FullScreenMode.Windowed;
+        FullScreenMode mode = FullScreenMode.FullScreenWindow; // 기본값 (테두리 없는 창)
         switch (_currentDisplayMode)
         {
             case DisplayMode.FullScreen:
@@ -143,24 +161,27 @@ public class SettingsMenu : UiBase
                 mode = FullScreenMode.Windowed;
                 break;
         }
-        Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, mode);
-        // PlayerPrefs에 현재 설정 값을 저장합니다.
+        // 현재 해상도를 유지하면서 화면 모드만 변경합니다.
+        Screen.SetResolution(Screen.width, Screen.height, mode);
         PlayerPrefs.SetInt("DisplayMode", (int)_currentDisplayMode);
+        Debug.Log($"디스플레이 모드를 '{mode}' (으)로 변경 및 저장했습니다.");
+
+        //  현재 슬라이더의 값들을 PlayerPrefs에 저장합니다.
         PlayerPrefs.SetFloat("CameraSensitivity", _cameraSensitivitySlider.value);
         PlayerPrefs.SetFloat("MasterVolume", _masterVolumeSlider.value);
         PlayerPrefs.SetFloat("BGMVolume", _bgmVolumeSlider.value);
         PlayerPrefs.SetFloat("SFXVolume", _sfxVolumeSlider.value);
-
-        // 변경사항을 즉시 디스크에 저장합니다.
         PlayerPrefs.Save();
-
-        Debug.Log("설정이 적용되었습니다.");
-
-        // TODO: 변경된 값을 즉시 게임에 적용하는 로직 호출 (예: GameManager.Instance.SoundManager.SetMasterVolume(...))
+              
+        //  저장된 값을 바탕으로, 실제 게임에 즉시 적용합니다.
+        //    (슬라이더를 움직이지 않고 '적용'만 눌렀을 경우를 대비)
+        OnCameraSensitivityChanged();
+        OnMasterVolumeChanged();
+        OnBGMVolumeChanged();
+        OnSFXVolumeChanged();     
+       
+        Debug.Log("변경된 설정이 게임에 즉시 적용되었습니다.");
     }
-    /// <summary>
-    /// 설정을 적용하고 창을 닫습니다.
-    /// </summary>
     /// <summary>
     /// 설정을 적용하고 창을 닫습니다.
     /// </summary>
@@ -175,7 +196,7 @@ public class SettingsMenu : UiBase
     public void OnCancelButton()
     {
         CloseSettingsMenu(); // 창을 닫는 로직을 공통 함수로 분리
-    }  
+    }
     public void OnDisplayModeNext()
     {
         _currentDisplayMode++;
@@ -212,4 +233,4 @@ public class SettingsMenu : UiBase
             GameManager.Instance.UIManager.Show<PauseMenu>(true);
         }
     }
-}
+}    

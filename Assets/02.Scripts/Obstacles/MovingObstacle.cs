@@ -18,7 +18,7 @@ public class MovingObstacle : BaseObstacle
         StartMoving();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         Vector3 currentPosition = transform.position;
         Vector3 delta = currentPosition - _lastPosition;
