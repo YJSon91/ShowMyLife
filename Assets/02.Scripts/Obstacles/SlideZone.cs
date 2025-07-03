@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening; // DOTween 네임스페이스 추가
 
 /// <summary>
 /// 미끄럼틀 장애물 트리거 영역 관리
@@ -12,7 +13,7 @@ public class SlideZone : MonoBehaviour
     [Tooltip("미끄럼틀 진행 방향을 나타내는 Transform (없으면 현재 오브젝트의 forward 사용)")]
     [SerializeField] private Transform _slideDirection;
     
-    [Tooltip("미끄러지는 기본 속도")]
+    [Tooltip("미끄러지는 최대 속도")]
     [SerializeField] private float _slideForce = 8f;
     
     [Tooltip("슬립 중 중력 배수")]
@@ -21,10 +22,22 @@ public class SlideZone : MonoBehaviour
     [Tooltip("슬립 중 플레이어 입력 무시 정도 (0: 완전 제어 가능, 1: 완전 제어 불가)")]
     [SerializeField] private float _inputReduction = 0.8f;
 
+    [Tooltip("초기 슬라이딩 속도")]
+    [SerializeField] private float _initialSlideSpeed = 2f;
+
+    [Tooltip("최대 속도까지 가속하는 시간 (초)")]
+    [SerializeField] private float _accelerationDuration = 1.5f;
+
+    [Tooltip("가속 곡선 (비어있으면 기본 InQuad 사용)")]
+    [SerializeField] private AnimationCurve _accelerationCurve;
+
     [Header("디버그")]
     [Tooltip("슬립 방향을 Scene 뷰에서 시각적으로 표시")]
     [SerializeField] private bool _showDirectionGizmo = true;
     [SerializeField] private float _gizmoLength = 2f;
+
+    // 현재 활성화된 트윈 저장용
+    private Tween _currentAccelerationTween;
 
     #endregion
 
@@ -33,6 +46,15 @@ public class SlideZone : MonoBehaviour
     private void Start()
     {
         ValidateSettings();
+        
+        // 가속 곡선이 비어있으면 기본 곡선 생성
+        if (_accelerationCurve.keys.Length == 0)
+        {
+            _accelerationCurve = new AnimationCurve(
+                new Keyframe(0, 0, 0, 1),
+                new Keyframe(1, 1, 1, 0)
+            );
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -44,8 +66,24 @@ public class SlideZone : MonoBehaviour
             if (player != null)
             {
                 Vector3 slideDir = GetSlideDirection();
-                player.MovementController.ActivateSlipping(slideDir, _slideForce, _slipGravityMultiplier, _inputReduction);
-                Debug.Log($"플레이어 슬립 시작 - 방향: {slideDir}");
+                
+                // 먼저 초기 슬라이딩 상태 활성화
+                player.MovementController.ActivateSlipping(slideDir, _initialSlideSpeed, _slipGravityMultiplier, _inputReduction);
+                Debug.Log($"플레이어 슬립 시작 - 방향: {slideDir}, 초기 속도: {_initialSlideSpeed}");
+                
+                // 기존 트윈이 있으면 중단
+                if (_currentAccelerationTween != null && _currentAccelerationTween.IsActive())
+                {
+                    _currentAccelerationTween.Kill();
+                }
+                
+                // DOTween을 사용하여 초기 속도에서 최대 속도로 부드럽게 가속
+                _currentAccelerationTween = DOVirtual.Float(_initialSlideSpeed, _slideForce, _accelerationDuration, (speed) => {
+                    // 현재 속도 업데이트
+                    player.MovementController.UpdateSlideSpeed(speed);
+                }).SetEase(_accelerationCurve);
+                
+                Debug.Log($"가속 시작: {_initialSlideSpeed} → {_slideForce}, 시간: {_accelerationDuration}초");
             }
             else
             {
@@ -61,9 +99,26 @@ public class SlideZone : MonoBehaviour
             var player = other.GetComponentInParent<Player>();
             if (player != null)
             {
+                // 가속 트윈 중단
+                if (_currentAccelerationTween != null && _currentAccelerationTween.IsActive())
+                {
+                    _currentAccelerationTween.Kill();
+                    _currentAccelerationTween = null;
+                }
+                
                 player.MovementController.DeactivateSlipping();
                 Debug.Log("플레이어 슬립 종료");
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 안전하게 트윈 정리
+        if (_currentAccelerationTween != null && _currentAccelerationTween.IsActive())
+        {
+            _currentAccelerationTween.Kill();
+            _currentAccelerationTween = null;
         }
     }
 
@@ -110,6 +165,24 @@ public class SlideZone : MonoBehaviour
             _slideForce = 8f;
         }
 
+        if (_initialSlideSpeed < 0f)
+        {
+            Debug.LogWarning($"SlideZone ({gameObject.name}): _initialSlideSpeed가 0 미만입니다. 0으로 설정합니다.");
+            _initialSlideSpeed = 0f;
+        }
+        
+        if (_initialSlideSpeed > _slideForce)
+        {
+            Debug.LogWarning($"SlideZone ({gameObject.name}): _initialSlideSpeed가 _slideForce보다 큽니다. _slideForce와 동일하게 설정합니다.");
+            _initialSlideSpeed = _slideForce;
+        }
+        
+        if (_accelerationDuration <= 0f)
+        {
+            Debug.LogWarning($"SlideZone ({gameObject.name}): _accelerationDuration이 0 이하입니다. 기본값 1.5f로 설정합니다.");
+            _accelerationDuration = 1.5f;
+        }
+
         if (_slipGravityMultiplier <= 0f)
         {
             Debug.LogWarning($"SlideZone ({gameObject.name}): _slipGravityMultiplier가 0 이하입니다. 기본값 2f로 설정합니다.");
@@ -146,7 +219,8 @@ public class SlideZone : MonoBehaviour
 
         // 방향 텍스트 (에디터에서만)
         #if UNITY_EDITOR
-        UnityEditor.Handles.Label(endPos + Vector3.up * 0.5f, $"슬립 방향\n속도: {_slideForce}\n중력: x{_slipGravityMultiplier}");
+        UnityEditor.Handles.Label(endPos + Vector3.up * 0.5f, 
+            $"슬립 방향\n초기 속도: {_initialSlideSpeed}\n최대 속도: {_slideForce}\n가속 시간: {_accelerationDuration}초\n중력: x{_slipGravityMultiplier}");
         #endif
     }
 
