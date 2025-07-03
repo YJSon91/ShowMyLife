@@ -181,6 +181,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.Player.Enable();
                 Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
                 Cursor.visible = false;
+                SoundManager?.PlayBGM(BgmType.Main);
                 break;
 
             case GameState.Paused:
@@ -190,10 +191,12 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
+                SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
             case GameState.MainMenu:
-                 break;
+                SoundManager?.PlayBGM(BgmType.Lobby);
+                break;
 
             case GameState.LevelClear:
                 // 메뉴, 일시정지, 클리어 상태에서는 UI 조작만 가능해야 합니다.
@@ -203,8 +206,22 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = true;
                 break;
         }
-        // --- 수정 끝 ---
-
+        // 새로운 게임 상태에 맞는 배경음악을 재생합니다.
+        if (SoundManager != null)
+        {
+            switch (newState)
+            {
+                case GameState.MainMenu:
+                    SoundManager.PlayBGM(BgmType.Lobby);
+                    break;
+                case GameState.Playing:
+                    SoundManager.PlayBGM(BgmType.Main);
+                    break;
+                case GameState.LevelClear:
+                    SoundManager.PlayBGM(BgmType.GameOver); 
+                    break;
+            }
+        }
         // 씬 로딩 로직
         if (newState == GameState.Playing)
         {
