@@ -31,6 +31,7 @@ public class BaseObstacle : MonoBehaviour
             // 충돌한 오브젝트가 플레이어인지 확인
             if (hit.collider.transform == playerTransform || hit.collider.transform.IsChildOf(playerTransform))
             {
+            
                 player = playerTransform;
                 return true;
             }
