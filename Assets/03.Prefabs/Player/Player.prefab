@@ -675,7 +675,7 @@ GameObject:
   - component: {fileID: 6189176186302233557}
   m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1285,7 +1285,7 @@ GameObject:
   - component: {fileID: 4426709595952000257}
   m_Layer: 3
   m_Name: Character_Component
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1299,7 +1299,7 @@ Transform:
   m_GameObject: {fileID: 7404158023314197825}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 57.4, y: 0, z: -66.14}
+  m_LocalPosition: {x: 44.1, y: 15.1, z: -20.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1321,7 +1321,7 @@ Animator:
   m_GameObject: {fileID: 7404158023314197825}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d9dbc514e3829c24c90fd23a9446b805, type: 3}
-  m_Controller: {fileID: 22100000, guid: 86d6fd0192922ed41bee8be5d6523ec2, type: 2}
+  m_Controller: {fileID: 22100000, guid: fae551e81dc701d45b3b20bd27fefa94, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1391,7 +1391,7 @@ MonoBehaviour:
   _inputReader: {fileID: 2070509320222949198}
   _movementController: {fileID: 4733781252321742603}
   _stateController: {fileID: 1382464110842281991}
-  _godModeController: {fileID: 0}
+  _godModeController: {fileID: 4426709595952000257}
 --- !u!114 &4065016933934461777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1586,7 +1586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255e3ac4108552e44906ff518060fdd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 0}
+  _player: {fileID: 2448309932646984854}
   _flySpeed: 10
   _fastFlySpeed: 20
   _slowFlySpeed: 5
@@ -2019,7 +2019,7 @@ GameObject:
   - component: {fileID: 9096275727351349169}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

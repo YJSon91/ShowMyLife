@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     // --- 하위 매니저 참조 ---
     public UIManager UIManager { get; private set; }
-    public LevelManager LevelManager { get; private set; }
+    public StageManager StageManager { get; private set; }
     public SoundManager SoundManager { get; private set; }
     public ObstacleManager ObstacleManager { get; private set; }
     public Player Player { get; private set; }
@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
 
     // --- 하위 매니저 등록 메서드 ---
     public void RegisterUIManager(UIManager manager) => UIManager = manager;
-    public void RegisterLevelManager(LevelManager manager) => LevelManager = manager;
+    public void RegisterStageManager(StageManager manager) => StageManager = manager;
     public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
     public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
@@ -184,7 +184,17 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.Paused:
+
+                // 일시정지 상태에서는 UI 조작만 가능해야 합니다.
+                PlayerControls?.Player.Disable();
+                PlayerControls?.UI.Enable();
+                Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
+                Cursor.visible = true;
+                break;
+
             case GameState.MainMenu:
+                 break;
+
             case GameState.LevelClear:
                 // 메뉴, 일시정지, 클리어 상태에서는 UI 조작만 가능해야 합니다.
                 PlayerControls?.Player.Disable();
@@ -227,17 +237,20 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 플레이어의 리스폰 절차를 시작하도록 요청합니다.
     /// </summary>
-    //public void RequestPlayerRespawn()
-    //{
-    //    if (LevelManager != null && Player != null)
-    //    {
-    //        Vector3 respawnPoint = LevelManager.GetCurrentRespawnPoint();
-    //        Player.Respawn(respawnPoint);
-    //        Debug.Log($"[GameManager] Player Respawn Requested at {respawnPoint}");
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError("[GameManager] LevelManager 또는 Player가 등록되지 않아 리스폰할 수 없습니다.");
-    //    }
-    //}
+    public void RequestPlayerRespawn()
+    {
+        // StageManager와 Player가 모두 등록되었는지 확인
+        if (StageManager != null && Player != null)
+        {
+            // 1. StageManager에게 리스폰 위치를 물어봅니다.
+            Vector3 respawnPoint = StageManager.GetCurrentRespawnPoint();
+            // 2. PlayerController에게 해당 위치로 리스폰하라고 명령합니다.
+            //Player.Respawn(respawnPoint);
+            Debug.Log($"[GameManager] Player 리스폰 요청 완료: {respawnPoint}");
+        }
+        else
+        {
+            Debug.LogError("[GameManager] StageManager 또는 Player가 등록되지 않아 리스폰할 수 없습니다.");
+        }
+    }
 }

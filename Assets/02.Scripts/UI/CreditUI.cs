@@ -6,7 +6,7 @@ public class CreditUI : UiBase
 {
     [SerializeField] private RectTransform _creditTextRect; // 스크롤될 텍스트의 RectTransform
     [SerializeField] private TextMeshProUGUI _playtimeText;
-    [SerializeField] private float _scrollDuration = 30f; // 전체 스크롤 시간
+    [SerializeField] private float _scrollDuration = 25f; // 전체 스크롤 시간
 
     public override void Init()
     {
@@ -21,6 +21,7 @@ public class CreditUI : UiBase
             // TODO: GameManager로부터 실제 플레이 시간 받아오기
             _playtimeText.text = "00:25:30"; // 임시 플레이 시간
             StartScrolling();
+            Debug.Log("CreditUI is now visible, starting scroll animation.");
         }
     }
 
@@ -33,8 +34,14 @@ public class CreditUI : UiBase
         _creditTextRect.DOAnchorPosY(_creditTextRect.rect.height, _scrollDuration)
                      .SetEase(Ease.Linear)
                      .OnComplete(() => {
-                         // 스크롤이 끝나면 게임 상태를 MainMenu로 변경하도록 요청
+                         // 1. 게임 상태를 MainMenu로 변경하도록 요청합니다.
                          GameManager.Instance.UpdateGameState(GameManager.GameState.MainMenu);
+
+                         // 2. UIManager에게 MainMenuUI를 직접 활성화하도록 요청합니다.
+                         GameManager.Instance.UIManager.Show<MainMenu>(true);
+
+                         // 3. 자신의 역할은 끝났으니, 크레딧 UI는 숨깁니다.
+                         GameManager.Instance.UIManager.Hide<CreditUI>();
                      });
     }
 }
