@@ -601,6 +601,19 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     /// <summary>
+    /// 슬립 속도를 업데이트합니다 (DOTween에서 호출)
+    /// </summary>
+    /// <param name="newSpeed">새로운 슬립 속도</param>
+    public void UpdateSlideSpeed(float newSpeed)
+    {
+        if (_isSlipping)
+        {
+            _slipForce = newSpeed;
+            Debug.Log($"슬립 속도 업데이트: {_slipForce}");
+        }
+    }
+
+    /// <summary>
     /// 플레이어의 캡슐 크기를 조정합니다
     /// </summary>
     /// <param name="crouching">플레이어가 웅크리고 있는지 여부</param>

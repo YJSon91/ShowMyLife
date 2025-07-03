@@ -16,7 +16,9 @@ public enum SfxType
 {
     ButtonClick,
     Jump,
-    Land
+    Land,
+    Walk,
+    Run
     // ... 필요에 따라 추가
 }
 
@@ -37,10 +39,7 @@ public class SoundManager : MonoBehaviour
     private const string SFX_VOLUME_KEY = "SfxVolume";
 
     private void Awake()
-    {
-
-
-
+    {    
         // --- 수정 2: Init() 함수 내용을 Awake()로 통합하여 간소화 ---
         bgmSource = gameObject.AddComponent<AudioSource>();
         sfxSource = gameObject.AddComponent<AudioSource>();

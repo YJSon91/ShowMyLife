@@ -44,4 +44,16 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         transform.DOKill(); // 이전 애니메이션 중단
         transform.DOScale(_originalScale, _animationDuration).SetEase(Ease.OutQuad);
     }
+
+    /// <summary>
+    /// 마우스 포인터가 이 UI 요소를 클릭했을 때 자동으로 호출됩니다.
+    /// </summary>
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // GameManager를 통해 SoundManager에게 버튼 클릭 효과음 재생을 요청합니다.
+        if (GameManager.Instance?.SoundManager != null)
+        {
+           // GameManager.Instance.SoundManager.PlayButtonClickSFX();
+        }
+    }
 }
