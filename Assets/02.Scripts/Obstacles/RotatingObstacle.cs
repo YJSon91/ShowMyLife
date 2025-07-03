@@ -20,7 +20,7 @@ public class RotatingObstacle : BaseObstacle
     private Quaternion _lastRotation;
     private float _currentAngle = 0f;
 
-    //public float power;
+    public float power;
 
     private void Start()
     {
@@ -89,12 +89,12 @@ public class RotatingObstacle : BaseObstacle
                 
                 Debug.Log("cc.move 작동중");
 
-                // if ((player.position - before).sqrMagnitude < 0.001f || !cc.isGrounded)
-                // {
-                //     Vector3 bounceDir = (player.position - transform.position).normalized;
-                //     float bouncePower = 0.01f; // 튕김 세기(필요시 조정)
-                //     cc.Move(bounceDir * bouncePower);
-                // }
+                if ((player.position - before).sqrMagnitude < 0.01f || !cc.isGrounded)
+                {
+                    Vector3 bounceDir = (player.position - transform.position).normalized;
+                    float bouncePower = 0.1f; // 튕김 세기(필요시 조정)
+                    cc.Move(bounceDir * bouncePower);
+                }
             }
             else
                 player.position = newPos;
