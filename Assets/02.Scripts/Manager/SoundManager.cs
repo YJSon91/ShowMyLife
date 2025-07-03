@@ -16,7 +16,9 @@ public enum SfxType
 {
     ButtonClick,
     Jump,
-    Land
+    Land,
+    Walk,
+    Run
     // ... 필요에 따라 추가
 }
 
