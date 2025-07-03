@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// 플레이어의 모든 컴포넌트를 관리하는 중앙 클래스
 /// </summary>
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(PlayerAnimationController))]
 [RequireComponent(typeof(PlayerMovementController))]
 [RequireComponent(typeof(PlayerStateController))]
@@ -18,8 +19,10 @@ public class Player : MonoBehaviour
     [Header("필수 컴포넌트")]
     [Tooltip("플레이어 애니메이션을 제어하는 컴포넌트")]
     [SerializeField] private PlayerAnimationController _animationController;
-    [Tooltip("플레이어 이동을 제어하는 Character Controller 컴포넌트")]
-    [SerializeField] private CharacterController _characterController;
+    [Tooltip("플레이어 이동을 제어하는 Rigidbody 컴포넌트")]
+    [SerializeField] private Rigidbody _rigidbody;
+    [Tooltip("플레이어 충돌을 제어하는 CapsuleCollider 컴포넌트")]
+    [SerializeField] private CapsuleCollider _capsuleCollider;
     //메인카메라 트랜스폼 캐싱
     private Transform _mainCameraTransform;
     
@@ -41,7 +44,8 @@ public class Player : MonoBehaviour
     #region 속성
 
     public PlayerAnimationController AnimationController => _animationController;
-    public CharacterController CharacterController => _characterController;
+    public Rigidbody Rigidbody => _rigidbody;
+    public CapsuleCollider CapsuleCollider => _capsuleCollider;
     public Transform MainCameraTransform => _mainCameraTransform;
     public InputReader InputReader => _inputReader;
     public PlayerMovementController MovementController => _movementController;
@@ -110,8 +114,11 @@ public class Player : MonoBehaviour
     private void InitializeComponents()
     {
         // 컴포넌트가 Inspector에서 할당되지 않은 경우 자동으로 찾기
-        if (_characterController == null)
-            _characterController = GetComponent<CharacterController>();
+        if (_rigidbody == null)
+            _rigidbody = GetComponent<Rigidbody>();
+            
+        if (_capsuleCollider == null)
+            _capsuleCollider = GetComponent<CapsuleCollider>();
 
         if (_animationController == null)
             _animationController = GetComponent<PlayerAnimationController>();
@@ -138,8 +145,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void ValidateComponents()
     {
-        if (_characterController == null)
-            Debug.LogError("Player: CharacterController가 할당되지 않았습니다!");
+        if (_rigidbody == null)
+            Debug.LogError("Player: Rigidbody가 할당되지 않았습니다!");
+            
+        if (_capsuleCollider == null)
+            Debug.LogError("Player: CapsuleCollider가 할당되지 않았습니다!");
 
         if (_animationController == null)
             Debug.LogError("Player: PlayerAnimationController가 할당되지 않았습니다!");

@@ -16,6 +16,7 @@ public class PlayerStateController : MonoBehaviour
     private PlayerAnimationController _animationController;
     private PlayerMovementController _movementController;
     private InputReader _inputReader;
+    private Rigidbody _rigidbody;
 
     #endregion
 
@@ -108,6 +109,7 @@ public class PlayerStateController : MonoBehaviour
             _animationController = _player.AnimationController;
             _movementController = _player.MovementController;
             _inputReader = _player.InputReader;
+            _rigidbody = _player.Rigidbody;
         }
         else
         {
@@ -130,6 +132,9 @@ public class PlayerStateController : MonoBehaviour
 
         if (_inputReader == null)
             Debug.LogError("PlayerStateController: InputReader가 할당되지 않았습니다!");
+            
+        if (_rigidbody == null)
+            Debug.LogError("PlayerStateController: Rigidbody가 할당되지 않았습니다!");
     }
 
     #endregion
@@ -282,18 +287,9 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void HandleJumpInput()
     {
-        switch (_currentState)
+        if (_currentState == PlayerAnimationState.Movement && _movementController.IsGrounded)
         {
-            case PlayerAnimationState.Movement:
-                SwitchState(PlayerAnimationState.Jump);
-                break;
-            case PlayerAnimationState.Crouch:
-                if (!_movementController._cannotStandUp)
-                {
-                    _movementController.DeactivateCrouch();
-                    SwitchState(PlayerAnimationState.Jump);
-                }
-                break;
+            SwitchState(PlayerAnimationState.Jump);
         }
     }
 
@@ -385,12 +381,9 @@ public class PlayerStateController : MonoBehaviour
     private void EnterJumpState()
     {
         // 애니메이션 설정
-        _animationController.SetJumping(true);
-
-        // 슬라이딩 비활성화
-        _movementController.DeactivateSliding();
-
-        // 점프 힘 적용
+        _animationController.SetJumpTrigger();
+        
+        // 물리 적용
         _movementController.Jump();
     }
 
@@ -399,24 +392,23 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void UpdateJumpState()
     {
-        // 중력 적용
-        _movementController.ApplyGravity();
-
-        // 하강 시작하면 낙하 상태로 전환
-        if (_movementController._velocity.y <= 0f)
+        // 리지드바디의 속도를 확인하여 상승 중인지 확인
+        if (_rigidbody.velocity.y < 0)
         {
-            _animationController.SetJumping(false);
             SwitchState(PlayerAnimationState.Fall);
             return;
         }
-
-        // 지면 확인
-        _movementController.GroundedCheck();
-
-        // 이동 로직 실행
+        
+        // 지면에 착지했는지 확인
+        if (_movementController.IsGrounded)
+        {
+            SwitchState(PlayerAnimationState.Movement);
+            return;
+        }
+        
+        // 이동 방향 계산 및 회전 적용
         _movementController.CalculateMoveDirection();
         _movementController.FaceMoveDirection();
-        _movementController.Move();
     }
 
     /// <summary>
@@ -425,7 +417,7 @@ public class PlayerStateController : MonoBehaviour
     private void ExitJumpState()
     {
         // 애니메이션 설정
-        _animationController.SetJumping(false);
+        _animationController.SetJumpTrigger();
     }
 
     #endregion
@@ -451,23 +443,25 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void UpdateFallState()
     {
-        // 지면 확인
-        _movementController.GroundedCheck();
-
-        // 이동 로직 실행
-        _movementController.CalculateMoveDirection();
-        _movementController.FaceMoveDirection();
-        _movementController.ApplyGravity();
-        _movementController.Move();
-
-        // 낙하 지속 시간 업데이트
-        _movementController.UpdateFallingDuration();
-
-        // 지면에 착지하면 이동 상태로 전환
+        // 지면에 착지했는지 확인
         if (_movementController.IsGrounded)
         {
+            // 낙하 시간이 일정 이상이면 착지 애니메이션 재생
+            if (_movementController.FallingDuration > 0.5f)
+            {
+                _animationController.SetLandingTrigger();
+            }
+            
             SwitchState(PlayerAnimationState.Movement);
+            return;
         }
+        
+        // 낙하 지속 시간 업데이트
+        _movementController.UpdateFallingDuration();
+        
+        // 이동 방향 계산 및 회전 적용
+        _movementController.CalculateMoveDirection();
+        _movementController.FaceMoveDirection();
     }
 
     /// <summary>
