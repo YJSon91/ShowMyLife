@@ -38,8 +38,8 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-       
-        
+
+
 
         // --- 수정 2: Init() 함수 내용을 Awake()로 통합하여 간소화 ---
         bgmSource = gameObject.AddComponent<AudioSource>();
