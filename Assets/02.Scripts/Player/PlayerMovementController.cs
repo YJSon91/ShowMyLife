@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// 플레이어의 이동 및 물리 동작을 처리하는 컨트롤러
@@ -13,8 +12,8 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private Player _player;
     
     // 내부 컴포넌트 참조 (초기화 시 할당)
-    private Rigidbody _rigidbody;
-    private CapsuleCollider _capsuleCollider;
+    private CharacterController _controller;
+    
     private InputReader _inputReader;
 
     #endregion
@@ -40,7 +39,7 @@ public class PlayerMovementController : MonoBehaviour
 
     #endregion
 
-    #region 캡슐 콜라이더 설정
+    #region 케릭터 컨트롤러 캡슐 설정
 
     [Header("캡슐 값")]
     [Tooltip("플레이어 캡슐의 서있는 높이")]
@@ -77,8 +76,6 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _inclineAngle;
     [Tooltip("거친 지면에 유용함")]
     [SerializeField] private float _groundedOffset = -0.14f;
-    [Tooltip("지면 체크 거리")]
-    [SerializeField] private float _groundCheckDistance = 0.2f;
 
     #endregion
 
@@ -191,19 +188,6 @@ public class PlayerMovementController : MonoBehaviour
         _inputReader.onSprintDeactivated += DeactivateSprint;
         _inputReader.onCrouchActivated += ActivateCrouch;
         _inputReader.onCrouchDeactivated += DeactivateCrouch;
-        
-        // Rigidbody 설정
-        ConfigureRigidbody();
-    }
-    
-    private void ConfigureRigidbody()
-    {
-        if (_rigidbody != null)
-        {
-            _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-            _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-            _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        }
     }
 
     private void OnDestroy()
@@ -214,67 +198,6 @@ public class PlayerMovementController : MonoBehaviour
         _inputReader.onSprintDeactivated -= DeactivateSprint;
         _inputReader.onCrouchActivated -= ActivateCrouch;
         _inputReader.onCrouchDeactivated -= DeactivateCrouch;
-    }
-    
-    private void FixedUpdate()
-    {
-        // 지면 체크
-        GroundedCheck();
-        
-        // 이동 방향 계산
-        CalculateMoveDirection();
-        
-        // 이동 적용
-        Move();
-        
-        // 회전 적용
-        FaceMoveDirection();
-        
-        // 낙하 지속 시간 업데이트
-        if (!_isGrounded)
-        {
-            UpdateFallingDuration();
-        }
-        else
-        {
-            ResetFallingDuration();
-        }
-        
-        // 천장 높이 체크 (웅크리기 관련)
-        if (_isCrouching)
-        {
-            CeilingHeightCheck();
-        }
-    }
-    
-    private void OnCollisionEnter(Collision collision)
-    {
-        // 지면과 충돌 시 추가 처리
-        if (IsGroundLayer(collision.gameObject.layer))
-        {
-            _isGrounded = true;
-            ResetFallingDuration();
-        }
-    }
-    
-    private void OnCollisionExit(Collision collision)
-    {
-        // 지면과 분리 시 추가 처리
-        if (IsGroundLayer(collision.gameObject.layer))
-        {
-            StartCoroutine(CheckGroundedWithDelay(0.1f));
-        }
-    }
-    
-    private IEnumerator CheckGroundedWithDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        GroundedCheck();
-    }
-    
-    private bool IsGroundLayer(int layer)
-    {
-        return ((1 << layer) & _groundLayerMask) != 0;
     }
 
     #endregion
@@ -293,8 +216,8 @@ public class PlayerMovementController : MonoBehaviour
         // Player 컴포넌트에서 필요한 컴포넌트 가져오기
         if (_player != null)
         {
-            _rigidbody = _player.Rigidbody;
-            _capsuleCollider = _player.CapsuleCollider;
+            _controller = _player.CharacterController;
+            
             _inputReader = _player.InputReader;
         }
         else
@@ -310,11 +233,9 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     private void ValidateComponents()
     {
-        if (_rigidbody == null)
-            Debug.LogError("PlayerMovementController: Rigidbody가 할당되지 않았습니다!");
-            
-        if (_capsuleCollider == null)
-            Debug.LogError("PlayerMovementController: CapsuleCollider가 할당되지 않았습니다!");
+        if (_controller == null)
+            Debug.LogError("PlayerMovementController: CharacterController가 할당되지 않았습니다!");
+        
 
         if (_inputReader == null)
             Debug.LogError("PlayerMovementController: InputReader가 할당되지 않았습니다!");
@@ -332,17 +253,7 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void Move()
     {
-        // 리지드바디를 사용한 이동 처리
-        Vector3 moveVelocity = new Vector3(_velocity.x, _rigidbody.velocity.y, _velocity.z);
-        
-        // 슬립 중이거나 지면에 있지 않은 경우 중력 적용
-        if (_isSlipping || !_isGrounded)
-        {
-            // 현재 수직 속도 유지
-            moveVelocity.y = _rigidbody.velocity.y;
-        }
-        
-        _rigidbody.velocity = moveVelocity;
+        _controller.Move(_velocity * Time.deltaTime);
     }
 
     /// <summary>
@@ -427,11 +338,9 @@ public class PlayerMovementController : MonoBehaviour
             _gravityMultiplier * _slipGravityMultiplier : 
             _gravityMultiplier;
             
-        // 리지드바디는 자체적으로 중력을 적용하므로 추가 중력만 적용
-        if (!_isGrounded)
+        if (_velocity.y > Physics.gravity.y)
         {
-            Vector3 extraGravity = Physics.gravity * (gravityMultiplier - 1f);
-            _rigidbody.AddForce(extraGravity, ForceMode.Acceleration);
+            _velocity.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
 
@@ -440,6 +349,8 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void FaceMoveDirection()
     {
+        // _cameraForward = _cameraController.GetCameraForwardZeroedYNormalised();
+        // Camera.main을 사용하여 카메라 전방 벡터 얻기
         Vector3 characterForward = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
         Vector3 characterRight = new Vector3(transform.right.x, 0f, transform.right.z).normalized;
         Vector3 directionForward = new Vector3(_moveDirection.x, 0f, _moveDirection.z).normalized;
@@ -477,17 +388,14 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
+    
+
     /// <summary>
     /// 플레이어에게 점프 힘을 적용합니다
     /// </summary>
     public void Jump()
     {
-        if (_isGrounded)
-        {
-            _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0f, _rigidbody.velocity.z);
-            _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
-            _isGrounded = false;
-        }
+        _velocity = new Vector3(_velocity.x, _jumpForce, _velocity.z);
     }
 
     #endregion
@@ -499,26 +407,12 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void GroundedCheck()
     {
-        // 레이캐스트로 지면 체크
         Vector3 spherePosition = new Vector3(
-            transform.position.x,
-            transform.position.y - _groundedOffset,
-            transform.position.z
+            _controller.transform.position.x,
+            _controller.transform.position.y - _groundedOffset,
+            _controller.transform.position.z
         );
-        
-        bool wasGrounded = _isGrounded;
-        _isGrounded = Physics.CheckSphere(spherePosition, _capsuleCollider.radius, _groundLayerMask, QueryTriggerInteraction.Ignore);
-
-        if (_isGrounded && !wasGrounded)
-        {
-            // 지면에 착지
-            ResetFallingDuration();
-        }
-        else if (!_isGrounded && wasGrounded)
-        {
-            // 지면에서 떨어짐
-            _fallStartTime = Time.time;
-        }
+        _isGrounded = Physics.CheckSphere(spherePosition, _controller.radius, _groundLayerMask, QueryTriggerInteraction.Ignore);
 
         if (_isGrounded)
         {
@@ -727,13 +621,13 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (crouching)
         {
-            _capsuleCollider.height = _capsuleCrouchingHeight;
-            _capsuleCollider.center = new Vector3(0f, _capsuleCrouchingCentre, 0f);
+            _controller.center = new Vector3(0f, _capsuleCrouchingCentre, 0f);
+            _controller.height = _capsuleCrouchingHeight;
         }
         else
         {
-            _capsuleCollider.height = _capsuleStandingHeight;
-            _capsuleCollider.center = new Vector3(0f, _capsuleStandingCentre, 0f);
+            _controller.center = new Vector3(0f, _capsuleStandingCentre, 0f);
+            _controller.height = _capsuleStandingHeight;
         }
     }
 

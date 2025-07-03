@@ -75,30 +75,29 @@ public class RotatingObstacle : BaseObstacle
             Vector3 newPos = transform.position + deltaRotation * dir;
             Vector3 delta = newPos - player.position;
 
-            // 리지드바디 우선 사용
             Rigidbody rb = player.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                // 리지드바디 이동
-                rb.MovePosition(newPos);
-                return;
-            }
-
-            // 리지드바디가 없는 경우 CharacterController 사용 (이전 코드와의 호환성)
             CharacterController cc = player.GetComponentInChildren<CharacterController>();
-            PlayerMovementController playerMovement = player.GetComponentInChildren<PlayerMovementController>();
-            
-            if (cc != null)
+
+            if (rb != null)
+                rb.MovePosition(newPos);
+            else if (cc != null)
             {
+                Vector3 before = player.position;
+
                 cc.Move(delta);
-                if (playerMovement != null)
-                    playerMovement.ApplyGravity();
+                //cc.Move(transform.right * -power * Time.deltaTime);
+                
+                Debug.Log("cc.move 작동중");
+
+                if ((player.position - before).sqrMagnitude < 0.01f || !cc.isGrounded)
+                {
+                    Vector3 bounceDir = (player.position - transform.position).normalized;
+                    float bouncePower = 0.1f; // 튕김 세기(필요시 조정)
+                    cc.Move(bounceDir * bouncePower);
+                }
             }
             else
-            {
-                // 둘 다 없는 경우 직접 위치 설정
                 player.position = newPos;
-            }
         }
     }
 }
