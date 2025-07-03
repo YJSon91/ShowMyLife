@@ -148,19 +148,37 @@ public class SettingsMenu : UiBase
     /// </summary>
     public void OnApplyButton()
     {
-        // 1. 현재 슬라이더의 값들을 PlayerPrefs에 저장합니다.
+        FullScreenMode mode = FullScreenMode.FullScreenWindow; // 기본값 (테두리 없는 창)
+        switch (_currentDisplayMode)
+        {
+            case DisplayMode.FullScreen:
+                mode = FullScreenMode.ExclusiveFullScreen;
+                break;
+            case DisplayMode.Borderless:
+                mode = FullScreenMode.FullScreenWindow;
+                break;
+            case DisplayMode.Windowed:
+                mode = FullScreenMode.Windowed;
+                break;
+        }
+        // 현재 해상도를 유지하면서 화면 모드만 변경합니다.
+        Screen.SetResolution(Screen.width, Screen.height, mode);
+        PlayerPrefs.SetInt("DisplayMode", (int)_currentDisplayMode);
+        Debug.Log($"디스플레이 모드를 '{mode}' (으)로 변경 및 저장했습니다.");
+
+        //  현재 슬라이더의 값들을 PlayerPrefs에 저장합니다.
         PlayerPrefs.SetFloat("CameraSensitivity", _cameraSensitivitySlider.value);
         PlayerPrefs.SetFloat("MasterVolume", _masterVolumeSlider.value);
         PlayerPrefs.SetFloat("BGMVolume", _bgmVolumeSlider.value);
         PlayerPrefs.SetFloat("SFXVolume", _sfxVolumeSlider.value);
         PlayerPrefs.Save();
               
-        // 2. 저장된 값을 바탕으로, 실제 게임에 즉시 적용합니다.
+        //  저장된 값을 바탕으로, 실제 게임에 즉시 적용합니다.
         //    (슬라이더를 움직이지 않고 '적용'만 눌렀을 경우를 대비)
         OnCameraSensitivityChanged();
         OnMasterVolumeChanged();
         OnBGMVolumeChanged();
-        OnSFXVolumeChanged();
+        OnSFXVolumeChanged();     
        
         Debug.Log("변경된 설정이 게임에 즉시 적용되었습니다.");
     }
