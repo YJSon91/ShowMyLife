@@ -17,7 +17,6 @@ public class StartPanelUI : UiBase
     public override void Show(bool show)
     {
         base.Show(show); // 부모의 Show 함수(SetActive) 호출
-
         if (show)
         {
             // 이전에 실행되던 트윈이 있다면 안전하게 제거
