@@ -141,10 +141,14 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void Show<T>(bool show) where T : UiBase
     {
-        Type key = typeof(T);
-        if (_uiDictionary.TryGetValue(key, out UiBase ui))
+        if (_uiDictionary.TryGetValue(typeof(T), out UiBase ui))
         {
+            // UiBase에 있는 Show 함수를 호출합니다.
+            // 이 함수는 이제 위치를 옮기는 역할을 합니다.
             ui.Show(show);
+
+            // UIManager는 추가로 오브젝트 자체의 활성화/비활성화를 제어합니다.
+            ui.gameObject.SetActive(show);
         }
     }
     /// <summary>

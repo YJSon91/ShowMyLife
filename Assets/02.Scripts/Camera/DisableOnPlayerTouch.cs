@@ -1,21 +1,26 @@
 using UnityEngine;
 using System.Collections;
 
-public class DisableAfterDelay : MonoBehaviour
+public class DisableSelfEnableOtherAfterDelay : MonoBehaviour
 {
-    [SerializeField] float delay = 0.5f;
+    [SerializeField] private float delay = 0.5f;
+    [SerializeField] private GameObject objectToEnable;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            StartCoroutine(DisableRoutine());
+            StartCoroutine(SwitchObjects());
         }
     }
 
-    IEnumerator DisableRoutine()
+    private IEnumerator SwitchObjects()
     {
         yield return new WaitForSeconds(delay);
+
+        if (objectToEnable != null)
+            objectToEnable.SetActive(true);
+
         gameObject.SetActive(false);
     }
 }

@@ -34,40 +34,34 @@ public class SoundManager : MonoBehaviour
     public float BgmVolume { get; private set; }
     public float SfxVolume { get; private set; }
 
-    private const string MASTER_VOLUME_KEY = "MasterVolume";
-    private const string BGM_VOLUME_KEY = "BgmVolume";
-    private const string SFX_VOLUME_KEY = "SfxVolume";
-
     private void Awake()
-    {    
-        // --- 수정 2: Init() 함수 내용을 Awake()로 통합하여 간소화 ---
-        bgmSource = gameObject.AddComponent<AudioSource>();
-        sfxSource = gameObject.AddComponent<AudioSource>();
-        bgmSource.loop = true; // BGM은 반복 재생
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void Start()
     {
-        if (GameManager.Instance != null)
+        // AudioSource를 컴포넌트에서 가져오는 방식으로 변경
+        var audioSources = GetComponentsInChildren<AudioSource>();
+        if (audioSources.Length >= 2)
         {
-            GameManager.Instance.RegisterSoundManager(this);
+            bgmSource = audioSources[0];
+            sfxSource = audioSources[1];
         }
         else
         {
-            Debug.LogError("[SoundManager] SoundManager가 씬에 존재하지 않습니다!");
+            Debug.LogError("SoundManager에 AudioSource가 2개 필요합니다.");
         }
-        LoadSounds();
-        LoadVolumeSettings();
 
-        // 불러온 볼륨 값을 실제 AudioSource에 적용
-        SetMasterVolume(MasterVolume);
-        SetBgmVolume(BgmVolume);
-        SetSfxVolume(SfxVolume);
+        LoadSounds();   // 오디오 클립 로드
+        ApplyVolume();  // 볼륨 설정 반영
+    }
 
-        // --- 수정 3: 자동 BGM 재생 로직 삭제 ---
-        // PlayBGM(BgmType.Lobby, -1); // 이 제어권은 GameManager에게 넘겨줍니다.
+    // 현재 설정된 볼륨값을 실제 AudioSource 및 AudioListener에 반영하는 함수
+    private void ApplyVolume()
+    {
+        AudioListener.volume = MasterVolume;
+
+        if (bgmSource != null)
+            bgmSource.volume = BgmVolume;
+
+        if (sfxSource != null)
+            sfxSource.volume = SfxVolume;
     }
 
     private void OnDestroy()
@@ -78,16 +72,17 @@ public class SoundManager : MonoBehaviour
     // Resources 폴더에서 오디오 클립 로드
     private void LoadSounds()
     {
+        // Dictionary에 직접 대입하여 중복 키 예외 방지
         foreach (BgmType type in System.Enum.GetValues(typeof(BgmType)))
         {
             AudioClip[] clips = Resources.LoadAll<AudioClip>($"Sounds/BGM/{type}");
-            if (clips.Length > 0) bgmClips.Add(type, new List<AudioClip>(clips));
+            bgmClips[type] = clips.ToList(); // 덮어쓰기 방식
         }
 
         foreach (SfxType type in System.Enum.GetValues(typeof(SfxType)))
         {
             AudioClip[] clips = Resources.LoadAll<AudioClip>($"Sounds/SFX/{type}");
-            if (clips.Length > 0) sfxClips.Add(type, new List<AudioClip>(clips));
+            sfxClips[type] = clips.ToList(); // 덮어쓰기 방식
         }
     }
 
@@ -134,16 +129,37 @@ public class SoundManager : MonoBehaviour
         sfxSource.volume = SfxVolume; // SFX 볼륨은 SFX AudioSource를 제어
     }
 
-    private void LoadVolumeSettings()
-    {
-        MasterVolume = PlayerPrefs.GetFloat(MASTER_VOLUME_KEY, 1f);
-        BgmVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 0.8f);
-        SfxVolume = PlayerPrefs.GetFloat(SFX_VOLUME_KEY, 0.8f);
-    }
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 이 함수의 제어권은 GameManager에게 넘겨주는 것이 좋습니다.
         // GameManager가 상태에 따라 BGM 재생을 명령하기 때문입니다.
+    }
+
+    // 이벤트 구독
+    private void OnEnable()
+    {
+
+    }
+    // 이벤트 구독 해제
+    private void OnDisable()
+    {
+
+    }
+
+    // 점프 이벤트
+    private void HandlePlayerJump()
+    {
+        PlaySFX(SfxType.Jump);
+    }
+
+    // 착지 이벤트
+    private void HandlePlayerLanded()
+    {
+        PlaySFX(SfxType.Land);
+    }
+    // UI 버튼 클릭
+    public void PlayButtonClickSFX()
+    {
+        PlaySFX(SfxType.ButtonClick);
     }
 }
