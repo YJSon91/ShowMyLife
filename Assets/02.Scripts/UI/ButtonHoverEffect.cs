@@ -32,6 +32,10 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // 목표 크기(_hoverScale)로 부드럽게 확대시킵니다.
         transform.DOKill(); // 이전 애니메이션 중단
         transform.DOScale(_originalScale * _hoverScale, _animationDuration).SetEase(Ease.OutQuad);
+        if (GameManager.Instance?.SoundManager != null)
+        {
+            GameManager.Instance.SoundManager.PlayButtonClickSFX();
+        }
     }
 
     /// <summary>
@@ -43,6 +47,10 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // 원래 크기(_originalScale)로 부드럽게 축소시킵니다.
         transform.DOKill(); // 이전 애니메이션 중단
         transform.DOScale(_originalScale, _animationDuration).SetEase(Ease.OutQuad);
+        if (GameManager.Instance?.SoundManager != null)
+        {
+            GameManager.Instance.SoundManager.PlayButtonClickSFX();
+        }
     }
 
     /// <summary>
@@ -53,7 +61,7 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // GameManager를 통해 SoundManager에게 버튼 클릭 효과음 재생을 요청합니다.
         if (GameManager.Instance?.SoundManager != null)
         {
-           // GameManager.Instance.SoundManager.PlayButtonClickSFX();
+           GameManager.Instance.SoundManager.PlayButtonClickSFX();
         }
     }
 }

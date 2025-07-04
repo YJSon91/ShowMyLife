@@ -86,24 +86,27 @@ public class GameManager : MonoBehaviour
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
     public void RegisterPlayer(Player newPlayer)
     {
-        // 1. 만약 이전에 등록된 플레이어가 있었다면, 그 플레이어의 이벤트 구독을 먼저 해제합니다.
-        if (Player != null)
+        // 이전 플레이어의 이벤트 구독 해제
+        if (this.Player != null)
         {
-            InputReader oldInputReader = Player.GetComponent<InputReader>();
+            var oldInputReader = this.Player.GetComponent<InputReader>();
             if (oldInputReader != null)
             {
                 oldInputReader.OnPausePerformed -= TogglePauseState;
+                SoundManager?.UnsubscribeFromPlayerEvents(oldInputReader);
             }
         }
 
-        // 2. 새로운 플레이어를 현재 플레이어로 등록합니다.
-        Player = newPlayer;
-
-        // 3. 이제 새로운 플레이어의 이벤트에 안전하게 구독합니다.
-        InputReader newInputReader = newPlayer.GetComponent<InputReader>();
-        if (newInputReader != null)
+        // 새로운 플레이어 등록 및 이벤트 구독
+        this.Player = newPlayer;
+        if (this.Player != null)
         {
-            newInputReader.OnPausePerformed += TogglePauseState;
+            var newInputReader = this.Player.GetComponent<InputReader>();
+            if (newInputReader != null)
+            {
+                newInputReader.OnPausePerformed += TogglePauseState;
+                SoundManager?.SubscribeToPlayerEvents(newInputReader);
+            }
         }
     }
 
@@ -114,14 +117,18 @@ public class GameManager : MonoBehaviour
         // Player 액션 맵을 활성화합니다.
         PlayerControls.Player.Enable();
         SceneManager.sceneLoaded += CheckEventSystem;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     private void OnDisable()
     {
         // 내가 진짜 인스턴스가 아니면(복제품이면) 즉시 빠져나갑니다.
         if (Instance != this) return;
         // 진짜 인스턴스일 경우에만 아래 코드를 실행합니다.
-       PlayerControls?.Player.Disable();
+        PlayerControls?.Player.Disable();
         SceneManager.sceneLoaded -= CheckEventSystem;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        PlayerControls?.Player.Disable();
+        PlayerControls?.UI.Disable();
     }
 
     // OnDestroy도 동일한 안전장치를 추가해주는 것이 좋습니다.
@@ -191,7 +198,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
-                SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
+               // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
             case GameState.MainMenu:
@@ -268,6 +275,35 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.LogError("[GameManager] StageManager 또는 Player가 등록되지 않아 리스폰할 수 없습니다.");
+        }
+    }
+    /// <summary>
+    /// 씬 로딩이 완료될 때마다 호출되어, 필수 시스템을 확인하고 BGM을 재생합니다.
+    /// </summary>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 1. EventSystem 확인 및 자동 생성
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            var eventSystemObj = new GameObject("EventSystem");
+            eventSystemObj.AddComponent<EventSystem>();           
+        }
+
+        // 2. 현재 게임 상태에 맞는 BGM 재생
+        if (SoundManager != null)
+        {
+            switch (CurrentState)
+            {
+                case GameState.MainMenu:
+                    SoundManager.PlayBGM(BgmType.Lobby);
+                    break;
+                case GameState.Playing:
+                    SoundManager.PlayBGM(BgmType.Main);
+                    break;
+                case GameState.LevelClear:
+                    SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
+                    break;
+            }
         }
     }
 }
