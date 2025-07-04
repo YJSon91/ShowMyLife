@@ -58,6 +58,7 @@ public class MainMenu : UiBase
     }
     public override void Show(bool show)
     {
+        base.Show(show); // 부모 클래스의 Show 함수 호출
         if (show)
         {
             // 투명한 상태에서 시작
