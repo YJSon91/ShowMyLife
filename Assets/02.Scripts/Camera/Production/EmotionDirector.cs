@@ -102,7 +102,7 @@ public class EmotionDirector : MonoBehaviour
             float yaw = Mathf.Lerp(startYaw, startYaw + sweepAngle, t);
 
             // 고개를 위로 들고 좌우로 훑기
-            Quaternion rot = Quaternion.Euler(-30f, yaw + 180f, 0f); // 각도, 좌우, 기울기
+            Quaternion rot = Quaternion.Euler(-22f, yaw + 180f, 0f); // 각도, 좌우, 기울기
             themeCamera.SetPosition(fixedPos);
             themeCamera.SetRotation(rot.eulerAngles);
 
