@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems; 
-using DG.Tweening;       
+using DG.Tweening;
+using TMPro;
 
 /// <summary>
 /// UI 요소에 마우스를 올렸을 때(Hover), DOTween을 이용해 크기 변경 효과를 줍니다.
@@ -9,17 +10,27 @@ using DG.Tweening;
 public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("호버 효과 설정")]
-    [Tooltip("마우스를 올렸을 때 커질 크기 배율")]
+    [Tooltip("마우스를 올렸을 때 커질 크기 배율,색상")]
     [SerializeField] private float _hoverScale = 1.1f;
+    [SerializeField] private Color _highlightColor = Color.yellow; // 하이라이트 색상
 
     [Tooltip("애니메이션이 재생되는 시간")]
     [SerializeField] private float _animationDuration = 0.2f;
 
-    private Vector3 _originalScale; // 원래 크기를 저장할 변수
+    private TextMeshProUGUI _buttonText;
+    private Color _originalColor;
+    private Vector3 _originalScale;
+
 
     private void Awake()
     {
-        // 시작할 때, 이 오브젝트의 원래 크기를 저장해 둡니다.
+        _buttonText = GetComponentInChildren<TextMeshProUGUI>();
+        if (_buttonText != null)
+        {
+            // 원래 색상을 저장해 둡니다.
+            _originalColor = _buttonText.color;
+        }
+        // 원래 크기를 저장해 둡니다.
         _originalScale = transform.localScale;
     }
 
@@ -32,6 +43,7 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // 목표 크기(_hoverScale)로 부드럽게 확대시킵니다.
         transform.DOKill(); // 이전 애니메이션 중단
         transform.DOScale(_originalScale * _hoverScale, _animationDuration).SetEase(Ease.OutQuad);
+        _buttonText.DOColor(_highlightColor, _animationDuration);
         if (GameManager.Instance?.SoundManager != null)
         {
             GameManager.Instance.SoundManager.PlayButtonClickSFX();
@@ -47,6 +59,7 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // 원래 크기(_originalScale)로 부드럽게 축소시킵니다.
         transform.DOKill(); // 이전 애니메이션 중단
         transform.DOScale(_originalScale, _animationDuration).SetEase(Ease.OutQuad);
+        _buttonText.DOColor(_originalColor, _animationDuration);
         if (GameManager.Instance?.SoundManager != null)
         {
             GameManager.Instance.SoundManager.PlayButtonClickSFX();
