@@ -29,9 +29,10 @@ using UnityEngine.Serialization;
 
         public Action onWalkToggled;
 
-        public Action onGodModeToggled;
-
         public event System.Action OnPausePerformed;
+        
+        // 갓모드 토글 이벤트
+        public event System.Action OnGodModeToggled;
 
         public Vector2 LookInput { get; private set; }
 
@@ -51,6 +52,28 @@ using UnityEngine.Serialization;
         public void OnDisable()
         {
             _controls.Player.Disable();
+        }
+        
+        /// <summary>
+        /// 외부에서 호출 가능한 입력 활성화 메서드
+        /// </summary>
+        public void EnableInput()
+        {
+            if (_controls == null)
+            {
+                _controls = new Controls();
+                _controls.Player.SetCallbacks(this);
+            }
+            _controls.Player.Enable();
+        }
+        
+        /// <summary>
+        /// 외부에서 호출 가능한 입력 비활성화 메서드
+        /// </summary>
+        public void DisableInput()
+        {
+            if (_controls != null)
+                _controls.Player.Disable();
         }
 
         /// <summary>
@@ -199,7 +222,7 @@ using UnityEngine.Serialization;
                 return;
             }
 
-            onGodModeToggled?.Invoke();
+            OnGodModeToggled?.Invoke();
         }
     }
 

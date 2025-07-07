@@ -20,6 +20,8 @@ public class RotatingObstacle : BaseObstacle
     private Quaternion _lastRotation;
     private float _currentAngle = 0f;
 
+    public float power;
+
     private void Start()
     {
         _lastRotation = transform.rotation;
@@ -74,14 +76,25 @@ public class RotatingObstacle : BaseObstacle
             Vector3 delta = newPos - player.position;
 
             Rigidbody rb = player.GetComponent<Rigidbody>();
-            CharacterController cc = player.GetComponentInChildren<CharacterController>();
-
+            
             if (rb != null)
+            {
+                Debug.Log("플레이어가 위에 있음");
+                // 리지드바디가 있으면 MovePosition 사용
                 rb.MovePosition(newPos);
-            else if (cc != null)
-                cc.Move(delta);
+                
+                // 플레이어가 회전 플랫폼 위에 있음을 알림 (필요시 구현)
+                Player playerComponent = player.GetComponent<Player>();
+                if (playerComponent != null)
+                {
+                    // 필요한 경우 플레이어에게 회전 플랫폼 위에 있음을 알림
+                }
+            }
             else
+            {
+                // 리지드바디가 없는 경우 직접 위치 설정
                 player.position = newPos;
+            }
         }
     }
 }

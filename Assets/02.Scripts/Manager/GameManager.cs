@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     [Header("핵심 에셋")]
     [Tooltip("프로젝트의 Input Action 에셋을 연결해주세요.")]
     [SerializeField] private InputActionAsset _inputActions;
+
+    private float _playtime = 0f;
+    private bool _isTimerRunning = false;
+
     /// <summary>
     /// 게임 전체에서 공유될 컨트롤러 인스턴스입니다.
     /// </summary>
@@ -77,6 +81,14 @@ public class GameManager : MonoBehaviour
         UpdateGameState(GameState.Start);
     }
 
+    private void Update()
+    {
+        // 타이머가 켜져 있을 때만 시간을 누적합니다.
+        if (_isTimerRunning)
+        {
+            _playtime += Time.deltaTime;
+        }
+    }
 
     // --- 하위 매니저 등록 메서드 ---
     public void RegisterUIManager(UIManager manager) => UIManager = manager;
@@ -86,24 +98,27 @@ public class GameManager : MonoBehaviour
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
     public void RegisterPlayer(Player newPlayer)
     {
-        // 1. 만약 이전에 등록된 플레이어가 있었다면, 그 플레이어의 이벤트 구독을 먼저 해제합니다.
-        if (Player != null)
+        // 이전 플레이어의 이벤트 구독 해제
+        if (this.Player != null)
         {
-            InputReader oldInputReader = Player.GetComponent<InputReader>();
+            var oldInputReader = this.Player.GetComponent<InputReader>();
             if (oldInputReader != null)
             {
                 oldInputReader.OnPausePerformed -= TogglePauseState;
+                SoundManager?.UnsubscribeFromPlayerEvents(oldInputReader);
             }
         }
 
-        // 2. 새로운 플레이어를 현재 플레이어로 등록합니다.
-        Player = newPlayer;
-
-        // 3. 이제 새로운 플레이어의 이벤트에 안전하게 구독합니다.
-        InputReader newInputReader = newPlayer.GetComponent<InputReader>();
-        if (newInputReader != null)
+        // 새로운 플레이어 등록 및 이벤트 구독
+        this.Player = newPlayer;
+        if (this.Player != null)
         {
-            newInputReader.OnPausePerformed += TogglePauseState;
+            var newInputReader = this.Player.GetComponent<InputReader>();
+            if (newInputReader != null)
+            {
+                newInputReader.OnPausePerformed += TogglePauseState;
+                SoundManager?.SubscribeToPlayerEvents(newInputReader);
+            }
         }
     }
 
@@ -114,14 +129,18 @@ public class GameManager : MonoBehaviour
         // Player 액션 맵을 활성화합니다.
         PlayerControls.Player.Enable();
         SceneManager.sceneLoaded += CheckEventSystem;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     private void OnDisable()
     {
         // 내가 진짜 인스턴스가 아니면(복제품이면) 즉시 빠져나갑니다.
         if (Instance != this) return;
         // 진짜 인스턴스일 경우에만 아래 코드를 실행합니다.
-       PlayerControls?.Player.Disable();
+        PlayerControls?.Player.Disable();
         SceneManager.sceneLoaded -= CheckEventSystem;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        PlayerControls?.Player.Disable();
+        PlayerControls?.UI.Disable();
     }
 
     // OnDestroy도 동일한 안전장치를 추가해주는 것이 좋습니다.
@@ -181,9 +200,14 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.Player.Enable();
                 Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
                 Cursor.visible = false;
-                SoundManager?.PlayBGM(BgmType.Main);
+                if (!_isTimerRunning)
+                {
+                    _playtime = 0f; // 새 게임 시작 시 시간 초기화
+                    _isTimerRunning = true;
+                    Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
+                }
                 break;
-
+                
             case GameState.Paused:
 
                 // 일시정지 상태에서는 UI 조작만 가능해야 합니다.
@@ -191,11 +215,11 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
-                SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
+               // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
             case GameState.MainMenu:
-                SoundManager?.PlayBGM(BgmType.Lobby);
+                SoundManager?.PlayBGM(BgmType.Main);
                 break;
 
             case GameState.LevelClear:
@@ -204,11 +228,11 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
-                //SoundManager?.PlayBGM(BgmType.Clear);
+                _isTimerRunning = false;
+                Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
-        }
-        // --- 수정 끝 ---
-
+        }       
+        
         // 씬 로딩 로직
         if (newState == GameState.Playing)
         {
@@ -256,5 +280,47 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("[GameManager] StageManager 또는 Player가 등록되지 않아 리스폰할 수 없습니다.");
         }
+    }
+    /// <summary>
+    /// 씬 로딩이 완료될 때마다 호출되어, 필수 시스템을 확인하고 BGM을 재생합니다.
+    /// </summary>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 1. EventSystem 확인 및 자동 생성
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            var eventSystemObj = new GameObject("EventSystem");
+            eventSystemObj.AddComponent<EventSystem>();           
+        }
+
+        // 2. 현재 게임 상태에 맞는 BGM 재생
+        if (SoundManager != null)
+        {
+            switch (CurrentState)
+            {
+                case GameState.MainMenu:
+                   // SoundManager.PlayBGM(BgmType.Lobby);
+                    break;
+                case GameState.Playing:
+                    SoundManager.StopBGM();
+                    break;
+                case GameState.LevelClear:
+                  //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
+                    break;
+            }
+        }
+    }
+    /// <summary>
+    /// 측정된 플레이 시간을 "00:00:00" 형식의 문자열로 변환하여 반환합니다.
+    /// </summary>
+    public string GetFormattedPlaytime()
+    {
+        // 총 초(seconds)를 시, 분, 초로 변환합니다.
+        int hours = (int)(_playtime / 3600);
+        int minutes = (int)((_playtime % 3600) / 60);
+        int seconds = (int)(_playtime % 60);
+
+        // String.Format을 사용하여 "00:00:00" 형태로 만듭니다.
+        return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
     }
 }

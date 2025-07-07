@@ -17,9 +17,8 @@ public class CreditUI : UiBase
     {
         base.Show(show);
         if (show)
-        {
-            // TODO: GameManager로부터 실제 플레이 시간 받아오기
-            _playtimeText.text = "00:25:30"; // 임시 플레이 시간
+        {            
+            _playtimeText.text = GameManager.Instance.GetFormattedPlaytime();
             StartScrolling();
             Debug.Log("CreditUI is now visible, starting scroll animation.");
         }

@@ -5,12 +5,14 @@ using UnityEngine;
 /// <summary>
 /// 플레이어의 모든 컴포넌트를 관리하는 중앙 클래스
 /// </summary>
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(PlayerAnimationController))]
 [RequireComponent(typeof(PlayerMovementController))]
 [RequireComponent(typeof(PlayerStateController))]
 [RequireComponent(typeof(InputReader))]
 [RequireComponent(typeof(PlayerGodModeController))]
+
 public class Player : MonoBehaviour
 {
     #region 컴포넌트 참조
@@ -18,8 +20,10 @@ public class Player : MonoBehaviour
     [Header("필수 컴포넌트")]
     [Tooltip("플레이어 애니메이션을 제어하는 컴포넌트")]
     [SerializeField] private PlayerAnimationController _animationController;
-    [Tooltip("플레이어 이동을 제어하는 Character Controller 컴포넌트")]
-    [SerializeField] private CharacterController _characterController;
+    [Tooltip("플레이어 이동을 제어하는 Rigidbody 컴포넌트")]
+    [SerializeField] private Rigidbody _rigidbody;
+    [Tooltip("플레이어 충돌을 처리하는 Collider 컴포넌트")]
+    [SerializeField] private CapsuleCollider _capsuleCollider;
     //메인카메라 트랜스폼 캐싱
     private Transform _mainCameraTransform;
     
@@ -41,7 +45,8 @@ public class Player : MonoBehaviour
     #region 속성
 
     public PlayerAnimationController AnimationController => _animationController;
-    public CharacterController CharacterController => _characterController;
+    public Rigidbody Rigidbody => _rigidbody;
+    public CapsuleCollider CapsuleCollider => _capsuleCollider;
     public Transform MainCameraTransform => _mainCameraTransform;
     public InputReader InputReader => _inputReader;
     public PlayerMovementController MovementController => _movementController;
@@ -110,8 +115,11 @@ public class Player : MonoBehaviour
     private void InitializeComponents()
     {
         // 컴포넌트가 Inspector에서 할당되지 않은 경우 자동으로 찾기
-        if (_characterController == null)
-            _characterController = GetComponent<CharacterController>();
+        if (_rigidbody == null)
+            _rigidbody = GetComponent<Rigidbody>();
+            
+        if (_capsuleCollider == null)
+            _capsuleCollider = GetComponent<CapsuleCollider>();
 
         if (_animationController == null)
             _animationController = GetComponent<PlayerAnimationController>();
@@ -124,13 +132,37 @@ public class Player : MonoBehaviour
 
         if (_stateController == null)
             _stateController = GetComponent<PlayerStateController>();
-
+            
         if (_godModeController == null)
             _godModeController = GetComponent<PlayerGodModeController>();
 
         // 카메라 컨트롤러는 다른 게임 오브젝트에 있을 수 있으므로 자동으로 찾지 않음
 
         ValidateComponents();
+        
+        // 리지드바디 초기 설정
+        ConfigureRigidbody();
+    }
+    
+    /// <summary>
+    /// 리지드바디의 기본 설정을 구성합니다
+    /// </summary>
+    private void ConfigureRigidbody()
+    {
+        if (_rigidbody != null)
+        {
+            // 회전은 직접 제어할 것이므로 물리 회전 제한
+            _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            
+            // 공기 저항 설정
+            _rigidbody.drag = 0.5f;
+            
+            // 부드러운 움직임을 위한 보간 설정
+            _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            
+            // 충돌 설정
+            _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        }
     }
 
     /// <summary>
@@ -138,8 +170,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void ValidateComponents()
     {
-        if (_characterController == null)
-            Debug.LogError("Player: CharacterController가 할당되지 않았습니다!");
+        if (_rigidbody == null)
+            Debug.LogError("Player: Rigidbody가 할당되지 않았습니다!");
+            
+        if (_capsuleCollider == null)
+            Debug.LogError("Player: CapsuleCollider가 할당되지 않았습니다!");
 
         if (_animationController == null)
             Debug.LogError("Player: PlayerAnimationController가 할당되지 않았습니다!");
@@ -152,6 +187,9 @@ public class Player : MonoBehaviour
 
         if (_stateController == null)
             Debug.LogError("Player: PlayerStateController가 할당되지 않았습니다!");
+            
+        if (_godModeController == null)
+            Debug.LogError("Player: PlayerGodModeController가 할당되지 않았습니다!");
     }
 
     #endregion
@@ -165,6 +203,13 @@ public class Player : MonoBehaviour
     public void SetPosition(Vector3 position)
     {
         transform.position = position;
+        
+        // 리지드바디 위치도 업데이트
+        if (_rigidbody != null)
+        {
+            _rigidbody.position = position;
+            _rigidbody.velocity = Vector3.zero; // 순간이동 시 속도 초기화
+        }
     }
 
     /// <summary>
@@ -174,6 +219,13 @@ public class Player : MonoBehaviour
     public void SetRotation(Quaternion rotation)
     {
         transform.rotation = rotation;
+        
+        // 리지드바디 회전도 업데이트 (필요한 경우)
+        if (_rigidbody != null)
+        {
+            _rigidbody.rotation = rotation;
+            _rigidbody.angularVelocity = Vector3.zero; // 회전 속도 초기화
+        }
     }
 
     #endregion
