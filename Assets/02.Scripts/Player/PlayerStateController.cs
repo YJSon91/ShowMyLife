@@ -12,6 +12,8 @@ public class PlayerStateController : MonoBehaviour
     [Tooltip("플레이어 메인 컴포넌트")]
     [SerializeField] private Player _player;
     
+    
+    
     // 내부 컴포넌트 참조 (초기화 시 할당)
     private PlayerAnimationController _animationController;
     private PlayerMovementController _movementController;
@@ -24,7 +26,7 @@ public class PlayerStateController : MonoBehaviour
     /// <summary>
     /// 현재 플레이어 애니메이션 상태
     /// </summary>
-    private PlayerAnimationState _currentState = PlayerAnimationState.Base;
+    [SerializeField]private PlayerAnimationState _currentState = PlayerAnimationState.Base;
 
     /// <summary>
     /// 현재 플레이어 걸음걸이 상태
@@ -282,18 +284,15 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void HandleJumpInput()
     {
-        switch (_currentState)
+        // 점프 입력이 들어왔을 때 현재 상태에 따라 처리
+        if (_currentState == PlayerAnimationState.Movement || _currentState == PlayerAnimationState.Crouch)
         {
-            case PlayerAnimationState.Movement:
+            if (_movementController.IsGrounded)
+            {
+                // 지면에 있을 때만 점프 가능
+                 _movementController.Jump();
                 SwitchState(PlayerAnimationState.Jump);
-                break;
-            case PlayerAnimationState.Crouch:
-                if (!_movementController._cannotStandUp)
-                {
-                    _movementController.DeactivateCrouch();
-                    SwitchState(PlayerAnimationState.Jump);
-                }
-                break;
+            }
         }
     }
 
@@ -399,24 +398,17 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void UpdateJumpState()
     {
-        // 중력 적용
-        _movementController.ApplyGravity();
-
-        // 하강 시작하면 낙하 상태로 전환
-        if (_movementController._velocity.y <= 0f)
+        // 리지드바디 사용 시 점프 상태 확인 로직 수정
+        if (_movementController.IsGrounded)
         {
-            _animationController.SetJumping(false);
-            SwitchState(PlayerAnimationState.Fall);
-            return;
+            // 지면에 도달하면 Movement 상태로 전환
+            SwitchState(PlayerAnimationState.Movement);
         }
-
-        // 지면 확인
-        _movementController.GroundedCheck();
-
-        // 이동 로직 실행
-        _movementController.CalculateMoveDirection();
-        _movementController.FaceMoveDirection();
-        _movementController.Move();
+        else if (_player.Rigidbody.velocity.y < -0.1f)
+        {
+            // 하강 중이면 Fall 상태로 전환
+            SwitchState(PlayerAnimationState.Fall);
+        }
     }
 
     /// <summary>

@@ -48,11 +48,15 @@ public class MovingObstacle : BaseObstacle
             CharacterController cc = player.GetComponentInChildren<CharacterController>();
 
             if (rb != null)
+            {
+                Debug.Log("리지드바디가 있음");
                 rb.MovePosition(rb.position + delta);
-            else if (cc != null)
-                cc.Move(delta);
+            }
             else
+            {
+                Debug.Log("리지드바디가 없음");
                 player.position += delta;
+            }
         }
     }
 }

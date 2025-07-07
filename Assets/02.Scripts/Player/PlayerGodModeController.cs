@@ -13,7 +13,8 @@ public class PlayerGodModeController : MonoBehaviour
     [SerializeField] private Player _player;
     
     // 내부 컴포넌트 참조
-    private CharacterController _controller;
+    private Rigidbody _rigidbody;
+    private CapsuleCollider _capsuleCollider;
     private PlayerMovementController _movementController;
     private InputReader _inputReader;
     private Transform _cameraTransform;
@@ -42,8 +43,9 @@ public class PlayerGodModeController : MonoBehaviour
     private Vector3 _flyVelocity = Vector3.zero;
     
     // 원래 컴포넌트 상태 저장
-    private bool _originalControllerEnabled;
-    private float _originalGravity;
+    private bool _originalUseGravity;
+    private bool _originalIsKinematic;
+    private RigidbodyConstraints _originalConstraints;
     
     #endregion
     
@@ -84,7 +86,7 @@ public class PlayerGodModeController : MonoBehaviour
         // 갓모드가 활성화되어 있을 때만 처리
         if (_isGodModeActive)
         {
-            HandleGodModeMovement();
+            UpdateGodModeMovement();
         }
         
         // 키보드 1번으로 갓모드 토글 (임시 - 나중에 Input System으로 대체)
@@ -105,31 +107,48 @@ public class PlayerGodModeController : MonoBehaviour
     #region 초기화 메서드
     
     /// <summary>
-    /// 필수 컴포넌트들을 초기화합니다
+    /// 필요한 컴포넌트를 초기화합니다
     /// </summary>
     private void InitializeComponents()
     {
-        // Player 컴포넌트가 할당되지 않았다면 자동으로 찾기
+        // Player 컴포넌트가 할당되지 않은 경우 부모에서 찾기
         if (_player == null)
-            _player = GetComponent<Player>();
+            _player = GetComponentInParent<Player>();
         
-        // Player 컴포넌트로부터 다른 컴포넌트들 가져오기
+        // Player 컴포넌트에서 필요한 컴포넌트 가져오기
         if (_player != null)
         {
-            _controller = _player.CharacterController;
+            _rigidbody = _player.Rigidbody;
+            _capsuleCollider = _player.CapsuleCollider;
             _movementController = _player.MovementController;
             _inputReader = _player.InputReader;
             _cameraTransform = _player.MainCameraTransform;
         }
+        else
+        {
+            Debug.LogError("PlayerGodModeController: Player 컴포넌트를 찾을 수 없습니다!");
+        }
         
-        
+        ValidateComponents();
     }
     
-    
-    
-    #endregion
-    
-    #region 입력 이벤트 처리
+    /// <summary>
+    /// 필요한 컴포넌트가 모두 할당되었는지 확인합니다
+    /// </summary>
+    private void ValidateComponents()
+    {
+        if (_rigidbody == null)
+            Debug.LogError("PlayerGodModeController: Rigidbody가 할당되지 않았습니다!");
+            
+        if (_capsuleCollider == null)
+            Debug.LogError("PlayerGodModeController: CapsuleCollider가 할당되지 않았습니다!");
+        
+        if (_movementController == null)
+            Debug.LogError("PlayerGodModeController: PlayerMovementController가 할당되지 않았습니다!");
+        
+        if (_inputReader == null)
+            Debug.LogError("PlayerGodModeController: InputReader가 할당되지 않았습니다!");
+    }
     
     /// <summary>
     /// 입력 이벤트에 구독합니다
@@ -137,7 +156,7 @@ public class PlayerGodModeController : MonoBehaviour
     private void SubscribeToInputEvents()
     {
         // TODO: InputReader에 갓모드 이벤트가 추가되면 여기서 구독
-        // _inputReader.onGodModeToggled += ToggleGodMode;
+        _inputReader.onGodModeToggled += ToggleGodMode;
     }
     
     /// <summary>
@@ -146,7 +165,7 @@ public class PlayerGodModeController : MonoBehaviour
     private void UnsubscribeFromInputEvents()
     {
         // TODO: InputReader에 갓모드 이벤트가 추가되면 여기서 구독 해제
-        // _inputReader.onGodModeToggled -= ToggleGodMode;
+        _inputReader.onGodModeToggled -= ToggleGodMode;
     }
     
     #endregion
@@ -178,10 +197,14 @@ public class PlayerGodModeController : MonoBehaviour
         _isGodModeActive = true;
         
         // 원래 상태 저장
-        _originalControllerEnabled = _controller.enabled;
+        _originalUseGravity = _rigidbody.useGravity;
+        _originalIsKinematic = _rigidbody.isKinematic;
+        _originalConstraints = _rigidbody.constraints;
         
-        // CharacterController의 중력 비활성화
-        _controller.enabled = false;
+        // 리지드바디 설정 변경
+        _rigidbody.useGravity = false;
+        _rigidbody.isKinematic = true; // 물리 영향을 받지 않도록 설정
+        _rigidbody.constraints = RigidbodyConstraints.None; // 모든 제약 해제
         
         // 비행 속도 초기화
         _flyVelocity = Vector3.zero;
@@ -199,108 +222,64 @@ public class PlayerGodModeController : MonoBehaviour
         _isGodModeActive = false;
         
         // 원래 상태 복원
-        _controller.enabled = _originalControllerEnabled;
+        _rigidbody.useGravity = _originalUseGravity;
+        _rigidbody.isKinematic = _originalIsKinematic;
+        _rigidbody.constraints = _originalConstraints;
         
-        // 비행 속도 초기화
-        _flyVelocity = Vector3.zero;
+        // 속도 초기화
+        _rigidbody.velocity = Vector3.zero;
         
         Debug.Log("[갓모드] 갓모드가 비활성화되었습니다.");
     }
     
-    #endregion
-    
-    #region 갓모드 이동 처리
-    
     /// <summary>
-    /// 갓모드에서의 이동을 처리합니다
+    /// 갓모드 이동을 업데이트합니다
     /// </summary>
-    private void HandleGodModeMovement()
+    private void UpdateGodModeMovement()
     {
-        // 입력 값 가져오기
-        Vector2 moveInput = Vector2.zero;
+        if (!_isGodModeActive || _cameraTransform == null) return;
         
-        // InputReader가 있다면 사용, 없다면 직접 입력 처리
-        if (_inputReader != null)
-        {
-            moveInput = _inputReader._moveComposite;
-        }
-        else
-        {
-            // 직접 입력 처리 (fallback)
-            moveInput.x = Input.GetAxis("Horizontal");
-            moveInput.y = Input.GetAxis("Vertical");
-        }
+        // 입력 방향 가져오기
+        Vector2 moveInput = _inputReader._moveComposite;
         
-        // 상하 이동 입력 (스페이스바: 위로, Q: 아래로)
-        float verticalInput = 0f;
+        // 카메라 기준 방향 계산
+        Vector3 forward = _cameraTransform.forward;
+        Vector3 right = _cameraTransform.right;
+        
+        // Y축은 유지 (비행을 위해)
+        
+        // 이동 방향 계산
+        Vector3 moveDirection = (forward * moveInput.y + right * moveInput.x).normalized;
+        
+        // 수직 이동 (Space: 위로, Ctrl: 아래로)
         if (Input.GetKey(KeyCode.Space))
-            verticalInput = 1f;
-        else if (Input.GetKey(KeyCode.Q))
-            verticalInput = -1f;
+        {
+            moveDirection += Vector3.up;
+        }
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        {
+            moveDirection += Vector3.down;
+        }
         
-        // 속도 계산
-        float currentFlySpeed = CalculateCurrentFlySpeed();
-        
-        // 카메라 기준 이동 방향 계산
-        Vector3 targetVelocity = CalculateTargetVelocity(moveInput, verticalInput, currentFlySpeed);
-        
-        // 부드러운 가속/감속 적용
-        _flyVelocity = Vector3.Lerp(_flyVelocity, targetVelocity, _flyAcceleration * Time.deltaTime);
-        
-        // 실제 이동 적용
-        transform.position += _flyVelocity * Time.deltaTime;
-    }
-    
-    /// <summary>
-    /// 현재 비행 속도를 계산합니다 (Shift/Ctrl 입력 고려)
-    /// </summary>
-    private float CalculateCurrentFlySpeed()
-    {
+        // 속도 결정
+        float currentSpeed = _flySpeed;
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
-            return _fastFlySpeed; // 빠른 속도
+            currentSpeed = _fastFlySpeed;
         }
         else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
         {
-            return _slowFlySpeed; // 느린 속도
-        }
-        else
-        {
-            return _flySpeed; // 기본 속도
-        }
-    }
-    
-    /// <summary>
-    /// 카메라 기준으로 목표 속도를 계산합니다
-    /// </summary>
-    private Vector3 CalculateTargetVelocity(Vector2 moveInput, float verticalInput, float speed)
-    {
-        Vector3 targetVelocity = Vector3.zero;
-        
-        if (_cameraTransform != null)
-        {
-            // 카메라의 전방/우측 벡터 계산 (Y축 회전만 고려)
-            Vector3 cameraForward = _cameraTransform.forward;
-            cameraForward.y = 0f;
-            cameraForward.Normalize();
-            
-            Vector3 cameraRight = _cameraTransform.right;
-            cameraRight.y = 0f;
-            cameraRight.Normalize();
-            
-            // 수평 이동
-            targetVelocity = (cameraForward * moveInput.y + cameraRight * moveInput.x) * speed;
-            
-            // 수직 이동
-            targetVelocity.y = verticalInput * speed;
-        }
-        else
-        {
-            // 카메라가 없을 경우 월드 좌표계 사용
-            targetVelocity = new Vector3(moveInput.x, verticalInput, moveInput.y) * speed;
+            currentSpeed = _slowFlySpeed;
         }
         
-        return targetVelocity;
+        // 목표 속도 계산
+        Vector3 targetVelocity = moveDirection * currentSpeed;
+        
+        // 부드러운 이동을 위한 보간
+        _flyVelocity = Vector3.Lerp(_flyVelocity, targetVelocity, _flyAcceleration * Time.deltaTime);
+        
+        // 위치 업데이트
+        transform.position += _flyVelocity * Time.deltaTime;
     }
     
     #endregion

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 // BGM 타입 (Resources/Sounds/BGM/ 폴더 이름과 일치해야 함)
 public enum BgmType
@@ -9,6 +8,7 @@ public enum BgmType
     Lobby,
     Main,
     GameOver,
+    Ending // 엔딩/크레딧을 위한 BGM 타입 추가
 }
 
 // SFX 타입 (Resources/Sounds/SFX/ 폴더 이름과 일치해야 함)
@@ -19,7 +19,6 @@ public enum SfxType
     Land,
     Walk,
     Run
-    // ... 필요에 따라 추가
 }
 
 public class SoundManager : MonoBehaviour
@@ -30,136 +29,144 @@ public class SoundManager : MonoBehaviour
     private Dictionary<BgmType, List<AudioClip>> bgmClips = new();
     private Dictionary<SfxType, List<AudioClip>> sfxClips = new();
 
-    public float MasterVolume { get; private set; }
-    public float BgmVolume { get; private set; }
-    public float SfxVolume { get; private set; }
-
+    // Awake에서는 자신의 내부 컴포넌트만 준비합니다.
     private void Awake()
     {
-        // AudioSource를 컴포넌트에서 가져오는 방식으로 변경
+        // 자식 오브젝트에서 BGM, SFX용 AudioSource를 찾아 할당합니다.
         var audioSources = GetComponentsInChildren<AudioSource>();
         if (audioSources.Length >= 2)
         {
             bgmSource = audioSources[0];
             sfxSource = audioSources[1];
+            bgmSource.loop = true; // BGM은 반복 재생
         }
         else
         {
-            Debug.LogError("SoundManager에 AudioSource가 2개 필요합니다.");
+            Debug.LogError("[SoundManager] 자식 오브젝트에 AudioSource 2개가 필요합니다!", this.gameObject);
         }
-
-        LoadSounds();   // 오디오 클립 로드
-        ApplyVolume();  // 볼륨 설정 반영
     }
 
-    // 현재 설정된 볼륨값을 실제 AudioSource 및 AudioListener에 반영하는 함수
-    private void ApplyVolume()
+    // Start에서 다른 매니저와 소통하고 초기 설정을 진행합니다.
+    private void Start()
     {
-        AudioListener.volume = MasterVolume;
-
-        if (bgmSource != null)
-            bgmSource.volume = BgmVolume;
-
-        if (sfxSource != null)
-            sfxSource.volume = SfxVolume;
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    // Resources 폴더에서 오디오 클립 로드
-    private void LoadSounds()
-    {
-        // Dictionary에 직접 대입하여 중복 키 예외 방지
-        foreach (BgmType type in System.Enum.GetValues(typeof(BgmType)))
+        // GameManager에 자신을 등록합니다.
+        if (GameManager.Instance != null)
         {
-            AudioClip[] clips = Resources.LoadAll<AudioClip>($"Sounds/BGM/{type}");
-            bgmClips[type] = clips.ToList(); // 덮어쓰기 방식
+            GameManager.Instance.RegisterSoundManager(this);
         }
 
-        foreach (SfxType type in System.Enum.GetValues(typeof(SfxType)))
-        {
-            AudioClip[] clips = Resources.LoadAll<AudioClip>($"Sounds/SFX/{type}");
-            sfxClips[type] = clips.ToList(); // 덮어쓰기 방식
-        }
+        // 오디오 클립을 로드하고, 저장된 볼륨 설정을 적용합니다.
+        LoadSounds();
+        LoadAndApplyVolume();
     }
 
-    // --- Public API 메서드 ---
-    public void PlayBGM(BgmType bgmType, int index = -1)
+
+    // --- 이벤트 핸들러 ---
+    private void HandlePlayerJump() => PlaySFX(SfxType.Jump);
+    private void HandlePlayerLanded() => PlaySFX(SfxType.Land);
+    public void PlayButtonClickSFX() => PlaySFX(SfxType.ButtonClick);
+
+
+    // --- Public API ---
+
+    /// <summary>
+    /// 지정된 타입의 BGM을 재생합니다. GameManager에 의해 호출됩니다.
+    /// </summary>
+    public void PlayBGM(BgmType bgmType)
     {
-        if (!bgmClips.ContainsKey(bgmType)) return;
+        if (!bgmClips.ContainsKey(bgmType) || bgmClips[bgmType].Count == 0)
+        {
+            Debug.LogError($"[SoundManager] 재생할 '{bgmType}' BGM 클립이 없습니다! Resources 폴더를 확인해주세요.");
+            return;
+        }
+        // 폴더 내의 클립 중 하나를 랜덤으로 재생합니다.
         List<AudioClip> clips = bgmClips[bgmType];
-        if (clips.Count == 0) return;
-        AudioClip clip = (index < 0) ? clips[Random.Range(0, clips.Count)] : clips[index];
+        AudioClip clip = clips[Random.Range(0, clips.Count)];
 
         bgmSource.clip = clip;
         bgmSource.Play();
     }
 
-    public void StopBGM() => bgmSource.Stop();
-
-    public void PlaySFX(SfxType sfxType, int index = -1)
+    /// <summary>
+    /// 지정된 타입의 SFX를 재생합니다.
+    /// </summary>
+    public void PlaySFX(SfxType sfxType)
     {
-        if (!sfxClips.ContainsKey(sfxType)) return;
+        if (!sfxClips.ContainsKey(sfxType) || sfxClips[sfxType].Count == 0)
+        {
+            Debug.LogError($"[SoundManager] 재생할 '{sfxType}' SFX 클립이 없습니다! Resources 폴더를 확인해주세요.");
+            return;
+        }
         List<AudioClip> clips = sfxClips[sfxType];
-        if (clips.Count == 0) return;
-        AudioClip clip = (index < 0) ? clips[Random.Range(0, clips.Count)] : clips[index];
+        AudioClip clip = clips[Random.Range(0, clips.Count)];
 
         sfxSource.PlayOneShot(clip);
     }
 
-    // --- 수정 4: 볼륨 '적용'만 담당하도록 수정 (저장 로직 삭제) ---
-    public void SetMasterVolume(float volume)
+    public void StopBGM() => bgmSource.Stop();
+
+
+    // --- 이벤트 구독/해제 (GameManager가 호출) ---
+
+    /// <summary>
+    /// GameManager가 플레이어의 InputReader 이벤트를 구독하라고 명령할 때 호출됩니다.
+    /// </summary>
+    public void SubscribeToPlayerEvents(InputReader inputReader)
     {
-        MasterVolume = Mathf.Clamp01(volume);
-        AudioListener.volume = MasterVolume; // 전체 볼륨은 AudioListener를 제어
+        if (inputReader == null) return;
+        inputReader.onJumpPerformed += HandlePlayerJump;
+        // TODO: PlayerController에서 OnLanded 이벤트가 구현되면 여기에 구독 코드를 추가합니다.
+        // playerController.OnLanded += HandlePlayerLanded;
+        Debug.Log("[SoundManager] Player 이벤트 구독 완료.");
     }
 
+    /// <summary>
+    /// GameManager가 이전 플레이어의 이벤트 구독을 해제하라고 명령할 때 호출됩니다.
+    /// </summary>
+    public void UnsubscribeFromPlayerEvents(InputReader inputReader)
+    {
+        if (inputReader == null) return;
+        inputReader.onJumpPerformed -= HandlePlayerJump;
+        // playerController.OnLanded -= HandlePlayerLanded;
+        Debug.Log("[SoundManager] Player 이벤트 구독 해제.");
+    }
+
+
+    // --- 볼륨 제어 (SettingsMenu의 요청을 GameManager가 중개) ---
+
+    public void SetMasterVolume(float volume) => AudioListener.volume = Mathf.Clamp01(volume);
     public void SetBgmVolume(float volume)
     {
-        BgmVolume = Mathf.Clamp01(volume);
-        bgmSource.volume = BgmVolume; // BGM 볼륨은 BGM AudioSource를 제어
+        if (bgmSource != null) bgmSource.volume = Mathf.Clamp01(volume);
     }
-
     public void SetSfxVolume(float volume)
     {
-        SfxVolume = Mathf.Clamp01(volume);
-        sfxSource.volume = SfxVolume; // SFX 볼륨은 SFX AudioSource를 제어
+        if (sfxSource != null) sfxSource.volume = Mathf.Clamp01(volume);
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    // --- Private Helper 함수들 ---
+    private void LoadSounds()
     {
-        // 이 함수의 제어권은 GameManager에게 넘겨주는 것이 좋습니다.
-        // GameManager가 상태에 따라 BGM 재생을 명령하기 때문입니다.
+        foreach (BgmType type in System.Enum.GetValues(typeof(BgmType)))
+        {
+            bgmClips[type] = Resources.LoadAll<AudioClip>($"Sounds/BGM/{type}").ToList();
+        }
+        foreach (SfxType type in System.Enum.GetValues(typeof(SfxType)))
+        {
+            sfxClips[type] = Resources.LoadAll<AudioClip>($"Sounds/SFX/{type}").ToList();
+        }
     }
 
-    // 이벤트 구독
-    private void OnEnable()
+    private void LoadAndApplyVolume()
     {
+        // PlayerPrefs에서 값을 불러와서
+        float master = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        float bgm = PlayerPrefs.GetFloat("BGMVolume", 0.8f);
+        float sfx = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
 
-    }
-    // 이벤트 구독 해제
-    private void OnDisable()
-    {
-
-    }
-
-    // 점프 이벤트
-    private void HandlePlayerJump()
-    {
-        PlaySFX(SfxType.Jump);
-    }
-
-    // 착지 이벤트
-    private void HandlePlayerLanded()
-    {
-        PlaySFX(SfxType.Land);
-    }
-    // UI 버튼 클릭
-    public void PlayButtonClickSFX()
-    {
-        PlaySFX(SfxType.ButtonClick);
+        // 즉시 적용합니다.
+        SetMasterVolume(master);
+        SetBgmVolume(bgm);
+        SetSfxVolume(sfx);
     }
 }
