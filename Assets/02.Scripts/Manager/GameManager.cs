@@ -188,7 +188,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.Player.Enable();
                 Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
                 Cursor.visible = false;
-                SoundManager?.PlayBGM(BgmType.Main);
+                //SoundManager?.PlayBGM(BgmType.Main);
                 break;
 
             case GameState.Paused:
@@ -295,13 +295,13 @@ public class GameManager : MonoBehaviour
             switch (CurrentState)
             {
                 case GameState.MainMenu:
-                    SoundManager.PlayBGM(BgmType.Lobby);
+                   // SoundManager.PlayBGM(BgmType.Lobby);
                     break;
                 case GameState.Playing:
-                    SoundManager.PlayBGM(BgmType.Main);
+                    SoundManager.StopBGM();
                     break;
                 case GameState.LevelClear:
-                    SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
+                  //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
                     break;
             }
         }
