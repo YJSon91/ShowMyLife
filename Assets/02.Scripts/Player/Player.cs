@@ -12,6 +12,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerStateController))]
 [RequireComponent(typeof(InputReader))]
 [RequireComponent(typeof(PlayerGodModeController))]
+
 public class Player : MonoBehaviour
 {
     #region 컴포넌트 참조
@@ -131,7 +132,7 @@ public class Player : MonoBehaviour
 
         if (_stateController == null)
             _stateController = GetComponent<PlayerStateController>();
-
+            
         if (_godModeController == null)
             _godModeController = GetComponent<PlayerGodModeController>();
 
@@ -186,6 +187,9 @@ public class Player : MonoBehaviour
 
         if (_stateController == null)
             Debug.LogError("Player: PlayerStateController가 할당되지 않았습니다!");
+            
+        if (_godModeController == null)
+            Debug.LogError("Player: PlayerGodModeController가 할당되지 않았습니다!");
     }
 
     #endregion

@@ -29,9 +29,10 @@ using UnityEngine.Serialization;
 
         public Action onWalkToggled;
 
-        public Action onGodModeToggled;
-
         public event System.Action OnPausePerformed;
+        
+        // 갓모드 토글 이벤트
+        public event System.Action OnGodModeToggled;
 
         public Vector2 LookInput { get; private set; }
 
@@ -221,7 +222,7 @@ using UnityEngine.Serialization;
                 return;
             }
 
-            onGodModeToggled?.Invoke();
+            OnGodModeToggled?.Invoke();
         }
     }
 
