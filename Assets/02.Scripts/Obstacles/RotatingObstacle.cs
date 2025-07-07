@@ -79,6 +79,7 @@ public class RotatingObstacle : BaseObstacle
             
             if (rb != null)
             {
+                Debug.Log("플레이어가 위에 있음");
                 // 리지드바디가 있으면 MovePosition 사용
                 rb.MovePosition(newPos);
                 
