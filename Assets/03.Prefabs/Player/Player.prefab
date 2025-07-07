@@ -749,8 +749,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1.0000001
+  m_Radius: 0.3
+  m_Height: 0.83
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4506380652201679174
@@ -1300,7 +1300,7 @@ Transform:
   m_GameObject: {fileID: 7404158023314197825}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 42.37, y: 10.82, z: -32.17}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1568,11 +1568,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 2448309932646984854}
-  _flySpeed: 10
-  _fastFlySpeed: 20
-  _slowFlySpeed: 5
-  _flyAcceleration: 15
-  _flyDamping: 10
+  _godModeSpeed: 10
+  _godModeVerticalSpeed: 5
+  _godModeRotationSpeed: 100
 --- !u!54 &7516577086340267803
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1622,7 +1620,7 @@ CapsuleCollider:
   m_Radius: 0.31
   m_Height: 1.8
   m_Direction: 1
-  m_Center: {x: 0, y: 0.83, z: 0}
+  m_Center: {x: 0, y: 0.86, z: 0}
 --- !u!1 &7503278534058398077
 GameObject:
   m_ObjectHideFlags: 0
@@ -2054,7 +2052,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9096275727351349169
 Transform:
   m_ObjectHideFlags: 0
