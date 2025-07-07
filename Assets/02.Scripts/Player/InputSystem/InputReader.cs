@@ -52,6 +52,28 @@ using UnityEngine.Serialization;
         {
             _controls.Player.Disable();
         }
+        
+        /// <summary>
+        /// 외부에서 호출 가능한 입력 활성화 메서드
+        /// </summary>
+        public void EnableInput()
+        {
+            if (_controls == null)
+            {
+                _controls = new Controls();
+                _controls.Player.SetCallbacks(this);
+            }
+            _controls.Player.Enable();
+        }
+        
+        /// <summary>
+        /// 외부에서 호출 가능한 입력 비활성화 메서드
+        /// </summary>
+        public void DisableInput()
+        {
+            if (_controls != null)
+                _controls.Player.Disable();
+        }
 
         /// <summary>
         ///     OnLook 콜백이 호출될 때 수행할 동작을 정의합니다.
