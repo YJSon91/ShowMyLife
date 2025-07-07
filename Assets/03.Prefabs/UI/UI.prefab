@@ -885,7 +885,6 @@ GameObject:
   - component: {fileID: 726624638248584367}
   - component: {fileID: 9163841930013897787}
   - component: {fileID: 5264843331733320044}
-  - component: {fileID: 1991289799240346129}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -986,18 +985,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02138312ab2eb7a4488e548c83f221ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1991289799240346129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637413703305626035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2f0b44f908f96b4fac12e3ad871d987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &711724467887626300
@@ -1439,7 +1426,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1663563994585346313}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: OnRestartButton
+        m_MethodName: OnResumeButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3234,6 +3221,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pressKeyText: {fileID: 8805831363151633267}
+  _fadePanel: {fileID: 0}
+  _fadeDuration: 0.5
 --- !u!1 &2428359143716131343
 GameObject:
   m_ObjectHideFlags: 0
