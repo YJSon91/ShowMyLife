@@ -87,6 +87,13 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _inclineAngle;
     [Tooltip("거친 지면에 유용함")]
     [SerializeField] private float _groundedOffset = -0.14f;
+    
+    // 박스캐스트 관련 설정 추가
+    [Header("박스캐스트 지면 확인")]
+    [Tooltip("박스캐스트 너비 (x축)")]
+    [SerializeField] private float _boxCastWidth = 0.4f;
+    [Tooltip("박스캐스트 깊이 (z축)")]
+    [SerializeField] private float _boxCastDepth = 0.4f;
 
     #endregion
 
@@ -484,12 +491,29 @@ public class PlayerMovementController : MonoBehaviour
     #region 상태 확인 메서드
 
     /// <summary>
-    /// 플레이어가 지면에 있는지 확인합니다
+    /// 박스캐스트를 사용하여 지면 확인을 수행합니다
     /// </summary>
     public void GroundedCheck()
     {
-        // 레이캐스트로 지면 확인
-        if (Physics.Raycast(_capsuleCollider.bounds.center, Vector3.down,out _groundHit,_capsuleCollider.height / 2 + _groundCheckDistance,_groundLayerMask,QueryTriggerInteraction.Ignore))
+        // 박스캐스트로 지면 확인
+        Vector3 boxCenter = _capsuleCollider.bounds.center;
+        Vector3 boxHalfExtents = new Vector3(_boxCastWidth / 2f, 0.05f, _boxCastDepth / 2f);
+        Quaternion orientation = transform.rotation;
+        float distance = _capsuleCollider.height / 2 + _groundCheckDistance;
+        
+        // 지면 확인 (바로 아래)
+        bool groundHit = Physics.BoxCast(
+            boxCenter, 
+            boxHalfExtents, 
+            Vector3.down, 
+            out _groundHit, 
+            orientation, 
+            distance, 
+            _groundLayerMask, 
+            QueryTriggerInteraction.Ignore
+        );
+        
+        if (groundHit)
         {
             _groundNormal = _groundHit.normal;
             _isGrounded = true;
@@ -503,7 +527,7 @@ public class PlayerMovementController : MonoBehaviour
             _isGrounded = false;
         }
     }
-
+    
     /// <summary>
     /// 지면 경사를 확인합니다
     /// </summary>
@@ -716,4 +740,21 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     #endregion
+
+    // 디버그 시각화를 위한 메서드
+    private void OnDrawGizmosSelected()
+    {
+        if (!Application.isPlaying || _capsuleCollider == null) return;
+        
+        // 박스캐스트 시각화
+        Vector3 boxCenter = _capsuleCollider.bounds.center;
+        Vector3 boxHalfExtents = new Vector3(_boxCastWidth / 2f, 0.05f, _boxCastDepth / 2f);
+        Vector3 endPosition = boxCenter + Vector3.down * (_capsuleCollider.height / 2 + _groundCheckDistance);
+        
+        // 기본 지면 확인 박스
+        Gizmos.color = _isGrounded ? Color.green : Color.red;
+        Gizmos.DrawWireCube(boxCenter, boxHalfExtents * 2);
+        Gizmos.DrawWireCube(endPosition, boxHalfExtents * 2);
+        Gizmos.DrawLine(boxCenter, endPosition);
+    }
 } 

@@ -1300,7 +1300,7 @@ Transform:
   m_GameObject: {fileID: 7404158023314197825}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 42.37, y: 10.82, z: -32.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1516,10 +1516,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 2448309932646984854}
   _alwaysStrafe: 1
-  _walkSpeed: 1.4
-  _runSpeed: 2.5
-  _sprintSpeed: 7
-  _speedChangeDamping: 10
+  _walkSpeed: 1
+  _runSpeed: 6
+  _sprintSpeed: 11
+  _speedChangeDamping: 999
   _rotationSmoothing: 10
   _cameraRotationOffset: 0
   _movementType: 1
@@ -1527,17 +1527,19 @@ MonoBehaviour:
   _capsuleStandingCentre: 0.93
   _capsuleCrouchingHeight: 1.2
   _capsuleCrouchingCentre: 0.6
-  _jumpForce: 13
-  _gravityMultiplier: 1.8
-  _groundCheckDistance: 0.2
+  _jumpForce: 18
+  _gravityMultiplier: 1.4
+  _groundCheckDistance: 1
   _rearRayPos: {fileID: 4250760247602540282}
   _frontRayPos: {fileID: 2698652842034401688}
   _groundLayerMask:
     serializedVersion: 2
     m_Bits: 65
   _inclineAngle: 0
-  _groundedOffset: -0.14
-  _cannotStandUp: 0
+  _groundedOffset: -0.2
+  _boxCastWidth: 0.4
+  _boxCastDepth: 0.4
+  _cannotStandUp: 1
   _velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &1382464110842281991
 MonoBehaviour:
@@ -1605,7 +1607,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7404158023314197825}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 48bbfb4529e815d438e8c8634bcab592, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2052,7 +2054,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &9096275727351349169
 Transform:
   m_ObjectHideFlags: 0

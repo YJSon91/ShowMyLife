@@ -1,306 +1,273 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 플레이어의 갓모드 기능을 관리하는 컨트롤러
-/// 갓모드 활성화 시 자유롭게 날아다닐 수 있습니다
+/// 플레이어의 갓모드(자유 비행) 기능을 제어하는 컴포넌트
 /// </summary>
 public class PlayerGodModeController : MonoBehaviour
 {
     #region 컴포넌트 참조
-    
+
     [Header("필수 컴포넌트")]
     [Tooltip("플레이어 메인 컴포넌트")]
     [SerializeField] private Player _player;
     
-    // 내부 컴포넌트 참조
+    // 내부 컴포넌트 참조 (초기화 시 할당)
     private Rigidbody _rigidbody;
     private CapsuleCollider _capsuleCollider;
-    private PlayerMovementController _movementController;
     private InputReader _inputReader;
-    private Transform _cameraTransform;
-    
+
     #endregion
-    
+
     #region 갓모드 설정
-    
+
     [Header("갓모드 설정")]
-    [Tooltip("갓모드 비행 속도")]
-    [SerializeField] private float _flySpeed = 10f;
-    [Tooltip("갓모드 빠른 비행 속도 (Shift 누를 때)")]
-    [SerializeField] private float _fastFlySpeed = 20f;
-    [Tooltip("갓모드 느린 비행 속도 (Ctrl 누를 때)")]
-    [SerializeField] private float _slowFlySpeed = 5f;
-    [Tooltip("갓모드 이동 가속도")]
-    [SerializeField] private float _flyAcceleration = 15f;
-    [Tooltip("갓모드 이동 감쇠")]
-    [SerializeField] private float _flyDamping = 10f;
-    
+    [Tooltip("갓모드에서의 이동 속도")]
+    [SerializeField] private float _godModeSpeed = 10f;
+    [Tooltip("갓모드에서의 상승/하강 속도")]
+    [SerializeField] private float _godModeVerticalSpeed = 5f;
+    [Tooltip("갓모드에서의 회전 속도")]
+    [SerializeField] private float _godModeRotationSpeed = 100f;
+
     #endregion
-    
+
     #region 런타임 속성
-    
+
     private bool _isGodModeActive = false;
-    private Vector3 _flyVelocity = Vector3.zero;
-    
-    // 원래 컴포넌트 상태 저장
-    private bool _originalUseGravity;
-    private bool _originalIsKinematic;
+    private Vector3 _originalGravity;
     private RigidbodyConstraints _originalConstraints;
-    
+    private bool _originalKinematicState;
+    private bool _originalUseGravity;
+    private Vector3 _moveDirection;
+
     #endregion
-    
-    #region 공개 속성
-    
-    /// <summary>
-    /// 갓모드 활성화 여부
-    /// </summary>
-    public bool IsGodModeActive => _isGodModeActive;
-    
-    #endregion
-    
-    #region Unity 생명주기
-    
+
+    #region Unity 라이프사이클
+
     private void Awake()
     {
         InitializeComponents();
     }
-    
+
     private void Start()
     {
-        // 카메라를 다시 찾기 시도 (Player의 Start에서 카메라 초기화가 완료된 후)
-        if (_cameraTransform == null && _player != null)
+        // 입력 이벤트 구독
+        if (_inputReader != null)
         {
-            _cameraTransform = _player.MainCameraTransform;
-            if (_cameraTransform != null)
-            {
-                Debug.Log("PlayerGodModeController: 카메라 Transform을 찾았습니다.");
-            }
+            _inputReader.OnGodModeToggled += ToggleGodMode;
         }
-        
-        // 갓모드 토글 입력 이벤트 구독
-        SubscribeToInputEvents();
     }
-    
+
     private void Update()
     {
-        // 갓모드가 활성화되어 있을 때만 처리
+        // 갓모드가 활성화된 경우에만 업데이트
         if (_isGodModeActive)
         {
-            UpdateGodModeMovement();
-        }
-        
-        // 키보드 1번으로 갓모드 토글 (임시 - 나중에 Input System으로 대체)
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            ToggleGodMode();
+            CalculateMoveDirection();
         }
     }
-    
+
+    private void FixedUpdate()
+    {
+        // 갓모드가 활성화된 경우에만 물리 업데이트
+        if (_isGodModeActive)
+        {
+            MoveInGodMode();
+        }
+    }
+
     private void OnDestroy()
     {
         // 입력 이벤트 구독 해제
-        UnsubscribeFromInputEvents();
+        if (_inputReader != null)
+        {
+            _inputReader.OnGodModeToggled -= ToggleGodMode;
+        }
     }
-    
+
     #endregion
-    
+
     #region 초기화 메서드
-    
+
     /// <summary>
-    /// 필요한 컴포넌트를 초기화합니다
+    /// 모든 필수 컴포넌트를 초기화합니다
     /// </summary>
     private void InitializeComponents()
     {
-        // Player 컴포넌트가 할당되지 않은 경우 부모에서 찾기
+        // Player 컴포넌트가 할당되지 않은 경우 자동으로 찾기
         if (_player == null)
-            _player = GetComponentInParent<Player>();
-        
-        // Player 컴포넌트에서 필요한 컴포넌트 가져오기
+            _player = GetComponent<Player>();
+
         if (_player != null)
         {
             _rigidbody = _player.Rigidbody;
             _capsuleCollider = _player.CapsuleCollider;
-            _movementController = _player.MovementController;
             _inputReader = _player.InputReader;
-            _cameraTransform = _player.MainCameraTransform;
         }
-        else
-        {
-            Debug.LogError("PlayerGodModeController: Player 컴포넌트를 찾을 수 없습니다!");
-        }
-        
+
         ValidateComponents();
+        
+        // 원래 물리 설정 저장
+        if (_rigidbody != null)
+        {
+            _originalGravity = Physics.gravity;
+            _originalConstraints = _rigidbody.constraints;
+            _originalKinematicState = _rigidbody.isKinematic;
+            _originalUseGravity = _rigidbody.useGravity;
+        }
     }
-    
+
     /// <summary>
-    /// 필요한 컴포넌트가 모두 할당되었는지 확인합니다
+    /// 모든 필수 컴포넌트가 존재하는지 확인합니다
     /// </summary>
     private void ValidateComponents()
     {
+        if (_player == null)
+            Debug.LogError("PlayerGodModeController: Player가 할당되지 않았습니다!");
+            
         if (_rigidbody == null)
-            Debug.LogError("PlayerGodModeController: Rigidbody가 할당되지 않았습니다!");
+            Debug.LogError("PlayerGodModeController: Rigidbody를 찾을 수 없습니다!");
             
         if (_capsuleCollider == null)
-            Debug.LogError("PlayerGodModeController: CapsuleCollider가 할당되지 않았습니다!");
-        
-        if (_movementController == null)
-            Debug.LogError("PlayerGodModeController: PlayerMovementController가 할당되지 않았습니다!");
-        
+            Debug.LogError("PlayerGodModeController: CapsuleCollider를 찾을 수 없습니다!");
+
         if (_inputReader == null)
-            Debug.LogError("PlayerGodModeController: InputReader가 할당되지 않았습니다!");
+            Debug.LogError("PlayerGodModeController: InputReader를 찾을 수 없습니다!");
     }
-    
-    /// <summary>
-    /// 입력 이벤트에 구독합니다
-    /// </summary>
-    private void SubscribeToInputEvents()
-    {
-        // TODO: InputReader에 갓모드 이벤트가 추가되면 여기서 구독
-        _inputReader.onGodModeToggled += ToggleGodMode;
-    }
-    
-    /// <summary>
-    /// 입력 이벤트 구독을 해제합니다
-    /// </summary>
-    private void UnsubscribeFromInputEvents()
-    {
-        // TODO: InputReader에 갓모드 이벤트가 추가되면 여기서 구독 해제
-        _inputReader.onGodModeToggled -= ToggleGodMode;
-    }
-    
+
     #endregion
-    
-    #region 갓모드 제어 메서드
-    
+
+    #region 갓모드 메서드
+
     /// <summary>
     /// 갓모드를 토글합니다
     /// </summary>
     public void ToggleGodMode()
     {
+        _isGodModeActive = !_isGodModeActive;
+        
         if (_isGodModeActive)
         {
-            DeactivateGodMode();
+            EnableGodMode();
         }
         else
         {
-            ActivateGodMode();
+            DisableGodMode();
         }
+        
+        Debug.Log($"갓모드 {(_isGodModeActive ? "활성화" : "비활성화")}");
     }
-    
+
     /// <summary>
     /// 갓모드를 활성화합니다
     /// </summary>
-    public void ActivateGodMode()
+    private void EnableGodMode()
     {
-        if (_isGodModeActive) return;
+        if (_rigidbody != null)
+        {
+            // 물리 설정 변경
+            _rigidbody.useGravity = false;
+            _rigidbody.isKinematic = false;
+            _rigidbody.velocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+            _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        }
         
-        _isGodModeActive = true;
-        
-        // 원래 상태 저장
-        _originalUseGravity = _rigidbody.useGravity;
-        _originalIsKinematic = _rigidbody.isKinematic;
-        _originalConstraints = _rigidbody.constraints;
-        
-        // 리지드바디 설정 변경
-        _rigidbody.useGravity = false;
-        _rigidbody.isKinematic = true; // 물리 영향을 받지 않도록 설정
-        _rigidbody.constraints = RigidbodyConstraints.None; // 모든 제약 해제
-        
-        // 비행 속도 초기화
-        _flyVelocity = Vector3.zero;
-        
-        Debug.Log("[갓모드] 갓모드가 활성화되었습니다. WASD로 이동, Shift로 빠르게, Ctrl로 느리게 이동할 수 있습니다.");
+        // 콜라이더 비활성화 (선택적)
+        if (_capsuleCollider != null)
+        {
+            _capsuleCollider.isTrigger = true;
+        }
     }
-    
+
     /// <summary>
     /// 갓모드를 비활성화합니다
     /// </summary>
-    public void DeactivateGodMode()
+    private void DisableGodMode()
     {
-        if (!_isGodModeActive) return;
+        if (_rigidbody != null)
+        {
+            // 원래 물리 설정으로 복원
+            _rigidbody.useGravity = _originalUseGravity;
+            _rigidbody.isKinematic = _originalKinematicState;
+            _rigidbody.constraints = _originalConstraints;
+            _rigidbody.velocity = Vector3.zero;
+        }
         
-        _isGodModeActive = false;
-        
-        // 원래 상태 복원
-        _rigidbody.useGravity = _originalUseGravity;
-        _rigidbody.isKinematic = _originalIsKinematic;
-        _rigidbody.constraints = _originalConstraints;
-        
-        // 속도 초기화
-        _rigidbody.velocity = Vector3.zero;
-        
-        Debug.Log("[갓모드] 갓모드가 비활성화되었습니다.");
+        // 콜라이더 재활성화 (선택적)
+        if (_capsuleCollider != null)
+        {
+            _capsuleCollider.isTrigger = false;
+        }
     }
-    
+
     /// <summary>
-    /// 갓모드 이동을 업데이트합니다
+    /// 갓모드에서의 이동 방향을 계산합니다
     /// </summary>
-    private void UpdateGodModeMovement()
+    private void CalculateMoveDirection()
     {
-        if (!_isGodModeActive || _cameraTransform == null) return;
+        if (_player == null || _player.MainCameraTransform == null)
+            return;
+
+        // 카메라 기준 방향 벡터 계산
+        Vector3 forward = _player.MainCameraTransform.forward;
+        Vector3 right = _player.MainCameraTransform.right;
         
-        // 입력 방향 가져오기
-        Vector2 moveInput = _inputReader._moveComposite;
+        // 수평 이동은 카메라 방향 기준
+        forward.y = 0;
+        right.y = 0;
         
-        // 카메라 기준 방향 계산
-        Vector3 forward = _cameraTransform.forward;
-        Vector3 right = _cameraTransform.right;
+        // 정규화
+        if (forward.magnitude > 0.01f)
+            forward.Normalize();
+        if (right.magnitude > 0.01f)
+            right.Normalize();
+
+        // 입력에 따른 이동 방향 계산
+        _moveDirection = Vector3.zero;
         
-        // Y축은 유지 (비행을 위해)
-        
-        // 이동 방향 계산
-        Vector3 moveDirection = (forward * moveInput.y + right * moveInput.x).normalized;
-        
-        // 수직 이동 (Space: 위로, Ctrl: 아래로)
+        // 전후좌우 이동 (WASD)
+        if (_inputReader._moveComposite.y > 0)
+            _moveDirection += forward;
+        if (_inputReader._moveComposite.y < 0)
+            _moveDirection -= forward;
+        if (_inputReader._moveComposite.x > 0)
+            _moveDirection += right;
+        if (_inputReader._moveComposite.x < 0)
+            _moveDirection -= right;
+            
+        // 상하 이동 (스페이스와 컨트롤)
         if (Input.GetKey(KeyCode.Space))
-        {
-            moveDirection += Vector3.up;
-        }
+            _moveDirection += Vector3.up;
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-        {
-            moveDirection += Vector3.down;
-        }
-        
-        // 속도 결정
-        float currentSpeed = _flySpeed;
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-        {
-            currentSpeed = _fastFlySpeed;
-        }
-        else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-        {
-            currentSpeed = _slowFlySpeed;
-        }
-        
-        // 목표 속도 계산
-        Vector3 targetVelocity = moveDirection * currentSpeed;
-        
-        // 부드러운 이동을 위한 보간
-        _flyVelocity = Vector3.Lerp(_flyVelocity, targetVelocity, _flyAcceleration * Time.deltaTime);
-        
-        // 위치 업데이트
-        transform.position += _flyVelocity * Time.deltaTime;
+            _moveDirection += Vector3.down;
     }
-    
-    #endregion
-    
-    #region 공개 메서드
-    
+
     /// <summary>
-    /// 갓모드 활성화 상태를 강제로 설정합니다
+    /// 갓모드에서 이동합니다
     /// </summary>
-    /// <param name="active">활성화 여부</param>
-    public void SetGodModeActive(bool active)
+    private void MoveInGodMode()
     {
-        if (active)
+        if (_rigidbody == null)
+            return;
+            
+        // 이동 속도 적용
+        float currentSpeed = _godModeSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            currentSpeed *= 2; // 쉬프트 키로 속도 증가
+            
+        // 리지드바디 속도 직접 설정
+        _rigidbody.velocity = _moveDirection.normalized * currentSpeed;
+        
+        // 마우스 입력에 따른 회전 (선택적)
+        if (_inputReader.LookInput.magnitude > 0 && _player.MainCameraTransform != null)
         {
-            ActivateGodMode();
-        }
-        else
-        {
-            DeactivateGodMode();
+            // 카메라 방향으로 플레이어 회전
+            Quaternion targetRotation = Quaternion.LookRotation(_player.MainCameraTransform.forward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _godModeRotationSpeed);
         }
     }
-    
+
     #endregion
 } 
