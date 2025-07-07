@@ -1,5 +1,38 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &721997414863135704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3173428673181502468}
+  m_Layer: 0
+  m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3173428673181502468
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721997414863135704}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8441072833199051899}
+  - {fileID: 5330688546925630284}
+  m_Father: {fileID: 8929487011775673135}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2187399424398847591
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,12 +58,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2187399424398847591}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.00908, z: -0.0125}
+  m_LocalRotation: {x: 0.000000021855694, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2838376274258285381}
+  m_Father: {fileID: 3173428673181502468}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2682525078749491278
 BoxCollider:
@@ -51,7 +84,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.016, y: 0.016, z: 0.0015}
+  m_Size: {x: 0.9, y: 0.9, z: 0.1}
   m_Center: {x: 0, y: -0.001, z: 0}
 --- !u!1 &3598613426607900531
 GameObject:
@@ -65,7 +98,7 @@ GameObject:
   - component: {fileID: 7635449971089969881}
   - component: {fileID: 7192243200834836946}
   m_Layer: 0
-  m_Name: PF_SpinFH_00
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,9 +116,7 @@ Transform:
   m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 60, y: 60, z: 60}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8441072833199051899}
-  - {fileID: 5330688546925630284}
+  m_Children: []
   m_Father: {fileID: 8929487011775673135}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7635449971089969881
@@ -165,11 +196,12 @@ Transform:
   m_GameObject: {fileID: 6108877794541087023}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -48}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2838376274258285381}
+  - {fileID: 3173428673181502468}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2292035683065371976
@@ -184,9 +216,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aafcaf474e5dd0c47997c0066fb7851c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _castDistance: 1
+  _margin: 0.05
+  _curveSenseSize: 0.21
+  _curveSenseOffset: 0.012
+  _playerRayOriginOffset: 0.2
+  _activationRange: 10
   _rotationAxis: 1
   _rotationSpeed: 90
   _clockwise: 1
+  power: 0
 --- !u!136 &8730189626029120053
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -235,12 +274,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7186810024151632355}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.00908, z: 0.0125}
+  m_LocalRotation: {x: 0.000000021855694, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.044799984, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2838376274258285381}
+  m_Father: {fileID: 3173428673181502468}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &8784755603327123234
 BoxCollider:
@@ -261,5 +300,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.016, y: 0.016, z: 0.0015}
+  m_Size: {x: 0.9, y: 0.9, z: 0.1}
   m_Center: {x: 0, y: -0.001, z: 0}
