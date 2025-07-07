@@ -30,6 +30,16 @@ public class SettingsMenu : UiBase
     public enum DisplayMode { FullScreen, Borderless, Windowed }
     private DisplayMode _currentDisplayMode;
 
+    private void Update()
+    {
+        // 만약 'F1' 키가 눌렸다면
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            // OnDefaultsButton() 함수를 직접 호출합니다.
+            OnDefaultsButton();
+        }
+    }
+
     /// <summary>
     /// UIManager에 자기 자신을 등록하여 초기화합니다.
     /// </summary>
@@ -208,6 +218,34 @@ public class SettingsMenu : UiBase
         _currentDisplayMode--;
         if (_currentDisplayMode < DisplayMode.FullScreen) _currentDisplayMode = DisplayMode.Windowed;
         UpdateDisplayModeText();
+    }
+    /// <summary>
+    /// '기본값' 버튼에 연결될 함수입니다. 모든 설정을 초기화합니다.
+    /// </summary>
+    public void OnDefaultsButton()
+    {
+        Debug.Log("모든 설정을 기본값으로 초기화합니다.");
+
+        // 1. PlayerPrefs에 저장된 모든 설정 관련 키를 삭제합니다.
+        PlayerPrefs.DeleteKey("CameraSensitivity");
+        PlayerPrefs.DeleteKey("DisplayMode");
+        PlayerPrefs.DeleteKey("MasterVolume");
+        PlayerPrefs.DeleteKey("BGMVolume");
+        PlayerPrefs.DeleteKey("SFXVolume");
+        PlayerPrefs.DeleteKey("AllKeyRebinds");
+
+        PlayerPrefs.Save();
+
+        // 2. LoadSettings()를 다시 호출하여 UI를 기본값으로 새로고침합니다.
+        // GetFloat/GetInt의 두 번째 인자인 기본값이 슬라이더에 적용됩니다.
+        LoadSettings();
+
+        // 3. 변경된 기본값을 실제 게임 시스템에 즉시 적용합니다.
+        OnCameraSensitivityChanged();
+        //ApplyDisplayMode(); // 
+        OnMasterVolumeChanged();
+        OnBGMVolumeChanged();
+        OnSFXVolumeChanged();
     }
     private void UpdateDisplayModeText()
     {

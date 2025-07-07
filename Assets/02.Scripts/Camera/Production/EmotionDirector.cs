@@ -82,15 +82,34 @@ public class EmotionDirector : MonoBehaviour
 
         Vector3 eyePos = player.position + Vector3.up * 1.6f; // 머리 높이
 
+        // 플레이어 입력 비활성화
+        Player playerComponent = player.GetComponent<Player>();
+        if (playerComponent != null)
+        {
+            InputReader inputReader = playerComponent.GetComponent<InputReader>();
+            if (inputReader != null)
+            {
+                Debug.Log("카메라 연출 시작: 플레이어 입력 비활성화");
+                inputReader.DisableInput();
+            }
+            
+            PlayerMovementController movementController = playerComponent.GetComponent<PlayerMovementController>();
+            if (movementController != null)
+            {
+                Debug.Log("카메라 연출 시작: 플레이어 이동 컨트롤러 비활성화");
+                movementController.enabled = false;
+            }
+        }
+
         themeCamera.SwitchCameras();
         themeCamera.ClearAim();
         themeCamera.SetLookAt(null);
         themeCamera.SetFollow(null);
 
-        StartCoroutine(SkySweepRoutine(eyePos, sweepAngle, duration));
+        StartCoroutine(SkySweepRoutine(eyePos, sweepAngle, duration, player));
     }
 
-    private IEnumerator SkySweepRoutine(Vector3 fixedPos, float sweepAngle, float duration)
+    private IEnumerator SkySweepRoutine(Vector3 position, float sweepAngle, float duration, Transform player)
     {
         float elapsed = 0f;
         float startYaw = -sweepAngle * 0.5f;
@@ -103,10 +122,32 @@ public class EmotionDirector : MonoBehaviour
 
             // 고개를 위로 들고 좌우로 훑기
             Quaternion rot = Quaternion.Euler(-22f, yaw + 180f, 0f); // 각도, 좌우, 기울기
-            themeCamera.SetPosition(fixedPos);
+            themeCamera.SetPosition(position);
             themeCamera.SetRotation(rot.eulerAngles);
 
             yield return null;
+        }
+
+        // 연출 종료 시 플레이어 입력 다시 활성화
+        if (player != null)
+        {
+            Player playerComponent = player.GetComponent<Player>();
+            if (playerComponent != null)
+            {
+                InputReader inputReader = playerComponent.GetComponent<InputReader>();
+                if (inputReader != null)
+                {
+                    Debug.Log("카메라 연출 종료: 플레이어 입력 활성화");
+                    inputReader.EnableInput();
+                }
+                
+                PlayerMovementController movementController = playerComponent.GetComponent<PlayerMovementController>();
+                if (movementController != null)
+                {
+                    Debug.Log("카메라 연출 종료: 플레이어 이동 컨트롤러 활성화");
+                    movementController.enabled = true;
+                }
+            }
         }
 
         ResetEmotion();
