@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     [Header("핵심 에셋")]
     [Tooltip("프로젝트의 Input Action 에셋을 연결해주세요.")]
     [SerializeField] private InputActionAsset _inputActions;
+
+    private float _playtime = 0f;
+    private bool _isTimerRunning = false;
+
     /// <summary>
     /// 게임 전체에서 공유될 컨트롤러 인스턴스입니다.
     /// </summary>
@@ -77,6 +81,14 @@ public class GameManager : MonoBehaviour
         UpdateGameState(GameState.Start);
     }
 
+    private void Update()
+    {
+        // 타이머가 켜져 있을 때만 시간을 누적합니다.
+        if (_isTimerRunning)
+        {
+            _playtime += Time.deltaTime;
+        }
+    }
 
     // --- 하위 매니저 등록 메서드 ---
     public void RegisterUIManager(UIManager manager) => UIManager = manager;
@@ -188,9 +200,14 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.Player.Enable();
                 Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
                 Cursor.visible = false;
-                //SoundManager?.PlayBGM(BgmType.Main);
+                if (!_isTimerRunning)
+                {
+                    _playtime = 0f; // 새 게임 시작 시 시간 초기화
+                    _isTimerRunning = true;
+                    Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
+                }
                 break;
-
+                
             case GameState.Paused:
 
                 // 일시정지 상태에서는 UI 조작만 가능해야 합니다.
@@ -211,6 +228,8 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
+                _isTimerRunning = false;
+                Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }       
         
@@ -290,5 +309,18 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
+    }
+    /// <summary>
+    /// 측정된 플레이 시간을 "00:00:00" 형식의 문자열로 변환하여 반환합니다.
+    /// </summary>
+    public string GetFormattedPlaytime()
+    {
+        // 총 초(seconds)를 시, 분, 초로 변환합니다.
+        int hours = (int)(_playtime / 3600);
+        int minutes = (int)((_playtime % 3600) / 60);
+        int seconds = (int)(_playtime % 60);
+
+        // String.Format을 사용하여 "00:00:00" 형태로 만듭니다.
+        return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
     }
 }
