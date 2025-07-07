@@ -42,11 +42,17 @@ public class MainMenu : UiBase
         }
     }
 
-    // '게임 종료' 버튼을 위한 함수
     public void OnQuitGameButton()
     {
+        Debug.Log("게임 종료 버튼 클릭됨!");
+
+#if UNITY_EDITOR
+        // Unity 에디터에서 실행했을 경우, 에디터의 플레이 모드를 중지시킵니다.
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // 빌드된 게임에서 실행했을 경우, 어플리케이션을 종료합니다.
         Application.Quit();
-        Debug.Log("게임 종료 버튼 클릭됨! (빌드에서만 작동)");
+#endif
     }
 
     // '크레딧' 버튼을 위한 함수

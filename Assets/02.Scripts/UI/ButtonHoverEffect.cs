@@ -46,7 +46,7 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         _buttonText.DOColor(_highlightColor, _animationDuration);
         if (GameManager.Instance?.SoundManager != null)
         {
-            GameManager.Instance.SoundManager.PlayButtonClickSFX();
+           // GameManager.Instance.SoundManager.PlayButtonClickSFX();
         }
     }
 
@@ -62,7 +62,7 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         _buttonText.DOColor(_originalColor, _animationDuration);
         if (GameManager.Instance?.SoundManager != null)
         {
-            GameManager.Instance.SoundManager.PlayButtonClickSFX();
+           // GameManager.Instance.SoundManager.PlayButtonClickSFX();
         }
     }
 

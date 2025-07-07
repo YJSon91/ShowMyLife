@@ -188,7 +188,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.Player.Enable();
                 Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
                 Cursor.visible = false;
-                SoundManager?.PlayBGM(BgmType.Main);
+                //SoundManager?.PlayBGM(BgmType.Main);
                 break;
 
             case GameState.Paused:
@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.MainMenu:
-                SoundManager?.PlayBGM(BgmType.Lobby);
+                SoundManager?.PlayBGM(BgmType.Main);
                 break;
 
             case GameState.LevelClear:
@@ -212,23 +212,8 @@ public class GameManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
                 break;
-        }
-        // 새로운 게임 상태에 맞는 배경음악을 재생합니다.
-        if (SoundManager != null)
-        {
-            switch (newState)
-            {
-                case GameState.MainMenu:
-                    SoundManager.PlayBGM(BgmType.Lobby);
-                    break;
-                case GameState.Playing:
-                    SoundManager.PlayBGM(BgmType.Main);
-                    break;
-                case GameState.LevelClear:
-                    SoundManager.PlayBGM(BgmType.GameOver); 
-                    break;
-            }
-        }
+        }       
+        
         // 씬 로딩 로직
         if (newState == GameState.Playing)
         {
@@ -295,13 +280,13 @@ public class GameManager : MonoBehaviour
             switch (CurrentState)
             {
                 case GameState.MainMenu:
-                    SoundManager.PlayBGM(BgmType.Lobby);
+                   // SoundManager.PlayBGM(BgmType.Lobby);
                     break;
                 case GameState.Playing:
-                    SoundManager.PlayBGM(BgmType.Main);
+                    SoundManager.StopBGM();
                     break;
                 case GameState.LevelClear:
-                    SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
+                  //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
                     break;
             }
         }
