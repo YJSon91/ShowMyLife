@@ -92,7 +92,7 @@ public class EmotionDirector : MonoBehaviour
                 Debug.Log("카메라 연출 시작: 플레이어 입력 비활성화");
                 inputReader.DisableInput();
             }
-            
+
             PlayerMovementController movementController = playerComponent.GetComponent<PlayerMovementController>();
             if (movementController != null)
             {
@@ -121,7 +121,7 @@ public class EmotionDirector : MonoBehaviour
             float yaw = Mathf.Lerp(startYaw, startYaw + sweepAngle, t);
 
             // 고개를 위로 들고 좌우로 훑기
-            Quaternion rot = Quaternion.Euler(-22f, yaw + 180f, 0f); // 각도, 좌우, 기울기
+            Quaternion rot = Quaternion.Euler(-22f, yaw + 180f, 0f);
             themeCamera.SetPosition(position);
             themeCamera.SetRotation(rot.eulerAngles);
 
@@ -140,7 +140,7 @@ public class EmotionDirector : MonoBehaviour
                     Debug.Log("카메라 연출 종료: 플레이어 입력 활성화");
                     inputReader.EnableInput();
                 }
-                
+
                 PlayerMovementController movementController = playerComponent.GetComponent<PlayerMovementController>();
                 if (movementController != null)
                 {
@@ -150,6 +150,45 @@ public class EmotionDirector : MonoBehaviour
             }
         }
 
+        if (emotionLookTargets.Count > 2 && emotionLookTargets[2] != null)
+        {
+            Transform target = emotionLookTargets[2];
+
+            themeCamera.SmoothLookAt(target, 1f);
+
+            var defaultCam = themeCamera.DefaultCamera;
+            defaultCam.LookAt = null;
+
+            var pov = defaultCam.GetCinemachineComponent<Cinemachine.CinemachinePOV>();
+            if (pov != null)
+            {
+                Vector3 dir = target.position - defaultCam.transform.position;
+                if (dir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion rot = Quaternion.LookRotation(dir.normalized);
+                    Vector3 euler = rot.eulerAngles;
+
+                    pov.m_HorizontalAxis.Value = euler.y;
+                    pov.m_VerticalAxis.Value = -euler.x;
+
+                    Debug.Log($"[SkySweep] POV 회전 적용 완료 → Yaw: {euler.y}, Pitch: {-euler.x}");
+                }
+            }
+            else
+            {
+                Vector3 dir = target.position - defaultCam.transform.position;
+                if (dir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion lookRot = Quaternion.LookRotation(dir.normalized);
+                    defaultCam.transform.rotation = lookRot;
+                }
+            }
+
+            yield return new WaitForSeconds(1f);
+        }
+
+        themeCamera.ResetToDefault();
         ResetEmotion();
     }
+
 }
