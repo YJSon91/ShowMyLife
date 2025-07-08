@@ -95,6 +95,27 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("박스캐스트 깊이 (z축)")]
     [SerializeField] private float _boxCastDepth = 0.4f;
 
+    // 경사면 제한 설정 추가
+    [Header("경사면 제한")]
+    [Tooltip("플레이어가 올라갈 수 있는 최대 경사 각도")]
+    [SerializeField] private float _slopeLimit = 45f;
+    [Tooltip("경사면 제한 기능 활성화 여부")]
+    [SerializeField] private bool _slopeLimiting = true;
+    [Tooltip("플레이어가 미끄러지기 시작하는 경사 각도")]
+    [SerializeField] private float _slipAngle = 35f;
+    [Tooltip("경사면에서 미끄러지는 속도")]
+    [SerializeField] private float _slipSpeed = 2.5f;
+    [Tooltip("미끄러질 때 플레이어 입력 영향 감소 (0-1)")]
+    [SerializeField] private float _slipInputReduction = 0.8f;
+    
+    [Header("레이어별 경사면 제한")]
+    [Tooltip("Obstacle 레이어가 아닌 오브젝트에 적용할 최대 경사 각도")]
+    [SerializeField] private float _nonObstacleSlopeLimit = 5f;
+    [Tooltip("Obstacle 레이어 마스크")]
+    [SerializeField] private LayerMask _obstacleLayerMask;
+
+    private Vector3 _initialPosition; // 경사면 제한을 위한 초기 위치
+
     #endregion
 
     #region 런타임 속성
@@ -114,7 +135,7 @@ public class PlayerMovementController : MonoBehaviour
     private Vector3 _slipDirection;
     private float _slipForce;
     private float _slipGravityMultiplier;
-    private float _slipInputReduction;
+    
     
     public Vector3 _velocity;
     private Vector3 _moveDirection;
@@ -212,12 +233,24 @@ public class PlayerMovementController : MonoBehaviour
         _inputReader.onCrouchActivated += ActivateCrouch;
         _inputReader.onCrouchDeactivated += DeactivateCrouch;
     }
+
+   
     
     private void FixedUpdate()
     {
+        //현재 위치 저장 (경사면 제한을 위해)
+        _initialPosition = transform.position;
+        
         // 물리 업데이트는 FixedUpdate에서 처리
         GroundedCheck();
         CalculateMoveDirection();
+
+        //경사면 제한 적용
+        if (_isGrounded && _slopeLimiting)
+        {
+            SlopeLimit();
+        }
+
         Move();
         ApplyGravity();
         
@@ -414,8 +447,8 @@ public class PlayerMovementController : MonoBehaviour
             _gravityMultiplier;
             
         // 리지드바디에 중력 직접 적용 (지면 상태와 관계없이)
-        // Vector3 gravity = Physics.gravity * gravityMultiplier;
-        // _rigidbody.AddForce(gravity, ForceMode.Acceleration);
+        Vector3 gravity = Physics.gravity * gravityMultiplier;
+        _rigidbody.AddForce(gravity, ForceMode.Acceleration);
         
         // 지면에 있지 않을 때만 낙하 지속 시간 업데이트
         if (!_isGrounded)
@@ -484,6 +517,99 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 경사면 제한 기능을 적용합니다. 플레이어가 너무 가파른 경사면을 올라가지 못하게 합니다.
+    /// </summary>
+    private bool SlopeLimit()
+    {
+        // 지면 법선 벡터와 위쪽 벡터 사이의 각도 계산
+        float slopeAngle = Vector3.Angle(_groundNormal, Vector3.up);
+        
+        // 현재 충돌한 오브젝트의 레이어 확인
+        int hitLayer = _groundHit.collider.gameObject.layer;
+        
+        // 레이어에 따라 다른 경사각 제한 적용
+        float currentSlopeLimit = ((1 << hitLayer) & _obstacleLayerMask.value) != 0 ? _slopeLimit : _nonObstacleSlopeLimit;
+
+        // 경사각이 제한 각도보다 크면 경사면 제한 적용
+        if (slopeAngle > currentSlopeLimit)
+        {
+            // 이동 방향 계산
+            Vector3 absoluteMoveDirection = Vector3.ProjectOnPlane(_groundNormal, transform.position - _initialPosition);
+
+            // 경사면 아래쪽을 가리키는 벡터 계산
+            Vector3 crossVector = Vector3.Cross(_groundNormal, Vector3.down);
+            Vector3 downSlopeDirection = Vector3.Cross(crossVector, _groundNormal);
+
+            // 플레이어가 경사면을 올라가려고 하는지 확인
+            float angle = Vector3.Angle(absoluteMoveDirection, downSlopeDirection);
+
+            // 플레이어가 경사면을 내려가려고 하면 제한하지 않음
+            if (angle <= 90.0f)
+            {
+                return false;
+            }
+
+            // 경사면 위나 아래에 플레이어를 배치할 위치 계산
+            Vector3 resolvedPosition = ProjectPointOnLine(_initialPosition, crossVector, transform.position);
+            Vector3 direction = Vector3.ProjectOnPlane(_groundNormal, resolvedPosition - transform.position);
+
+            // 해결된 위치로 가는 경로가 다른 콜라이더에 의해 막혀 있는지 확인
+            if (Physics.CapsuleCast(
+                GetBottomCapsulePoint(),
+                GetTopCapsulePoint(),
+                _capsuleCollider.radius,
+                direction.normalized,
+                out RaycastHit hit,
+                direction.magnitude,
+                _groundLayerMask,
+                QueryTriggerInteraction.Ignore))
+            {
+                // 충돌 지점까지만 이동
+                transform.position += downSlopeDirection.normalized * hit.distance;
+            }
+            else
+            {
+                // 계산된 위치로 이동
+                transform.position += direction;
+            }
+
+            // 경사면 제한이 적용되었음을 반환
+            return true;
+        }
+
+        // 경사면 제한이 적용되지 않았음을 반환
+        return false;
+    }
+
+    /// <summary>
+    /// 캡슐 콜라이더의 하단 지점을 반환합니다.
+    /// </summary>
+    private Vector3 GetBottomCapsulePoint()
+    {
+        return transform.position + 
+               transform.up * (_capsuleCollider.center.y - _capsuleCollider.height / 2 + _capsuleCollider.radius);
+    }
+
+    /// <summary>
+    /// 캡슐 콜라이더의 상단 지점을 반환합니다.
+    /// </summary>
+    private Vector3 GetTopCapsulePoint()
+    {
+        return transform.position + 
+               transform.up * (_capsuleCollider.center.y + _capsuleCollider.height / 2 - _capsuleCollider.radius);
+    }
+
+    /// <summary>
+    /// 점을 선에 투영합니다. (Math3d.ProjectPointOnLine 대체)
+    /// </summary>
+    private Vector3 ProjectPointOnLine(Vector3 linePoint, Vector3 lineVec, Vector3 point)
+    {
+        Vector3 linePointToPoint = point - linePoint;
+        float t = Vector3.Dot(linePointToPoint, lineVec) / Vector3.Dot(lineVec, lineVec);
+        return linePoint + lineVec * t;
+    }
+
     #endregion
 
     #region 상태 확인 메서드
@@ -518,11 +644,20 @@ public class PlayerMovementController : MonoBehaviour
             
             // 지면에 있을 때 경사 확인
             GroundInclineCheck();
+
+            // 미끄러운 경사면 확인
+            CheckSlipperySlope();
         }
         else
         {
             // 일정 시간 후에 지면 상태 해제 (약간의 지연으로 계단 등에서 자연스러운 이동)
             _isGrounded = false;
+
+            //지면에 없으면 미끄러짐 상태 해제
+            if(_isSlipping)
+            {
+                DeactivateSlipping();
+            }
         }
     }
     
@@ -584,6 +719,45 @@ public class PlayerMovementController : MonoBehaviour
     public void UpdateFallingDuration()
     {
         _fallingDuration = Time.time - _fallStartTime;
+    }
+
+     /// <summary>
+    /// 미끄러운 경사면을 확인하고 필요시 미끄러짐 상태를 활성화합니다
+    /// </summary>
+    private void CheckSlipperySlope()
+    {
+        // 지면 법선 벡터와 위쪽 벡터 사이의 각도 계산
+        float slopeAngle = Vector3.Angle(_groundNormal, Vector3.up);
+        
+        // 현재 충돌한 오브젝트의 레이어 확인
+        int hitLayer = _groundHit.collider.gameObject.layer;
+        
+        // 레이어에 따라 다른 미끄러짐 각도 적용
+        float currentSlipAngle = ((1 << hitLayer) & _obstacleLayerMask.value) != 0 ? _slipAngle : _nonObstacleSlopeLimit;
+
+        // 경사각이 미끄러짐 각도보다 크면 미끄러짐 활성화
+        if (slopeAngle > currentSlipAngle)
+        {
+            // 경사면 아래쪽을 가리키는 벡터 계산
+            Vector3 crossVector = Vector3.Cross(_groundNormal, Vector3.down);
+            Vector3 downSlopeDirection = Vector3.Cross(crossVector, _groundNormal);
+
+            // 미끄러짐 상태가 아니면 활성화
+            if (!_isSlipping)
+            {
+                ActivateSlipping(downSlopeDirection, _slipSpeed, 1f);
+            }
+            // 이미 미끄러짐 상태라면 방향만 업데이트
+            else
+            {
+                _slipDirection = downSlopeDirection.normalized;
+            }
+        }
+        // 경사각이 미끄러짐 각도보다 작으면 미끄러짐 비활성화
+        else if (_isSlipping)
+        {
+            DeactivateSlipping();
+        }
     }
 
     #endregion
