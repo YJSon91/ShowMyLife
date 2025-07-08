@@ -68,7 +68,7 @@ public class SlideZone : MonoBehaviour
                 Vector3 slideDir = GetSlideDirection();
                 
                 // 먼저 초기 슬라이딩 상태 활성화
-                player.MovementController.ActivateSlipping(slideDir, _initialSlideSpeed, _slipGravityMultiplier, _inputReduction);
+                player.MovementController.ActivateObstacleSlide(slideDir, _initialSlideSpeed, _slipGravityMultiplier, _inputReduction);
                 Debug.Log($"플레이어 슬립 시작 - 방향: {slideDir}, 초기 속도: {_initialSlideSpeed}");
                 
                 // 기존 트윈이 있으면 중단
@@ -80,7 +80,7 @@ public class SlideZone : MonoBehaviour
                 // DOTween을 사용하여 초기 속도에서 최대 속도로 부드럽게 가속
                 _currentAccelerationTween = DOVirtual.Float(_initialSlideSpeed, _slideForce, _accelerationDuration, (speed) => {
                     // 현재 속도 업데이트
-                    player.MovementController.UpdateSlideSpeed(speed);
+                    player.MovementController.UpdateObstacleSlideSpeed(speed);
                 }).SetEase(_accelerationCurve);
                 
                 Debug.Log($"가속 시작: {_initialSlideSpeed} → {_slideForce}, 시간: {_accelerationDuration}초");
@@ -106,7 +106,7 @@ public class SlideZone : MonoBehaviour
                     _currentAccelerationTween = null;
                 }
                 
-                player.MovementController.DeactivateSlipping();
+                player.MovementController.DeactivateObstacleSlide();
                 Debug.Log("플레이어 슬립 종료");
             }
         }
