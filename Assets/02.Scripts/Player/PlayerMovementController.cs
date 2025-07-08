@@ -65,8 +65,8 @@ public class PlayerMovementController : MonoBehaviour
     #region 공중 설정
 
     [Header("플레이어 공중")]
-    [Tooltip("플레이어가 점프할 때 적용되는 힘")]
-    [SerializeField] private float _jumpForce = 10f;
+    [Tooltip("플레이어 점프 시 적용되는 초기 속도")]
+    [SerializeField] private float _jumpForce = 12f;
     [Tooltip("공중에 있을 때의 중력 배수")]
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
@@ -154,6 +154,13 @@ public class PlayerMovementController : MonoBehaviour
     private Vector3 _groundNormal = Vector3.up;
     private RaycastHit _groundHit;
 
+    // 미끄럼틀 함정 관련 변수 추가
+    private bool _isObstacleSliding;
+    private Vector3 _obstacleSlideDirection;
+    private float _obstacleSlideForce;
+    private float _obstacleSlideGravityMultiplier;
+    private float _obstacleSlideInputReduction;
+
     #endregion
 
     #region 공개 속성
@@ -212,6 +219,11 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어가 슬립 중인지 여부
     /// </summary>
     public bool IsSlipping => _isSlipping;
+
+    /// <summary>
+    /// 플레이어가 미끄럼틀 함정에서 슬라이딩 중인지 여부
+    /// </summary>
+    public bool IsObstacleSliding => _isObstacleSliding;
 
     #endregion
 
@@ -384,13 +396,21 @@ public class PlayerMovementController : MonoBehaviour
         Vector3 playerInputDirection = (cameraForward * _inputReader._moveComposite.y)
                    + (cameraRight * _inputReader._moveComposite.x);
 
-        // 슬립 중인지 확인하여 이동 방향 결정
-        if (_isSlipping)
+        // 미끄럼틀 함정 슬라이드가 우선순위가 가장 높음
+        if (_isObstacleSliding)
+        {
+            // 미끄럼틀에서는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
+            _moveDirection = Vector3.Lerp(_obstacleSlideDirection, playerInputDirection, 1f - _obstacleSlideInputReduction);
+            _targetMaxSpeed = _obstacleSlideForce;
+        }
+        // 다음으로 자연 경사면 슬립 확인
+        else if (_isSlipping)
         {
             // 슬립 중에는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
             _moveDirection = Vector3.Lerp(_slipDirection, playerInputDirection, 1f - _slipInputReduction);
             _targetMaxSpeed = _slipForce;
         }
+        
         else
         {
             _moveDirection = playerInputDirection;
@@ -441,10 +461,19 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void ApplyGravity()
     {
-        // 슬립 중인 경우 중력 배수 적용 
-        float gravityMultiplier = _isSlipping ? 
-            _gravityMultiplier * _slipGravityMultiplier : 
-            _gravityMultiplier;
+        // 중력 배수 결정
+            float gravityMultiplier = _gravityMultiplier;
+
+            // 미끄럼틀 함정이 우선
+            if (_isObstacleSliding)
+            {
+                gravityMultiplier = _obstacleSlideGravityMultiplier;
+            }
+            // 그 다음 자연 경사면 슬립
+            else if (_isSlipping)
+            {
+                gravityMultiplier= _slipGravityMultiplier;
+            }
             
         // 리지드바디에 중력 직접 적용 (지면 상태와 관계없이)
         Vector3 gravity = Physics.gravity * gravityMultiplier;
@@ -511,8 +540,11 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (_isGrounded)
         {
-            // 리지드바디에 위쪽 방향으로 힘 적용
-            _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            // 속도를 직접 설정하여 프레임 레이트에 독립적인 일관된 점프 구현
+            Vector3 velocity = _rigidbody.velocity;
+            velocity.y = _jumpForce;
+            _rigidbody.velocity = velocity;
+            
             _isGrounded = false;
         }
     }
@@ -912,6 +944,57 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     #endregion
+/// <summary>
+    /// 미끄럼틀 함정에서의 슬라이드 상태를 활성화합니다
+    /// </summary>
+    /// <param name="direction">슬라이드 방향</param>
+    /// <param name="force">슬라이드 힘</param>
+    /// <param name="gravityMultiplier">중력 배수</param>
+    /// <param name="inputReduction">입력 감소 정도 (0~1)</param>
+    public void ActivateObstacleSlide(Vector3 direction, float force, float gravityMultiplier, float inputReduction)
+    {
+        _isObstacleSliding = true;
+        _obstacleSlideDirection = direction.normalized;
+        _obstacleSlideForce = force;
+        _obstacleSlideGravityMultiplier = gravityMultiplier;
+        _obstacleSlideInputReduction = Mathf.Clamp01(inputReduction);
+
+        // 자연 경사면 슬립은 비활성화 (미끄럼틀이 우선)
+        if (_isSlipping)
+        {
+            _isSlipping = false;
+        }
+
+        Debug.Log($"미끄럼틀 슬라이드 활성화: 방향={_obstacleSlideDirection}, 힘={_obstacleSlideForce}, 중력배수={_obstacleSlideGravityMultiplier}, 입력감소={_obstacleSlideInputReduction}");
+    }
+
+    /// <summary>
+    /// 미끄럼틀 함정에서의 슬라이드 상태를 비활성화합니다
+    /// </summary>
+    public void DeactivateObstacleSlide()
+    {
+        _isObstacleSliding = false;
+        _obstacleSlideDirection = Vector3.zero;
+        _obstacleSlideForce = 0f;
+        _obstacleSlideGravityMultiplier = 0f;
+        _obstacleSlideInputReduction = 0f;
+
+        Debug.Log("미끄럼틀 슬라이드 비활성화");
+    }
+
+    /// <summary>
+    /// 미끄럼틀 슬라이드 속도를 업데이트합니다 (DOTween에서 호출)
+    /// </summary>
+    /// <param name="newSpeed">새로운 슬라이드 속도</param>
+    public void UpdateObstacleSlideSpeed(float newSpeed)
+    {
+        if (_isObstacleSliding)
+        {
+            _obstacleSlideForce = newSpeed;
+            Debug.Log($"미끄럼틀 슬라이드 속도 업데이트: {_obstacleSlideForce}");
+        }
+    }
+
 
     // 디버그 시각화를 위한 메서드
     private void OnDrawGizmosSelected()
