@@ -12,6 +12,8 @@ public class ThemeCameraController : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera themeCamera;
 
     private Coroutine rotateRoutine;
+    public CinemachineVirtualCamera DefaultCamera => defaultCamera;
+
 
     // 테마 카메라로 전환
     public void SwitchCameras()
