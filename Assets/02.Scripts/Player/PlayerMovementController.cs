@@ -65,8 +65,8 @@ public class PlayerMovementController : MonoBehaviour
     #region 공중 설정
 
     [Header("플레이어 공중")]
-    [Tooltip("플레이어가 점프할 때 적용되는 힘")]
-    [SerializeField] private float _jumpForce = 10f;
+    [Tooltip("플레이어 점프 시 적용되는 초기 속도")]
+    [SerializeField] private float _jumpForce = 12f;
     [Tooltip("공중에 있을 때의 중력 배수")]
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
@@ -540,8 +540,11 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (_isGrounded)
         {
-            // 리지드바디에 위쪽 방향으로 힘 적용
-            _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            // 속도를 직접 설정하여 프레임 레이트에 독립적인 일관된 점프 구현
+            Vector3 velocity = _rigidbody.velocity;
+            velocity.y = _jumpForce;
+            _rigidbody.velocity = velocity;
+            
             _isGrounded = false;
         }
     }
