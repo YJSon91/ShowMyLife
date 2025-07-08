@@ -273,10 +273,20 @@ public class PlayerMovementController : MonoBehaviour
         {
             SlopeLimit();
         }
+        if (jumpRequest) {
+        Vector3 velocity = _rigidbody.velocity;
+        velocity.y = _jumpForce;
+        _rigidbody.velocity = velocity;
+        _isGrounded = false;
+        jumpRequest = false;
+    }
 
         Move();
         ApplyGravity();
     }
+
+    private bool jumpRequest= false;
+    
 
     private void OnDestroy()
     {
@@ -551,11 +561,12 @@ public class PlayerMovementController : MonoBehaviour
         if (_isGrounded)
         {
             // 속도를 직접 설정하여 프레임 레이트에 독립적인 일관된 점프 구현
-            Vector3 velocity = _rigidbody.velocity;
-            velocity.y = _jumpForce;
-            _rigidbody.velocity = velocity;
+            // Vector3 velocity = _rigidbody.velocity;
+            // velocity.y = _jumpForce;
+            // _rigidbody.velocity = velocity;
             
-            _isGrounded = false;
+            // _isGrounded = false;
+            jumpRequest = true;
         }
     }
 
