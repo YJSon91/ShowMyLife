@@ -4,48 +4,76 @@ using UnityEditor;
 public class MaterialFixer : EditorWindow
 {
     [MenuItem("도구/머테리얼 수정")]
-    public static void ConvertHDRPMaterialsToURP()
+    public static void ConvertAllMaterialsToURP()
     {
-        // 'Assets/99.Externals' 폴더 내부의 머티리얼만 검색
+        // 'Assets/99.Externals' 경로 아래의 모든 머테리얼(.mat) 검색
         string[] guids = AssetDatabase.FindAssets("t:Material", new[] { "Assets/99.Externals" });
 
-        int count = 0;
+        int convertedCount = 0;
 
         foreach (string guid in guids)
         {
+            // GUID를 경로로 변환 → 머티리얼 로드
             string path = AssetDatabase.GUIDToAssetPath(guid);
-            Material hdrpMat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
 
-            if (hdrpMat == null || hdrpMat.shader == null)
+            if (mat == null || mat.shader == null)
                 continue;
 
-            string shaderName = hdrpMat.shader.name;
+            string shaderName = mat.shader.name;
 
-            // Shader Graph 또는 HDRP 기반 셰이더만 변환
-            if (!shaderName.StartsWith("Shader Graphs/") && !shaderName.Contains("HDRP"))
+            if (shaderName == "Universal Render Pipeline/Lit")
                 continue;
 
-            // 기존 속성 추출
-            Texture baseMap = hdrpMat.GetTexture("_BaseMap");
-            Texture normalMap = hdrpMat.GetTexture("_NormalMap");
-            Texture rmaMap = hdrpMat.GetTexture("_RMAMap");
-            Color baseColor = hdrpMat.HasProperty("_BaseMapTint") ? hdrpMat.GetColor("_BaseMapTint") : Color.white;
+            // 변환 대상 조건: Shader Graph / HDRP / InternalError / Built-in Standard
+            bool isConvertible =
+                shaderName.StartsWith("Shader Graphs/") ||
+                shaderName.Contains("HDRP") ||
+                shaderName == "Hidden/InternalErrorShader" ||
+                shaderName.Contains("Standard");
 
-            // URP/Lit 셰이더로 변경
-            hdrpMat.shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (!isConvertible)
+                continue;
 
-            // 속성 재적용
-            if (baseMap) hdrpMat.SetTexture("_BaseMap", baseMap);
-            if (normalMap) hdrpMat.SetTexture("_BumpMap", normalMap);
-            if (rmaMap) hdrpMat.SetTexture("_MetallicGlossMap", rmaMap);
-            hdrpMat.SetColor("_BaseColor", baseColor);
-            hdrpMat.SetFloat("_Smoothness", 0.8f);
+            // 기존 텍스처 추출
+            Texture baseMap = mat.GetTexture("_BaseMap")
+                            ?? mat.GetTexture("_MainTex")
+                            ?? mat.GetTexture("_Albedo");
 
-            EditorUtility.SetDirty(hdrpMat);
-            count++;
+            Texture normalMap = mat.GetTexture("_NormalMap")
+                              ?? mat.GetTexture("_BumpMap");
+
+            Texture metallicMap = mat.GetTexture("_MetallicGlossMap")
+                                ?? mat.GetTexture("_SpecGlossMap")
+                                ?? mat.GetTexture("_RMAMap");
+
+            // 색상 추출
+            Color baseColor = Color.white;
+            if (mat.HasProperty("_BaseColor")) baseColor = mat.GetColor("_BaseColor");
+            else if (mat.HasProperty("_Color")) baseColor = mat.GetColor("_Color");
+            else if (mat.HasProperty("_BaseMapTint")) baseColor = mat.GetColor("_BaseMapTint");
+
+            // Smoothness 추출
+            float smoothness = 0.8f;
+            if (mat.HasProperty("_Smoothness")) smoothness = mat.GetFloat("_Smoothness");
+
+            // 셰이더를 URP/Lit으로 교체
+            mat.shader = Shader.Find("Universal Render Pipeline/Lit");
+
+            // 속성 재설정
+            if (baseMap) mat.SetTexture("_BaseMap", baseMap);
+            if (normalMap) mat.SetTexture("_BumpMap", normalMap);
+            if (metallicMap) mat.SetTexture("_MetallicGlossMap", metallicMap);
+
+            mat.SetColor("_BaseColor", baseColor);
+            mat.SetFloat("_Smoothness", smoothness);
+
+            // 변경 사항 표시
+            EditorUtility.SetDirty(mat);
+            convertedCount++;
         }
-
         AssetDatabase.SaveAssets();
-        Debug.Log($"[MaterialFixer] 변환 완료: {count}개 머티리얼");
+        Debug.Log($"[MaterialFixer] 변환 완료: {convertedCount}개 머티리얼");
     }
 }
+
