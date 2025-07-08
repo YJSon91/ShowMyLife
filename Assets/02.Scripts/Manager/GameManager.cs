@@ -239,7 +239,7 @@ public class GameManager : MonoBehaviour
             // 현재 씬이 IntroScene일 때만 게임 씬을 로드하도록 조건을 추가하면 더 안전합니다.
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "IntroScene")
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene("TestMapScene_JSC");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainScene");
             }
         }
 
