@@ -408,20 +408,18 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void ApplyGravity()
     {
-        // 지면에 있지 않을 때만 중력 적용
+        // 슬립 중인 경우 중력 배수 적용 
+        float gravityMultiplier = _isSlipping ? 
+            _gravityMultiplier * _slipGravityMultiplier : 
+            _gravityMultiplier;
+            
+        // 리지드바디에 중력 직접 적용 (지면 상태와 관계없이)
+        // Vector3 gravity = Physics.gravity * gravityMultiplier;
+        // _rigidbody.AddForce(gravity, ForceMode.Acceleration);
+        
+        // 지면에 있지 않을 때만 낙하 지속 시간 업데이트
         if (!_isGrounded)
         {
-            // 슬립 중인 경우 중력 배수 적용 
-            float gravityMultiplier = _isSlipping ? 
-                _gravityMultiplier * _slipGravityMultiplier : 
-                _gravityMultiplier;
-            //! 배수가 필요한경우 다시 해제
-                
-            // 리지드바디에 중력 직접 적용
-            Vector3 gravity = Physics.gravity * gravityMultiplier;
-            _rigidbody.AddForce(gravity, ForceMode.Acceleration);
-            
-            // 낙하 지속 시간 업데이트
             UpdateFallingDuration();
         }
         else
