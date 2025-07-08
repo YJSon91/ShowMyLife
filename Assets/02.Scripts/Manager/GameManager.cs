@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     public ObstacleManager ObstacleManager { get; private set; }
     public Player Player { get; private set; }
     public CameraManager CameraManager { get; private set; }
+    public DialogueManager DialogueManager { get; private set; }
 
 
 
@@ -96,6 +97,8 @@ public class GameManager : MonoBehaviour
     public void RegisterSoundManager(SoundManager manager) => SoundManager = manager;
     public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
+    public void RegisterDialogueManager(DialogueManager manager) => DialogueManager = manager;
+
     public void RegisterPlayer(Player newPlayer)
     {
         // 이전 플레이어의 이벤트 구독 해제
