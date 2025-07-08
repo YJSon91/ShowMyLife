@@ -1527,18 +1527,27 @@ MonoBehaviour:
   _capsuleStandingCentre: 0.93
   _capsuleCrouchingHeight: 1.2
   _capsuleCrouchingCentre: 0.6
-  _jumpForce: 18
-  _gravityMultiplier: 1.4
+  _jumpForce: 16
+  _gravityMultiplier: 1.8
   _groundCheckDistance: 1
   _rearRayPos: {fileID: 4250760247602540282}
   _frontRayPos: {fileID: 2698652842034401688}
   _groundLayerMask:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 1089
   _inclineAngle: 0
   _groundedOffset: -0.2
   _boxCastWidth: 0.4
-  _boxCastDepth: 0.4
+  _boxCastDepth: 0.2
+  _slopeLimit: 80
+  _slopeLimiting: 1
+  _slipAngle: 80
+  _slipSpeed: 2.5
+  _slipInputReduction: 0.4
+  _nonObstacleSlopeLimit: 50
+  _obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 1024
   _cannotStandUp: 1
   _velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &1382464110842281991
@@ -1568,8 +1577,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 2448309932646984854}
-  _godModeSpeed: 10
-  _godModeVerticalSpeed: 5
+  _godModeSpeed: 30
+  _godModeVerticalSpeed: 20
   _godModeRotationSpeed: 100
 --- !u!54 &7516577086340267803
 Rigidbody:
