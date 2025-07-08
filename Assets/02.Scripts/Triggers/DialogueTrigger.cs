@@ -1,18 +1,32 @@
 using UnityEngine;
 
-public enum DialogueTriggerType { Fall, Cheer, Process, Reach }
+public enum DialogueTriggerType { Fall, Cheer, Process, Reach, Start, End }
 
 public class DialogueTrigger : MonoBehaviour
 {
+    [Header("트리거 설정")]
+    [Tooltip("이 트리거의 종류를 선택합니다.")]
     [SerializeField] private DialogueTriggerType _triggerType;
-    private bool _hasBeenTriggered = false;
+
+    [Tooltip("지정 대사를 출력하고 싶을 경우, 여기에 대사 ID를 입력하세요.")]
+    [SerializeField] private string _dialogueID = ""; // ID를 저장할 변수
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!_hasBeenTriggered && other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            _hasBeenTriggered = true;
-            GameManager.Instance.DialogueManager.ShowRandomDialogueByType(_triggerType);
+            // ID가 지정되었다면 지정 대사를, 비어있다면 랜덤 대사를 요청합니다.
+            if (!string.IsNullOrEmpty(_dialogueID))
+            {
+                GameManager.Instance.DialogueManager.ShowDialogueByID(_dialogueID);
+            }
+            else
+            {
+                GameManager.Instance.DialogueManager.ShowRandomDialogueByType(_triggerType);
+            }
+
+            // 한 번만 작동하도록 비활성화
+            gameObject.SetActive(false);
         }
     }
 }
