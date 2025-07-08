@@ -33,7 +33,7 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("속도 변경을 위한 감쇠 계수")]
     [SerializeField] private float _speedChangeDamping = 10f;
     [Tooltip("회전 부드러움 계수")]
-    [SerializeField] private float _rotationSmoothing = 10f;
+    [SerializeField] private float _rotationSmoothing = 15f; // 더 부드러운 회전을 위해 값 증가
     [Tooltip("카메라 회전 오프셋")]
     [SerializeField] private float _cameraRotationOffset;
     [Tooltip("이동 방식 - Force 또는 Velocity")]
@@ -248,14 +248,25 @@ public class PlayerMovementController : MonoBehaviour
 
    
     
+    private void Update()
+    {
+        // 입력 처리 및 방향 계산은 Update에서 처리 (더 부드러운 응답성)
+        CalculateMoveDirection();
+        
+        // 지면에 있을 때만 회전 적용 (시각적 부드러움을 위해)
+        if (_isGrounded)
+        {
+            FaceMoveDirection();
+        }
+    }
+    
     private void FixedUpdate()
     {
         //현재 위치 저장 (경사면 제한을 위해)
         _initialPosition = transform.position;
         
-        // 물리 업데이트는 FixedUpdate에서 처리
+        // 물리 기반 처리는 FixedUpdate에서 유지
         GroundedCheck();
-        CalculateMoveDirection();
 
         //경사면 제한 적용
         if (_isGrounded && _slopeLimiting)
@@ -265,12 +276,6 @@ public class PlayerMovementController : MonoBehaviour
 
         Move();
         ApplyGravity();
-        
-        // 지면에 있을 때만 회전 적용
-        if (_isGrounded)
-        {
-            FaceMoveDirection();
-        }
     }
 
     private void OnDestroy()
@@ -365,8 +370,13 @@ public class PlayerMovementController : MonoBehaviour
         }
         else
         {
-            // 속도 직접 설정 (즉각적인 반응)
-            Vector3 newVelocity = new Vector3(_targetVelocity.x, _rigidbody.velocity.y, _targetVelocity.z);
+            // 속도 직접 설정 (부드러운 반응을 위해 약간의 보간 추가)
+            Vector3 currentVel = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
+            Vector3 targetVel = new Vector3(_targetVelocity.x, 0, _targetVelocity.z);
+            Vector3 newHorizontalVel = Vector3.Lerp(currentVel, targetVel, _speedChangeDamping * Time.fixedDeltaTime);
+            
+            // y축 속도는 그대로 유지
+            Vector3 newVelocity = new Vector3(newHorizontalVel.x, _rigidbody.velocity.y, newHorizontalVel.z);
             _rigidbody.velocity = newVelocity;
         }
         
@@ -437,7 +447,7 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
 
-        const float ANIMATION_DAMP_TIME = 5f;
+        const float ANIMATION_DAMP_TIME = 10f; // 더 빠른 반응성을 위해 값 증가
         _currentMaxSpeed = Mathf.Lerp(_currentMaxSpeed, _targetMaxSpeed, ANIMATION_DAMP_TIME * Time.deltaTime);
 
         _targetVelocity.x = _moveDirection.x * _currentMaxSpeed;
