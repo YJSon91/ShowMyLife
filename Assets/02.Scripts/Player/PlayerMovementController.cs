@@ -372,11 +372,17 @@ public class PlayerMovementController : MonoBehaviour
         // 이동 방식에 따라 다른 물리 이동 적용
         if (_movementType == MovementType.Force)
         {
-            // AddForce를 사용한 이동 (가속/감속이 자연스러움)
+            // 기존 AddForce 대신 velocity 직접 수정 방식으로 변경
             Vector3 moveForce = new Vector3(_targetVelocity.x, 0, _targetVelocity.z) - new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
             moveForce = Vector3.ClampMagnitude(moveForce * _speedChangeDamping, _currentMaxSpeed * 2);
             
-            _rigidbody.AddForce(moveForce, ForceMode.Acceleration);
+            // Time.deltaTime을 곱해 프레임 독립적인 이동 구현
+            Vector3 velocityChange = moveForce * Time.deltaTime;
+            Vector3 newVelocity = _rigidbody.velocity + velocityChange;
+            
+            // y축 속도는 그대로 유지
+            newVelocity.y = _rigidbody.velocity.y;
+            _rigidbody.velocity = newVelocity;
         }
         else
         {
@@ -482,22 +488,24 @@ public class PlayerMovementController : MonoBehaviour
     public void ApplyGravity()
     {
         // 중력 배수 결정
-            float gravityMultiplier = _gravityMultiplier;
+        float gravityMultiplier = _gravityMultiplier;
 
-            // 미끄럼틀 함정이 우선
-            if (_isObstacleSliding)
-            {
-                gravityMultiplier = _obstacleSlideGravityMultiplier;
-            }
-            // 그 다음 자연 경사면 슬립
-            else if (_isSlipping)
-            {
-                gravityMultiplier= _slipGravityMultiplier;
-            }
+        // 미끄럼틀 함정이 우선
+        if (_isObstacleSliding)
+        {
+            gravityMultiplier = _obstacleSlideGravityMultiplier;
+        }
+        // 그 다음 자연 경사면 슬립
+        else if (_isSlipping)
+        {
+            gravityMultiplier = _slipGravityMultiplier;
+        }
             
-        // 리지드바디에 중력 직접 적용 (지면 상태와 관계없이)
-        Vector3 gravity = Physics.gravity * gravityMultiplier;
-        _rigidbody.AddForce(gravity, ForceMode.Acceleration);
+        // 리지드바디 속도에 중력 직접 적용 (Time.deltaTime 사용)
+        Vector3 gravityVelocity = Physics.gravity * gravityMultiplier * Time.deltaTime;
+        Vector3 currentVelocity = _rigidbody.velocity;
+        currentVelocity.y += gravityVelocity.y;
+        _rigidbody.velocity = currentVelocity;
         
         // 지면에 있지 않을 때만 낙하 지속 시간 업데이트
         if (!_isGrounded)
