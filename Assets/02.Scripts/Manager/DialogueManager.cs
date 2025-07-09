@@ -11,6 +11,11 @@ public class DialogueManager : MonoBehaviour
     // 2. 이제 Dictionary도 바로 JSON으로 변환할 수 있습니다!
     private Dictionary<DialogueTriggerType, List<Dialogue>> _dialogueDatabase;
 
+    private DialogueData _dialogueData;
+    // 높이 기준점을 인스펙터에서 설정할 수 있도록 추가합니다.
+    [SerializeField] private float _middleHeightThreshold = 50f;
+    [SerializeField] private float _highHeightThreshold = 100f;
+
     private void Start()
     {
         GameManager.Instance.RegisterDialogueManager(this);
@@ -110,6 +115,34 @@ public class DialogueManager : MonoBehaviour
         {
             dialogueUI.SetText(message);
             GameManager.Instance.UIManager.Show<DialogueUI>(true);
+        }
+    }
+    /// <summary>
+    /// 트리거의 높이를 기준으로 Fall 타입의 랜덤 대사를 출력합니다.
+    /// </summary>
+    public void ShowFallDialogueByHeight(float triggerHeight)
+    {
+        List<Dialogue> targetDialogues = null;
+
+        // 높이 임계값에 따라 적절한 대사 목록을 선택합니다.
+        if (triggerHeight >= _highHeightThreshold)
+        {
+            targetDialogues = _dialogueData.Fall.High;
+        }
+        else if (triggerHeight >= _middleHeightThreshold)
+        {
+            targetDialogues = _dialogueData.Fall.Middle;
+        }
+        else
+        {
+            targetDialogues = _dialogueData.Fall.Low;
+        }
+
+        // 선택된 목록에서 랜덤 대사를 출력합니다.
+        if (targetDialogues != null && targetDialogues.Count > 0)
+        {
+            Dialogue randomDialogue = targetDialogues[UnityEngine.Random.Range(0, targetDialogues.Count)];
+            ShowDialogueUI(randomDialogue.text);
         }
     }
 }
