@@ -29,4 +29,10 @@ public class DialogueTrigger : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+    // DialogueTool에서 ID를 설정하기 위한 public 함수
+    public void SetDialogueID(string newID)
+    {
+        this._dialogueID = newID;
+    }
+    public string DialogueID => _dialogueID;
 }
