@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class DialogueManager : MonoBehaviour
                 Debug.LogError("[DialogueManager] dialogue.json 파일의 내용이 비어있습니다!");
                 return;
             }
+
 
             try
             {
@@ -122,24 +124,29 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     public void ShowFallDialogueByHeight(float triggerHeight)
     {
-        List<Dialogue> targetDialogues = null;
+        // 1. 열쇠를 문자열 "Fall" 대신, enum 타입인 DialogueTriggerType.Fall 로 변경합니다.
+        if (!_dialogueDatabase.ContainsKey(DialogueTriggerType.Fall)) return;
 
-        // 높이 임계값에 따라 적절한 대사 목록을 선택합니다.
+        // 2. 데이터를 가져올 때도 동일하게 enum 타입을 사용합니다.
+        List<Dialogue> fallDialogues = _dialogueDatabase[DialogueTriggerType.Fall];
+        List<Dialogue> targetDialogues;
+
+        // 높이에 따라 ID에 포함된 키워드로 대사를 필터링합니다.
         if (triggerHeight >= _highHeightThreshold)
         {
-            targetDialogues = _dialogueData.Fall.High;
+            targetDialogues = fallDialogues.Where(d => d.id.Contains("High")).ToList();
         }
         else if (triggerHeight >= _middleHeightThreshold)
         {
-            targetDialogues = _dialogueData.Fall.Middle;
+            targetDialogues = fallDialogues.Where(d => d.id.Contains("Middle")).ToList();
         }
         else
         {
-            targetDialogues = _dialogueData.Fall.Low;
+            targetDialogues = fallDialogues.Where(d => d.id.Contains("Low")).ToList();
         }
 
-        // 선택된 목록에서 랜덤 대사를 출력합니다.
-        if (targetDialogues != null && targetDialogues.Count > 0)
+        // 필터링된 목록에서 랜덤 대사를 출력합니다.
+        if (targetDialogues.Count > 0)
         {
             Dialogue randomDialogue = targetDialogues[UnityEngine.Random.Range(0, targetDialogues.Count)];
             ShowDialogueUI(randomDialogue.text);
