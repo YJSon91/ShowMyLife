@@ -232,6 +232,7 @@ public class GameManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
                 _isTimerRunning = false;
+               // GameManager.Instance.UIManager.Show<EndingUI>(true);
                 Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }       
