@@ -1,19 +1,21 @@
 using System.Collections.Generic;
 
-[System.Serializable]
-public class FallDialogues
-{
-    public List<Dialogue> Low;
-    public List<Dialogue> Middle;
-    public List<Dialogue> High;
-}
 
-// 기존 DialogueData 수정
 [System.Serializable]
 public class DialogueData
 {
-    public FallDialogues Fall; // fall의 타입을 FallDialogues로 변경
-    public List<Dialogue> Cheer;
-    public List<Dialogue> Process;
-    public List<Dialogue> Reach;
+    // 이제 모든 타입이 동일한 구조를 가집니다.
+    public List<Dialogue> Start { get; set; }
+    public List<Dialogue> End { get; set; }
+    public List<Dialogue> Fall { get; set; }
+    public List<Dialogue> Cheer { get; set; }
+    // ... 다른 타입들도 필요하면 List<Dialogue>로 추가 ...
 }
+[System.Serializable]
+public class Dialogue
+{
+    public string id;
+    public string text;
+}
+
+
