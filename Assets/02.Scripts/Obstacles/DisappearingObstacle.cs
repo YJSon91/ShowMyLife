@@ -20,6 +20,7 @@ public class DisappearingObstacle : BaseObstacle
     private Collider col;
     private Color originalColor;
     private bool isProcessing = false;
+    private bool _wasPlayerOnPlatform = false;
 
     private void Awake()
     {
@@ -43,9 +44,15 @@ public class DisappearingObstacle : BaseObstacle
 
     private void Update()
     {
-        if (!useAutoLoop && !isProcessing && TryGetPlayerOnTop(out Transform _))
+        if (!useAutoLoop && !isProcessing)
         {
-            StartCoroutine(DisappearRoutine());
+            bool isOn = IsPlayerOnPlatform();
+
+            if (isOn && !_wasPlayerOnPlatform)
+            {
+                StartCoroutine(DisappearRoutine());
+            }
+            _wasPlayerOnPlatform = isOn;
         }
     }
 
@@ -85,6 +92,10 @@ public class DisappearingObstacle : BaseObstacle
         {
             col.enabled = false;
         }
+
+        // 플래그를 강제로 해제!
+        _playerOnPlatform = null;
+        _playerRigidbody = null;
     }
 
     private void Reappear()
