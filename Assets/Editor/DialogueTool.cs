@@ -45,20 +45,20 @@ public class DialogueTool : EditorWindow
             return;
         }
 
-        // 2. JSON에 있는 모든 대사 ID 목록을 만듭니다.
-        HashSet<string> idsInJson = new HashSet<string>();
-        foreach (var dialogueList in database.Values)
+        // --- 2. ID와 타입을 함께 저장하는 새로운 데이터 구조를 사용합니다 ---
+        var dialoguesInJson = new Dictionary<string, DialogueTriggerType>();
+        foreach (var pair in database)
         {
-            foreach (var dialogue in dialogueList)
+            DialogueTriggerType type = pair.Key;
+            foreach (var dialogue in pair.Value)
             {
-                // ID가 비어있지 않은 경우에만 추가
                 if (!string.IsNullOrEmpty(dialogue.id))
                 {
-                    idsInJson.Add(dialogue.id);
+                    dialoguesInJson[dialogue.id] = type;
                 }
             }
         }
-        Debug.Log($"JSON에서 {idsInJson.Count}개의 고유 ID를 찾았습니다.");
+        Debug.Log($"JSON에서 {dialoguesInJson.Count}개의 고유 ID와 타입을 찾았습니다.");
 
 
         // 3. 지정된 폴더에서 모든 DialogueTrigger 프리팹을 찾습니다.
@@ -99,28 +99,26 @@ public class DialogueTool : EditorWindow
         int createdCount = 0;
         int warningCount = 0;
 
-        // JSON에는 있는데 프로젝트에는 없는 ID -> 새 프리팹 생성
-        foreach (string id in idsInJson)
+        // --- JSON에는 있는데 프로젝트에는 없는 ID -> 새 프리팹 생성 ---
+        foreach (var pair in dialoguesInJson)
         {
+            string id = pair.Key;
+            DialogueTriggerType type = pair.Value;
+
             if (!prefabsInProject.ContainsKey(id))
             {
-                // 임시 게임 오브젝트 생성
                 GameObject newTriggerObj = new GameObject(id);
-
-                // DialogueTrigger 컴포넌트 추가 및 ID 설정
                 DialogueTrigger newTrigger = newTriggerObj.AddComponent<DialogueTrigger>();
-                newTrigger.SetDialogueID(id);
 
-                // 트리거로 작동하기 위한 BoxCollider 추가
+                // ID와 함께 Type도 자동으로 설정합니다!
+                newTrigger.SetDialogueID(id);
+                newTrigger.SetTriggerType(type);
+
                 BoxCollider collider = newTriggerObj.AddComponent<BoxCollider>();
                 collider.isTrigger = true;
-                collider.size = new Vector3(1, 1, 1); // 기본 크기 설정
 
-                // 지정된 경로에 프리팹으로 저장
                 string prefabPath = $"{prefabFolderPath}/{id}.prefab";
                 PrefabUtility.SaveAsPrefabAsset(newTriggerObj, prefabPath);
-
-                // 씬에 남은 임시 오브젝트 즉시 제거
                 DestroyImmediate(newTriggerObj);
                 createdCount++;
             }
@@ -129,7 +127,7 @@ public class DialogueTool : EditorWindow
         // 프로젝트에는 있는데 JSON에는 없는 ID -> 경고 메시지 출력
         foreach (var pair in prefabsInProject)
         {
-            if (!idsInJson.Contains(pair.Key))
+            if (!dialoguesInJson.ContainsKey(pair.Key))
             {
                 Debug.LogWarning($"JSON에 없는 ID를 가진 프리팹 발견: '{pair.Key}'. 삭제를 고려해보세요. 경로: {AssetDatabase.GetAssetPath(pair.Value)}");
                 warningCount++;

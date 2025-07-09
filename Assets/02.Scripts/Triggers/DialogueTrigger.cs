@@ -10,6 +10,8 @@ public class DialogueTrigger : MonoBehaviour
 
     [Tooltip("지정 대사를 출력하고 싶을 경우, 여기에 대사 ID를 입력하세요.")]
     [SerializeField] private string _dialogueID = ""; // ID를 저장할 변수
+    public string DialogueID => _dialogueID;
+    public DialogueTriggerType TriggerType => _triggerType;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -29,10 +31,16 @@ public class DialogueTrigger : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+    /// <summary>
+    /// DialogueTool에서 Trigger Type을 설정하기 위한 public 함수
+    /// </summary>
+    public void SetTriggerType(DialogueTriggerType newType)
+    {
+        this._triggerType = newType;
+    }
     // DialogueTool에서 ID를 설정하기 위한 public 함수
     public void SetDialogueID(string newID)
     {
         this._dialogueID = newID;
-    }
-    public string DialogueID => _dialogueID;
+    }    
 }
