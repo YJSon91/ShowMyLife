@@ -14,12 +14,16 @@ public class FallDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 충돌한 오브젝트가 'Player' 태그를 가지고 있다면
+        // 1. 플레이어 태그를 확인합니다.
         if (other.CompareTag("Player"))
         {
-            // GameManager를 통해 StageManager에게 플레이어 낙하 사실을 '보고'합니다.
-            if (GameManager.Instance != null && GameManager.Instance.StageManager != null)
+            // 2. 플레이어의 Rigidbody 컴포넌트를 가져옵니다.
+            Rigidbody playerRb = other.GetComponent<Rigidbody>();
+
+            // 3. 플레이어가 아래로 떨어지는 중일 때만 (Y축 속도가 음수일 때) 동작합니다.
+            if (playerRb != null && playerRb.velocity.y < 0)
             {
+                // GameManager를 통해 StageManager에게 낙하 사실을 보고합니다.
                 GameManager.Instance.StageManager.OnPlayerFell();
             }
         }
