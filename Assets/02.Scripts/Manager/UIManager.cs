@@ -74,6 +74,10 @@ public class UIManager : MonoBehaviour
                 Show<StartPanelUI>(true);
                 break;
 
+            case GameManager.GameState.Tutorial:
+                Show<TutorialPanelUI>(true);
+                break;
+
             case GameManager.GameState.MainMenu:
                 // 메인 메뉴로 전환 시, 페이드 연출을 사용합니다.
                 var fadePanel = Get<FadePanelUI>();
