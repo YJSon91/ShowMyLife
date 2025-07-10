@@ -2,7 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
 
-public class CrossMovingObstacle : BaseObstacle
+public class CrossMovingObstacleLeft : BaseObstacle
 {
     [Header("이동 설정")]
     [Tooltip("십자 모양 이동 반경")]
@@ -42,10 +42,10 @@ public class CrossMovingObstacle : BaseObstacle
         // 십자 모양의 경로 정의 (중앙->오른쪽->중앙->왼쪽->중앙->위쪽->중앙->아래쪽->중앙)
         Vector3[] path = new Vector3[]
         {
+             _startPosition + Vector3.left * _moveRadius,     // 왼쪽
+            _startPosition,                                  // 중앙
             _startPosition + Vector3.right * _moveRadius,    // 오른쪽
-            _startPosition,                                  // 중앙
-            _startPosition + Vector3.left * _moveRadius,     // 왼쪽
-            _startPosition,                                  // 중앙
+            _startPosition,                                  // 중앙           
             _startPosition + Vector3.forward * _moveRadius,  // 위쪽
             _startPosition,                                  // 중앙
             _startPosition + Vector3.back * _moveRadius,     // 아래쪽
