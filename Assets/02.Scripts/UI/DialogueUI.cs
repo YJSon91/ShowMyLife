@@ -22,7 +22,10 @@ public class DialogueUI : UiBase
     {
         if (_dialogueText != null)
         {
-            _dialogueText.text = message;
+            // <mark> 태그를 사용해 텍스트 뒤에 반투명한 검은색 음영을 추가합니다.
+            // #000000은 검은색, 90은 투명도(00~FF)를 의미합니다.
+            string textWithShadow = $"<mark=#00000090>{message}</mark>";
+            _dialogueText.text = textWithShadow;
         }
     }
 
@@ -50,5 +53,5 @@ public class DialogueUI : UiBase
 
         // UIManager에게 다시 나를 숨겨달라고 요청합니다.
         GameManager.Instance.UIManager.Show<DialogueUI>(false);
-    }
+    }    
 }
