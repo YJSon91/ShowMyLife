@@ -318,9 +318,9 @@ public class GameManager : MonoBehaviour
                 case GameState.Playing:
                     SoundManager.StopBGM();
                     break;
-                case GameState.Tutorial:
-                    SoundManager.StopBGM();
-                    break;
+                //case GameState.Tutorial:
+                //    SoundManager.StopBGM();
+                //    break;
                 case GameState.LevelClear:
                   //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
                     break;
