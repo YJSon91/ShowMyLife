@@ -12,7 +12,20 @@ public class ThemeCameraController : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera themeCamera;
 
     private Coroutine rotateRoutine;
+    private Vector3 lastSweepPosition;
+    private Quaternion lastSweepRotation;
     public CinemachineVirtualCamera DefaultCamera => defaultCamera;
+    public Vector3 LastSweepPosition
+    {
+        get => lastSweepPosition;
+        set => lastSweepPosition = value;
+    }
+
+    public Quaternion LastSweepRotation
+    {
+        get => lastSweepRotation;
+        set => lastSweepRotation = value;
+    }
 
 
     // 테마 카메라로 전환
@@ -25,6 +38,15 @@ public class ThemeCameraController : MonoBehaviour
     public void ResetToDefault()
     {
         SetCameraPriority(defaultCamera, themeCamera);
+        StartCoroutine(ResetZoomAfterDelay(5f));
+    }
+    // 줌 리셋
+    private IEnumerator ResetZoomAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (themeCamera != null)
+            themeCamera.m_Lens.FieldOfView = 60f;
     }
 
     // 우선순위 조절을 통해 가시 카메라 설정
