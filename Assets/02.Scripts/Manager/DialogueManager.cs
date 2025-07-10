@@ -166,7 +166,7 @@ public class DialogueManager : MonoBehaviour
             // 3. 대사가 끝나기를 기다립니다. 
             //    (여기서는 간단히 3초 + 키 입력 대기로 처리)
             yield return new WaitForSeconds(3f);
-            yield return new WaitUntil(() => Input.anyKeyDown);
+           // yield return new WaitUntil(() => Input.anyKeyDown);
         }
 
         // 4. 모든 대사가 끝나면 UI를 숨기고 플레이어 조작을 다시 활성화합니다.
