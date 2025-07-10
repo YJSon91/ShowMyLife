@@ -15,7 +15,10 @@ public class GameManager : MonoBehaviour
 
     private float _playtime = 0f;
     private bool _isTimerRunning = false;
-    private static bool _isTutorialAlreadyShown = false;
+    /// <summary>
+    ///튜토리얼 판넬 동작 안하도록 true 상태, 튜토리얼 살리고 싶으면 false로
+    ///MaingMenu에서 OnNewGameButton함수도 Tutorial로 수정필요
+    private static bool _isTutorialAlreadyShown = true; 
 
     /// <summary>
     /// 게임 전체에서 공유될 컨트롤러 인스턴스입니다.
@@ -223,11 +226,7 @@ public class GameManager : MonoBehaviour
                // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
-            case GameState.Tutorial:
-                if (SceneManager.GetActiveScene().name != "MainScene")
-                {
-                    SceneManager.LoadScene("MainScene");
-                }                
+            case GameState.Tutorial:                           
                 PlayerControls?.Player.Enable();
                 PlayerControls?.UI.Disable();                
                 break;
@@ -249,7 +248,7 @@ public class GameManager : MonoBehaviour
         }       
         
         // 씬 로딩 로직
-        if (newState == GameState.Playing)
+        if (newState == GameState.Playing || newState== GameState.Tutorial)
         {
             // 현재 씬이 IntroScene일 때만 게임 씬을 로드하도록 조건을 추가하면 더 안전합니다.
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "IntroScene")
@@ -302,27 +301,36 @@ public class GameManager : MonoBehaviour
             var eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<EventSystem>();           
         }
-        if (scene.name == "MainScene")
+        // 2. 로드된 씬이 게임 씬인지 확인합니다.
+        if (scene.name == "MainScene") 
         {
-            // 바로 Playing 상태로 가는 대신, Tutorial 상태로 시작합니다.
-            UpdateGameState(GameState.Tutorial);
+            // 3. 튜토리얼을 아직 안 봤다면 Tutorial 상태로, 봤다면 Playing 상태로 바로 시작합니다.
+            if (_isTutorialAlreadyShown)
+            {
+                UpdateGameState(GameState.Playing);
+            }
+            else
+            {
+                UpdateGameState(GameState.Tutorial);
+            }
         }
-        // 2. 현재 게임 상태에 맞는 BGM 재생
+
+        // 3. 현재 게임 상태에 맞는 BGM 재생
         if (SoundManager != null)
         {
             switch (CurrentState)
             {
                 case GameState.MainMenu:
-                   // SoundManager.PlayBGM(BgmType.Lobby);
+                    // SoundManager.PlayBGM(BgmType.Lobby);
                     break;
                 case GameState.Playing:
                     SoundManager.StopBGM();
                     break;
-                //case GameState.Tutorial:
-                //    SoundManager.StopBGM();
-                //    break;
+                case GameState.Tutorial:
+                    SoundManager.StopBGM();
+                    break;
                 case GameState.LevelClear:
-                  //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
+                    //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
                     break;
             }
         }
