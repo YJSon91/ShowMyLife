@@ -5,6 +5,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
+using System.Collections;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -151,5 +152,32 @@ public class DialogueManager : MonoBehaviour
             Dialogue randomDialogue = targetDialogues[UnityEngine.Random.Range(0, targetDialogues.Count)];
             ShowDialogueUI(randomDialogue.text);
         }
+    }
+    private IEnumerator SequentialDialogueRoutine(string[] dialogueIDs)
+    {
+        // 1. 플레이어의 조작을 잠시 멈춥니다 (선택 사항).
+        GameManager.Instance.PlayerControls.Player.Disable();
+
+        foreach (string id in dialogueIDs)
+        {
+            // 2. ID에 해당하는 대사를 찾아서 화면에 표시합니다.
+            ShowDialogueByID(id);
+
+            // 3. 대사가 끝나기를 기다립니다. 
+            //    (여기서는 간단히 3초 + 키 입력 대기로 처리)
+            yield return new WaitForSeconds(3f);
+            yield return new WaitUntil(() => Input.anyKeyDown);
+        }
+
+        // 4. 모든 대사가 끝나면 UI를 숨기고 플레이어 조작을 다시 활성화합니다.
+        GameManager.Instance.UIManager.Hide<DialogueUI>();
+        GameManager.Instance.PlayerControls.Player.Enable();
+    }
+    /// </summary>
+    public void StartSequentialDialogue(string[] dialogueIDs)
+    {
+        // 이미 다른 대사 시퀀스가 실행 중이라면 중복 실행을 막습니다.
+        StopAllCoroutines();
+        StartCoroutine(SequentialDialogueRoutine(dialogueIDs));
     }
 }
