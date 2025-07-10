@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
 
     private float _playtime = 0f;
     private bool _isTimerRunning = false;
+    /// <summary>
+    ///튜토리얼 판넬 동작 안하도록 true 상태, 튜토리얼 살리고 싶으면 false로
+    ///MaingMenu에서 OnNewGameButton함수도 Tutorial로 수정필요
+    private static bool _isTutorialAlreadyShown = true; 
 
     /// <summary>
     /// 게임 전체에서 공유될 컨트롤러 인스턴스입니다.
@@ -24,7 +28,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 게임의 현재 상태를 나타내는 열거형입니다.
     /// </summary>
-    public enum GameState { Start, MainMenu, Playing, Paused, LevelClear }
+    public enum GameState { Start, MainMenu, Playing, Paused, Tutorial, LevelClear }
 
 
     // --- 이벤트 ---
@@ -199,6 +203,7 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Playing:
                 // 플레이 중일 때는 플레이어 조작만 가능해야 합니다.
+                UIManager?.Hide<TutorialPanelUI>();
                 PlayerControls?.UI.Disable();
                 PlayerControls?.Player.Enable();
                 Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
@@ -221,6 +226,11 @@ public class GameManager : MonoBehaviour
                // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
+            case GameState.Tutorial:                           
+                PlayerControls?.Player.Enable();
+                PlayerControls?.UI.Disable();                
+                break;
+
             case GameState.MainMenu:
                 SoundManager?.PlayBGM(BgmType.Main);
                 break;
@@ -238,7 +248,7 @@ public class GameManager : MonoBehaviour
         }       
         
         // 씬 로딩 로직
-        if (newState == GameState.Playing)
+        if (newState == GameState.Playing || newState== GameState.Tutorial)
         {
             // 현재 씬이 IntroScene일 때만 게임 씬을 로드하도록 조건을 추가하면 더 안전합니다.
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "IntroScene")
@@ -255,16 +265,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void TogglePauseState()
     {
-        // 현재 게임 상태가 '플레이 중'일 때만 일시정지할 수 있습니다.
-        if (CurrentState == GameState.Playing)
-        {
-            UpdateGameState(GameState.Paused);
-        }
-        // 현재 게임 상태가 '일시정지 중'일 때만 게임을 재개할 수 있습니다.
-        else if (CurrentState == GameState.Paused)
-        {
-            UpdateGameState(GameState.Playing);
-        }
+        // 튜토리얼 중일 때는 일시정지 메뉴가 열리지 않도록 합니다.
+        if (CurrentState == GameState.Tutorial) return;
+
+        if (CurrentState == GameState.Playing) UpdateGameState(GameState.Paused);
+        else if (CurrentState == GameState.Paused) UpdateGameState(GameState.Playing);
     }
     /// <summary>
     /// 플레이어의 리스폰 절차를 시작하도록 요청합니다.
@@ -296,20 +301,36 @@ public class GameManager : MonoBehaviour
             var eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<EventSystem>();           
         }
+        // 2. 로드된 씬이 게임 씬인지 확인합니다.
+        if (scene.name == "MainScene") 
+        {
+            // 3. 튜토리얼을 아직 안 봤다면 Tutorial 상태로, 봤다면 Playing 상태로 바로 시작합니다.
+            if (_isTutorialAlreadyShown)
+            {
+                UpdateGameState(GameState.Playing);
+            }
+            else
+            {
+                UpdateGameState(GameState.Tutorial);
+            }
+        }
 
-        // 2. 현재 게임 상태에 맞는 BGM 재생
+        // 3. 현재 게임 상태에 맞는 BGM 재생
         if (SoundManager != null)
         {
             switch (CurrentState)
             {
                 case GameState.MainMenu:
-                   // SoundManager.PlayBGM(BgmType.Lobby);
+                    // SoundManager.PlayBGM(BgmType.Lobby);
                     break;
                 case GameState.Playing:
                     SoundManager.StopBGM();
                     break;
+                case GameState.Tutorial:
+                    SoundManager.StopBGM();
+                    break;
                 case GameState.LevelClear:
-                  //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
+                    //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
                     break;
             }
         }
@@ -326,5 +347,21 @@ public class GameManager : MonoBehaviour
 
         // String.Format을 사용하여 "00:00:00" 형태로 만듭니다.
         return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
+    }
+    /// <summary>
+    /// 튜토리얼을 끝내는 함수입니다. TutorialPanelUI에 의해 호출됩니다.
+    /// </summary>
+    public void EndTutorial()
+    {
+        if (CurrentState == GameState.Tutorial)
+        {
+            Debug.Log("튜토리얼 종료! 게임을 시작합니다.");
+
+            // 튜토리얼을 봤다고 '기억'합니다.
+            _isTutorialAlreadyShown = true;
+
+            // 상태를 Playing으로 변경합니다.
+            UpdateGameState(GameState.Playing);
+        }
     }
 }

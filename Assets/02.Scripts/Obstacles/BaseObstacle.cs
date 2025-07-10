@@ -4,7 +4,7 @@ public class BaseObstacle : MonoBehaviour
 {
     [Header("플레이어 감지 옵션")]
     [Tooltip("플레이어를 감지해서 장애물 동작에 반영할지 여부")]
-    [SerializeField] protected bool enablePlayerCarry = true;
+    [SerializeField] protected bool enablePlayerCarry = true; // Inspector에서 체크 On/Off
 
     // 플레이어가 올라온 상태를 저장 (자식에서 사용 가능)
     protected Transform _playerOnPlatform;
@@ -15,8 +15,7 @@ public class BaseObstacle : MonoBehaviour
     /// </summary>
     protected virtual void OnCollisionEnter(Collision collision)
     {
-        if (!enablePlayerCarry) return;
-        // 여러 플레이어가 있을 경우 tag 등 추가 분기
+        if (!enablePlayerCarry) return; // 감지 Off면 무시
         if (collision.gameObject.CompareTag("Player"))
         {
             _playerOnPlatform = collision.transform;
@@ -30,9 +29,9 @@ public class BaseObstacle : MonoBehaviour
     /// </summary>
     protected virtual void OnCollisionExit(Collision collision)
     {
+        if (!enablePlayerCarry) return; // 감지 Off면 무시
         if (collision.gameObject.CompareTag("Player"))
         {
-            // 내려온 오브젝트만 해제
             if (_playerOnPlatform == collision.transform)
             {
                 _playerOnPlatform = null;
@@ -42,11 +41,28 @@ public class BaseObstacle : MonoBehaviour
         }
     }
 
+    public void NotifyPlayerOnPlatform(Transform player, Rigidbody rb)
+    {
+        if (!enablePlayerCarry) return;
+        _playerOnPlatform = player;
+        _playerRigidbody = rb;
+    }
+
+    public void NotifyPlayerExitPlatform(Transform player)
+    {
+        if (_playerOnPlatform == player)
+        {
+            _playerOnPlatform = null;
+            _playerRigidbody = null;
+        }
+    }
+
     /// <summary>
     /// 플레이어가 장애물 위에 올라와있는지 판정
     /// </summary>
     protected bool IsPlayerOnPlatform()
     {
+        if (!enablePlayerCarry) return false; // 감지 Off면 항상 false
         return _playerOnPlatform != null && _playerRigidbody != null;
     }
 
@@ -55,7 +71,7 @@ public class BaseObstacle : MonoBehaviour
     /// </summary>
     protected Transform GetPlayerOnPlatform()
     {
-        return _playerOnPlatform;
+        return enablePlayerCarry ? _playerOnPlatform : null;
     }
 
     /// <summary>
@@ -63,6 +79,6 @@ public class BaseObstacle : MonoBehaviour
     /// </summary>
     protected Rigidbody GetPlayerRigidbody()
     {
-        return _playerRigidbody;
+        return enablePlayerCarry ? _playerRigidbody : null;
     }
 }

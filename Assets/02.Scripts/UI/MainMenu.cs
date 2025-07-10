@@ -17,14 +17,14 @@ public class MainMenu : UiBase
     public void OnNewGameButton()
     {
         // GameManager에게 게임 시작을 요청합니다.        
-       GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
+       //GameManager.Instance.UpdateGameState(GameManager.GameState.Tutorial);
+       GameManager.Instance.UpdateGameState(GameManager.GameState.Playing); // 게임 상태를 로딩으로 변경합니다.
     }
 
     // '이어하기' 버튼을 위한 함수
     public void OnContinueButton()
     {
-        // MVP에서는 우선 새 게임과 동일하게 처리합니다.
-        OnNewGameButton();
+        GameManager.Instance.UpdateGameState(GameManager.GameState.Playing); // 게임 상태를 로딩으로 변경합니다.
     }
 
     // '설정' 버튼을 위한 함수
