@@ -192,13 +192,28 @@ public class PlayerGodModeController : MonoBehaviour
             _rigidbody.useGravity = _originalUseGravity;
             _rigidbody.isKinematic = _originalKinematicState;
             _rigidbody.constraints = _originalConstraints;
-            _rigidbody.velocity = Vector3.zero;
+            
+            // 회전 초기화 - 플레이어를 항상 위쪽을 향하도록 설정
+            transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+            
+            // 회전 모멘텀 제거
+            _rigidbody.angularVelocity = Vector3.zero;
+            
+            // 아래쪽 방향으로 초기 속도 부여
+            Vector3 initialFallVelocity = new Vector3(0f, -10f, 0f); // 아래쪽 방향으로 10 유닛/초의 초기 속도
+            _rigidbody.velocity = initialFallVelocity;
         }
         
         // 콜라이더 재활성화 (선택적)
         if (_capsuleCollider != null)
         {
             _capsuleCollider.isTrigger = false;
+        }
+        
+        // 지면 확인 강제 실행
+        if (_player != null && _player.MovementController != null)
+        {
+            _player.MovementController.GroundedCheck();
         }
     }
 
