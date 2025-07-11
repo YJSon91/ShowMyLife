@@ -2,24 +2,92 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 
-// 연출설정 스크립트
+
+public enum CommonEmotionType
+{
+    Sweep,
+    FOVZoom,
+    MoveCamera,
+    RotateToTarget,
+    TopDownSlow,
+    ResetAll,
+    EndEmotion,
+}
+
+public struct EmotionParams
+{
+    public Vector3 position;
+    public Vector3 fromPosition;
+    public Vector3 toPosition;
+
+    public float pitch;
+    public float angle;
+    public float duration;
+    public float baseYaw;
+
+    public float fromFOV;
+    public float toFOV;
+
+    public bool sweepLeftToRight;
+
+    public System.Action onComplete;
+    public Transform targetTransform;
+}
+
 public class EmotionDirector : MonoBehaviour
 {
-    [Tooltip("ThemeCameraController 스크립트")]
-    [SerializeField] private ThemeCameraController themeCamera;
+    [Tooltip("ThemeCameraController 스크립트")] [SerializeField]
+    private ThemeCameraController themeCamera;
 
-    [Tooltip("PostProcessing 스크립트")]
-    [SerializeField] private PostProcessingManager postProcessing;
+    [Tooltip("PostProcessing 스크립트")] [SerializeField]
+    private PostProcessingManager postProcessing;
 
-    [Tooltip("TimeEffect 스크립트")]
-    [SerializeField] private TimeEffectManager timeEffect;
+    [Tooltip("TimeEffect 스크립트")] [SerializeField]
+    private TimeEffectManager timeEffect;
 
-    [Tooltip("연출용 타겟 리스트")]
-    [SerializeField] private List<Transform> emotionLookTargets = new List<Transform>();
+    [Tooltip("연출용 타겟 리스트")] [SerializeField]
+    private List<Transform> emotionLookTargets = new List<Transform>();
 
     public ThemeCameraController ThemeCamera => themeCamera;
 
+    public void PlayCommonEmotion(CommonEmotionType type, EmotionParams param)
+    {
+        switch (type)
+        {
+            case CommonEmotionType.Sweep:
+                PlaySweepEmotion(param.position, param.pitch, param.angle, param.duration, param.baseYaw, param.sweepLeftToRight);
+                break;
+
+
+            case CommonEmotionType.FOVZoom:
+                themeCamera?.PlayFOVZoom(param.fromFOV, param.toFOV, param.duration, param.onComplete);
+                break;
+
+            case CommonEmotionType.MoveCamera:
+                themeCamera?.PlayMoveCamera(param.fromPosition, param.toPosition, param.duration, param.onComplete);
+                break;
+
+            case CommonEmotionType.RotateToTarget:
+                StartCoroutine(RotateLookDirection(param.fromPosition, param.targetTransform, param.duration));
+                break;
+
+            case CommonEmotionType.TopDownSlow:
+                PlayTopDownEmotion();
+                break;
+
+            case CommonEmotionType.ResetAll:
+                ResetEmotion();
+                break;
+
+            case CommonEmotionType.EndEmotion:
+                EndEmotion(param.onComplete);
+                break;
+        }
+    }
+
+
     #region 공용 연출
+
     // 슬로우모션 연출
     public void PlayTopDownEmotion()
     {
@@ -35,8 +103,39 @@ public class EmotionDirector : MonoBehaviour
         timeEffect?.ResetTimeScale();
     }
 
+    // 연출 종료
+    public void EndEmotion(System.Action onComplete = null)
+    {
+        onComplete?.Invoke();
+    }
+
+    // 카메라 리셋
+    public void ResetThemeCamera()
+    {
+        if (themeCamera == null) return;
+
+        themeCamera.SwitchCameras();
+        themeCamera.ClearAim();
+        themeCamera.SetLookAt(null);
+        themeCamera.SetFollow(null);
+    }
+    // 메인 카메라 복귀
+    public void ResetToDefault()
+    {
+        themeCamera?.ResetToDefault();
+    }
+
+    // 플레이어 기준 기본 카메라 시작 위치 반환
+    public Vector3 GetPlayerEyePosition(Transform player)
+    {
+        if (player == null) return Vector3.zero;
+        return player.position + Vector3.up * 1.6f;
+
+    }
+
     // 지정된 각도로 훑기 연출
-    public void PlaySweepEmotion(Vector3 position, float pitch, float sweepAngle, float duration)
+    public void PlaySweepEmotion(Vector3 position, float pitch, float sweepAngle, float duration,
+        float baseYaw = 180f, bool sweepLeftToRight = true)
     {
         if (themeCamera == null) return;
 
@@ -45,22 +144,23 @@ public class EmotionDirector : MonoBehaviour
         themeCamera.SetLookAt(null);
         themeCamera.SetFollow(null);
 
-        StartCoroutine(SweepRoutine(position, pitch, sweepAngle, duration));
+        StartCoroutine(SweepRoutine(position, pitch, sweepAngle, duration, baseYaw, sweepLeftToRight));
     }
 
-    // 훑기 연출 코루틴
-    private IEnumerator SweepRoutine(Vector3 fixedPos, float pitch, float sweepAngle, float duration)
+    private IEnumerator SweepRoutine(Vector3 fixedPos, float pitch, float sweepAngle, float duration,
+        float baseYaw, bool sweepLeftToRight)
     {
-        float elapsed = 0f;
-        float startYaw = -sweepAngle * 0.5f;
+        float startYaw = sweepLeftToRight ? -sweepAngle * 0.5f : sweepAngle * 0.5f;
+        float endYaw = sweepLeftToRight ? sweepAngle * 0.5f : -sweepAngle * 0.5f;
 
+        float elapsed = 0f;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
-            float yaw = Mathf.Lerp(startYaw, startYaw + sweepAngle, t);
+            float yaw = Mathf.Lerp(startYaw, endYaw, t);
 
-            Quaternion rot = Quaternion.Euler(pitch, yaw + 180f, 0f);
+            Quaternion rot = Quaternion.Euler(pitch, baseYaw + yaw, 0f); // 기준 yaw + 훑기 각도
             themeCamera.SetPosition(fixedPos);
             themeCamera.SetRotation(rot.eulerAngles);
 
@@ -68,17 +168,97 @@ public class EmotionDirector : MonoBehaviour
         }
 
         // 마지막 상태 저장
+        Quaternion lastRot = Quaternion.Euler(pitch, baseYaw + endYaw, 0f);
         themeCamera.LastSweepPosition = fixedPos;
-        themeCamera.LastSweepRotation = Quaternion.Euler(pitch, startYaw + sweepAngle + 180f, 0f);
+        themeCamera.LastSweepRotation = lastRot;
 
-        themeCamera.SetPosition(themeCamera.LastSweepPosition);
-        themeCamera.SetRotation(themeCamera.LastSweepRotation.eulerAngles);
+        themeCamera.SetPosition(fixedPos);
+        themeCamera.SetRotation(lastRot.eulerAngles);
+    }
+
+
+    // 시점 멈춤 위치 계산
+    public Vector3 GetStopPosition(int index, float stopDistance, Vector3 fromPos)
+    {
+        if (index >= emotionLookTargets.Count || emotionLookTargets[index] == null)
+            return Vector3.zero;
+
+        Vector3 dir = (emotionLookTargets[index].position - fromPos).normalized;
+        return emotionLookTargets[index].position - dir * stopDistance;
+    }
+
+    // 시점 타겟 위치 반환
+    public Vector3 GetLookTarget(int index)
+    {
+        if (index >= emotionLookTargets.Count || emotionLookTargets[index] == null)
+            return Vector3.zero;
+
+        return emotionLookTargets[index].position;
+    }
+
+    // 카메라 회전 LookAt 기반
+    public IEnumerator RotateLookDirection(Vector3 fromPosition, Transform target, float duration)
+    {
+        if (themeCamera == null || target == null)
+            yield break;
+
+        var defaultCam = themeCamera.DefaultCamera;
+        if (defaultCam == null)
+            yield break;
+
+        Quaternion fromRot = defaultCam.transform.rotation;
+        Vector3 lookDir = (target.position - fromPosition).normalized;
+        Quaternion toRot = Quaternion.LookRotation(lookDir);
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            defaultCam.transform.rotation = Quaternion.Slerp(fromRot, toRot, t);
+            yield return null;
+        }
+
+        var pov = defaultCam.GetCinemachineComponent<Cinemachine.CinemachinePOV>();
+        if (pov != null)
+        {
+            Vector3 finalDir = target.position - defaultCam.transform.position;
+            if (finalDir.sqrMagnitude > 0.01f)
+            {
+                Quaternion lookRot = Quaternion.LookRotation(finalDir.normalized);
+                Vector3 euler = lookRot.eulerAngles;
+
+                pov.m_HorizontalAxis.Value = euler.y;
+                pov.m_VerticalAxis.Value = -euler.x;
+            }
+        }
+    }
+
+    // 카메라회전 수동
+    public IEnumerator RotateLookFromSweep(Vector3 fromPosition, Quaternion fromRotation, Transform target, float duration, float speedMultiplier = 1f)
+    {
+        if (themeCamera == null || target == null)
+            yield break;
+
+        Vector3 lookDir = (target.position - fromPosition).normalized;
+        Quaternion toRotation = Quaternion.LookRotation(lookDir);
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime * speedMultiplier;
+            float t = Mathf.Clamp01(elapsed / duration);
+            Quaternion rot = Quaternion.Slerp(fromRotation, toRotation, t);
+            themeCamera.SetRotation(rot.eulerAngles);
+            yield return null;
+        }
     }
 
     #endregion
 
 
     #region 플레이어 조작제한
+
     // 플레이어 조작을 비활성화
     public void DisablePlayerControl(Transform player)
     {
@@ -126,18 +306,17 @@ public class EmotionDirector : MonoBehaviour
             }
         }
     }
+
     #endregion
 
 
     #region 유치원 시네마틱
-    // 하늘 훑기 종료 후 타겟 응시 코루틴 시작
-    public void StartFinishSkySweep(float duration, int index)
+    public void StartFinishSkySweep(float delay, int targetIndex)
     {
-        StartCoroutine(FinishSkySweepAfter(duration, index));
+        StartCoroutine(FinishSkySweepRoutine(delay, targetIndex));
     }
 
-    // 하늘 훑기 종료 후 타겟 응시
-    private IEnumerator FinishSkySweepAfter(float delay, int targetIndex)
+    private IEnumerator FinishSkySweepRoutine(float delay, int targetIndex)
     {
         yield return new WaitForSeconds(delay);
 
@@ -153,106 +332,123 @@ public class EmotionDirector : MonoBehaviour
         defaultCam.LookAt = null;
         themeCamera.SmoothLookAt(target, 1f);
 
-        var pov = defaultCam.GetCinemachineComponent<Cinemachine.CinemachinePOV>();
-        if (pov != null)
-        {
-            Vector3 dir = target.position - defaultCam.transform.position;
-            if (dir.sqrMagnitude > 0.01f)
-            {
-                Quaternion rot = Quaternion.LookRotation(dir.normalized);
-                Vector3 euler = rot.eulerAngles;
+        yield return StartCoroutine(RotateLookDirection(themeCamera.LastSweepPosition, target, 1f));
 
-                pov.m_HorizontalAxis.Value = euler.y;
-                pov.m_VerticalAxis.Value = -euler.x;
-            }
-        }
-        else
-        {
-            Vector3 dir = target.position - defaultCam.transform.position;
-            if (dir.sqrMagnitude > 0.01f)
-            {
-                Quaternion lookRot = Quaternion.LookRotation(dir.normalized);
-                defaultCam.transform.rotation = lookRot;
-            }
-        }
-
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
+        ResetToDefault();
         ResetEmotion();
     }
+
 
     #endregion
 
 
     #region 초등학교 시네마틱
 
-    // 줌인 시네마틱 연출 시작
-    public void PlayFocusZoomFrom(Vector3 fromPos, Vector3 fromRot, int index, float duration, float stopDistance)
+    public void PlayZoomFromPlayer(Transform player, int index, float duration, float targetFOV = 40f, float moveDistance = 100f, System.Action onComplete = null)
     {
-        if (index >= emotionLookTargets.Count || emotionLookTargets[index] == null || themeCamera == null)
+        if (player == null || index >= emotionLookTargets.Count || emotionLookTargets[index] == null || themeCamera == null)
             return;
 
-        Transform target = emotionLookTargets[index];
+        ResetThemeCamera();
 
-        themeCamera.SwitchCameras();
-        themeCamera.ClearAim();
-        themeCamera.SetLookAt(null);
-        themeCamera.SetFollow(null);
+        // 시작 위치: 플레이어 기준
+        Vector3 fromPos = GetPlayerEyePosition(player);
 
-        Vector3 direction = (target.position - fromPos).normalized;
-        Vector3 toPos = target.position - direction * stopDistance;
-        Vector3 lookTarget = target.position;
-        float toFOV = 40f;
-
-        StartCoroutine(FocusZoomRoutine(fromPos, fromRot, toPos, lookTarget, toFOV, duration));
-    }
-
-    // 줌인 시네마틱 카메라 이동 처리
-    private IEnumerator FocusZoomRoutine(Vector3 fromPos, Vector3 fromRot, Vector3 toPos, Vector3 lookTarget,
-        float toFOV, float duration)
-    {
-        float elapsed = 0f;
-        float fromFOV = themeCamera.DefaultCamera.m_Lens.FieldOfView;
-        Quaternion fromQ = Quaternion.Euler(fromRot);
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-
-            Vector3 currentPos = Vector3.Lerp(fromPos, toPos, t);
-            Vector3 dir = (lookTarget - currentPos).normalized;
-            Quaternion toQ = Quaternion.LookRotation(dir);
-
-            themeCamera.SetPosition(currentPos);
-            themeCamera.SetRotation(Quaternion.Slerp(fromQ, toQ, t).eulerAngles);
-            themeCamera.SetZoom(Mathf.Lerp(fromFOV, toFOV, t));
-
-            yield return null;
-        }
-
-        themeCamera.SetPosition(toPos);
-        themeCamera.SetRotation(Quaternion.LookRotation((lookTarget - toPos).normalized).eulerAngles);
-        themeCamera.SetZoom(toFOV);
-    }
-
-    // 시점 멈춤 위치 계산
-    public Vector3 GetStopPosition(int index, float stopDistance, Vector3 fromPos)
-    {
-        if (index >= emotionLookTargets.Count || emotionLookTargets[index] == null)
-            return Vector3.zero;
-
+        // 타겟 방향
         Vector3 dir = (emotionLookTargets[index].position - fromPos).normalized;
-        return emotionLookTargets[index].position - dir * stopDistance;
+        if (dir.sqrMagnitude < 0.01f)
+            return;
+
+        // 회전 세팅 + 위치 세팅
+        Quaternion rot = Quaternion.LookRotation(dir);
+        themeCamera.SetRotation(rot.eulerAngles);
+        themeCamera.SetPosition(fromPos);
+
+        // 도착 위치
+        Vector3 toPos = fromPos + dir * moveDistance;
+
+        // 현재 FOV
+        float startFOV = themeCamera.GetFOV();
+
+        // 이동 + 줌을 동시에 시작
+        themeCamera.PlayMoveCamera(fromPos, toPos, duration, null);
+        themeCamera.PlayFOVZoom(startFOV, targetFOV, duration, () =>
+        {
+            EndEmotion(onComplete);
+        });
     }
 
-    // 시점 타겟 위치 반환
-    public Vector3 GetLookTarget(int index)
-    {
-        if (index >= emotionLookTargets.Count || emotionLookTargets[index] == null)
-            return Vector3.zero;
 
-        return emotionLookTargets[index].position;
-    }
+
 
     #endregion
+
+
+    public void PlayLookAroundThenFocus(int targetIndex, Transform player, float sweepDuration, float focusDuration,
+        System.Action onComplete = null)
+    {
+        StartCoroutine(LookAroundThenFocusRoutine(targetIndex, player, sweepDuration, focusDuration, onComplete));
+    }
+
+    private IEnumerator LookAroundThenFocusRoutine(int targetIndex, Transform player, float sweepDuration,
+        float focusDuration, System.Action onComplete)
+    {
+        if (themeCamera == null || player == null || targetIndex >= emotionLookTargets.Count ||
+            emotionLookTargets[targetIndex] == null)
+            yield break;
+
+        // 1. 시작 위치 계산
+        Vector3 startPos = GetPlayerEyePosition(player);
+
+        // 2. 카메라 초기화
+        ResetThemeCamera();
+        themeCamera.SetPosition(startPos);
+
+        // 4. 훑기 연출 (오른쪽 → 왼쪽)
+        EmotionParams sweepLeft = new EmotionParams
+        {
+            position = startPos,
+            pitch = 0f,
+            angle = 130f,
+            duration = sweepDuration * 0.5f,
+            sweepLeftToRight = false,
+        };
+        PlayCommonEmotion(CommonEmotionType.Sweep, sweepLeft);
+        yield return new WaitForSeconds(sweepDuration * 0.5f);
+
+        // 5. 훑기 연출 (왼쪽 → 오른쪽)
+        EmotionParams sweepRight = new EmotionParams
+        {
+            position = startPos,
+            pitch = 0f,
+            angle = 130f,
+            duration = sweepDuration * 0.5f,
+            sweepLeftToRight = true,
+        };
+        PlayCommonEmotion(CommonEmotionType.Sweep, sweepRight);
+        yield return new WaitForSeconds(sweepDuration * 0.5f);
+
+        // 6. 마지막 훑기 위치에서 타겟 응시 회전
+        Vector3 camPos = themeCamera.LastSweepPosition;
+        Quaternion fromRot = themeCamera.LastSweepRotation;
+        Transform target = emotionLookTargets[targetIndex];
+
+        float speedMultiplier = 1.8f;
+
+        yield return StartCoroutine(RotateLookFromSweep(camPos, fromRot, target, focusDuration, speedMultiplier));
+
+        yield return new WaitForSeconds(0.25f);
+
+        // 7. 카메라 이동
+        float stopDistance = 35f;
+        Vector3 toPos = GetStopPosition(targetIndex, stopDistance, camPos);
+        themeCamera.PlayMoveCamera(camPos, toPos, 5f, () =>
+        {
+            ResetToDefault();
+            onComplete?.Invoke();
+        });
+
+        yield return new WaitForSeconds(5f);
+    }
 }

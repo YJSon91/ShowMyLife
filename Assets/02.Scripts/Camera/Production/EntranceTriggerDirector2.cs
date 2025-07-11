@@ -6,79 +6,59 @@ public class EntranceTriggerDirector2 : MonoBehaviour
     [Tooltip("연출매니저")]
     [SerializeField] private EmotionDirector emotionDirector;
 
-    [Tooltip("플레이어 트랜스폼")]
-    [SerializeField] private Transform playerTransform;
-
-    [Tooltip("줌인 연출 시간")]
+    [Tooltip("첫번째 연출 속도")]
     [SerializeField] private float zoomDuration = 3f;
 
     [Tooltip("중간 대기 시간")]
-    [SerializeField] private float pauseDuration = 1f;
+    [SerializeField] private float pauseDuration = 0.5f;
 
-    [Tooltip("훑기 연출 시간")]
-    [SerializeField] private float sweepDuration = 4f;
+    [Tooltip("두번째 연출 속도")]
+    [SerializeField] private float sweepDuration = 6f;
 
     [Tooltip("훑기 각도")]
     [SerializeField] private float sweepAngle = 90f;
-
-    [Tooltip("첫 줌인 목표 거리")]
-    [SerializeField] private float zoomStopDistance = 150f;
 
     [Tooltip("훑기 시작 거리")]
     [SerializeField] private float sweepStartDistance = 10f;
 
     private bool hasTriggered = false;
+    private Transform player;
 
-    // 온 트리거
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered || !other.CompareTag("Player")) return;
         hasTriggered = true;
 
-        // 조작 비활성화
-        emotionDirector.DisablePlayerControl(other.transform);
+        player = other.transform;
+        emotionDirector.DisablePlayerControl(player);
 
-        // 카메라 연출
         StartCoroutine(PlayEmotionSequence());
     }
 
-    // 카메라 연출
     private IEnumerator PlayEmotionSequence()
     {
         if (emotionDirector == null)
             yield break;
 
-        // 멀리서 줌인
-        Vector3 camPos = Camera.main.transform.position;
-        Vector3 camRot = Camera.main.transform.eulerAngles;
-        emotionDirector.PlayFocusZoomFrom(camPos, camRot, 3, zoomDuration, zoomStopDistance);
+        // 줌인 연출 (플레이어 위치에서 타겟 방향으로 이동 + 줌)
+        emotionDirector.PlayZoomFromPlayer(player, 3, zoomDuration);
         yield return new WaitForSeconds(zoomDuration);
 
-        // 중간 대기
         yield return new WaitForSeconds(pauseDuration);
 
-        // 가까이 이동 후 정면 응시
-        Vector3 sweepPos = emotionDirector.GetStopPosition(3, sweepStartDistance, camPos);
-        Vector3 lookTarget = emotionDirector.GetLookTarget(3);
-        Vector3 dir = (lookTarget - sweepPos).normalized;
-        Quaternion rot = Quaternion.LookRotation(dir);
-
-        emotionDirector.ThemeCamera.SetPosition(sweepPos);
-        emotionDirector.ThemeCamera.SetRotation(rot.eulerAngles);
-
-        // 훑기 연출 실행
+        // 현재 카메라 위치 기준 훑기 시작 위치 계산
+        Vector3 sweepPos = emotionDirector.GetStopPosition(3, sweepStartDistance, Camera.main.transform.position);
         emotionDirector.PlaySweepEmotion(sweepPos, 45f, sweepAngle, sweepDuration);
         yield return new WaitForSeconds(sweepDuration);
 
-        // 연출 리셋 및 조작 복원
+        // 복원 및 종료
         emotionDirector.ResetEmotion();
-        emotionDirector.EnablePlayerControl(playerTransform);
+        emotionDirector.EnablePlayerControl(player);
+        emotionDirector.ResetToDefault();
 
-        // 자기 자신 비활성화
         gameObject.SetActive(false);
     }
 
-    // 범위 표시
     private void OnDrawGizmos()
     {
         Collider col = GetComponent<Collider>();

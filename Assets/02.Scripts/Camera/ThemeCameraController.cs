@@ -56,12 +56,6 @@ public class ThemeCameraController : MonoBehaviour
         inactiveCam.Priority = 10;
     }
 
-    // 테마 카메라 줌 설정
-    public void SetZoom(float fov)
-    {
-        themeCamera.m_Lens.FieldOfView = fov;
-    }
-
     // 테마 카메라 위치 변경
     public void SetPosition(Vector3 newPosition)
     {
@@ -136,4 +130,65 @@ public class ThemeCameraController : MonoBehaviour
         themeCamera.DestroyCinemachineComponent<CinemachinePOV>();
         themeCamera.DestroyCinemachineComponent<CinemachineFramingTransposer>();
     }
+
+    public void SetFOV(float fov)
+    {
+        if (themeCamera != null)
+            themeCamera.m_Lens.FieldOfView = fov;
+    }
+
+    public float GetFOV()
+    {
+        return themeCamera != null ? themeCamera.m_Lens.FieldOfView : 60f;
+    }
+
+    public void PlayFOVZoom(float fromFOV, float toFOV, float duration, System.Action onComplete = null)
+    {
+        StartCoroutine(FOVZoomRoutine(fromFOV, toFOV, duration, onComplete));
+    }
+
+    private IEnumerator FOVZoomRoutine(float from, float to, float duration, System.Action onComplete)
+    {
+        if (themeCamera == null)
+            yield break;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            themeCamera.m_Lens.FieldOfView = Mathf.Lerp(from, to, t);
+            yield return null;
+        }
+
+        themeCamera.m_Lens.FieldOfView = to; // 마지막 보정
+        onComplete?.Invoke();
+    }
+
+    public void PlayMoveCamera(Vector3 from, Vector3 to, float duration, System.Action onComplete = null)
+    {
+        SwitchCameras();
+        ClearAim();
+        SetLookAt(null);
+        SetFollow(null);
+        SetPosition(from);
+
+        StartCoroutine(MoveRoutine(from, to, duration, onComplete));
+    }
+
+    private IEnumerator MoveRoutine(Vector3 from, Vector3 to, float duration, System.Action onComplete)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            SetPosition(Vector3.Lerp(from, to, t));
+            yield return null;
+        }
+
+        SetPosition(to);
+        onComplete?.Invoke();
+    }
+
 }

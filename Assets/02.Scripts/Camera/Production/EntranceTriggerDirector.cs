@@ -6,21 +6,18 @@ public class EntranceTriggerDirector : MonoBehaviour
     [Tooltip("연출매니저")]
     [SerializeField] private EmotionDirector emotionDirector;
 
-    [Tooltip("플레이어")]
-    [SerializeField] private Transform playerTransform;
-
     [Tooltip("발판 오브젝트")]
     [SerializeField] private GameObject objectToActivate;
 
-    [Tooltip("연출 시간")]
-    [SerializeField] private float skyPanDuration = 3f;
+    [Tooltip("연출 속도")]
+    [SerializeField] private float skyPanDuration = 7f;
 
     [Tooltip("훑을 각도")]
     [SerializeField] private float sweepAngle = 90f;
 
     private bool hasTriggered = false;
 
-    //온 트리거
+    // 온 트리거
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered || !other.CompareTag("Player")) return;
@@ -37,21 +34,21 @@ public class EntranceTriggerDirector : MonoBehaviour
     private IEnumerator PlaySkySequence(Transform player)
     {
         // 연출 시작
-        Vector3 eyePos = playerTransform.position + Vector3.up * 1.6f;
+        Vector3 eyePos = emotionDirector.GetPlayerEyePosition(player);
 
         // 카메라 세팅 및 훑기 연출 시작
         emotionDirector.PlaySweepEmotion(eyePos, -22f, sweepAngle, skyPanDuration);
 
         // 플레이어를 즉시 뒤로 회전
-        Vector3 back = -playerTransform.forward;
+        Vector3 back = -player.forward;
         back.y = 0f;
-        playerTransform.rotation = Quaternion.LookRotation(back);
+        player.rotation = Quaternion.LookRotation(back);
 
         // 발판 오브젝트 활성화
         if (objectToActivate != null)
             objectToActivate.SetActive(true);
 
-        // 연출 후 타겟 응시 루틴 시작
+        // 연출 후 타겟 응시 및 회전 루틴 시작
         emotionDirector.StartFinishSkySweep(skyPanDuration, 2);
 
         // 연출 시간 대기
