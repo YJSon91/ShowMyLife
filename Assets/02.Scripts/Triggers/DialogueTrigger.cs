@@ -10,29 +10,46 @@ public class DialogueTrigger : MonoBehaviour
 
     [Tooltip("지정 대사를 출력하고 싶을 경우, 여기에 대사 ID를 입력하세요.")]
     [SerializeField] private string _dialogueID = ""; // ID를 저장할 변수
+
+    [Tooltip("여러 대사를 순서대로 출력하려면 여기에 ID 목록을 추가하세요.")]
+    [SerializeField] private string[] _dialogueIDs; // 여러 ID를 담을 배열 추가
+
+    [Tooltip("이 트리거를 한 번만 작동시킬지 여부를 설정합니다.")]
+    [SerializeField] private bool _isOneTimeTrigger = true;
+
     public string DialogueID => _dialogueID;
     public DialogueTriggerType TriggerType => _triggerType;
+    private bool _hasBeenTriggered = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (_isOneTimeTrigger && _hasBeenTriggered) return;
+
+        if (!_hasBeenTriggered && other.CompareTag("Player"))
         {
-            // Fall 타입일 경우, 자신의 Y 좌표와 함께 대사를 요청합니다.
-            if (_triggerType == DialogueTriggerType.Fall)
+            _hasBeenTriggered = true;
+
+            var dialogueManager = GameManager.Instance.DialogueManager;
+            if (dialogueManager == null) return;
+
+            // 1. 순차 대사 목록이 있는지 최우선으로 확인합니다.
+            if (_dialogueIDs != null && _dialogueIDs.Length > 0)
             {
-                GameManager.Instance.DialogueManager.ShowFallDialogueByHeight(transform.position.y);
+                dialogueManager.StartSequentialDialogue(_dialogueIDs);
             }
-            // 그 외의 타입은 기존 방식대로 작동합니다.
+            // 2. 순차 대사가 없다면, 지정된 단일 ID가 있는지 확인합니다.
             else if (!string.IsNullOrEmpty(_dialogueID))
             {
-                GameManager.Instance.DialogueManager.ShowDialogueByID(_dialogueID);
+                dialogueManager.ShowDialogueByID(_dialogueID);
             }
+            // 3. 둘 다 없다면, 타입에 맞는 랜덤 대사를 출력합니다.
             else
             {
-                GameManager.Instance.DialogueManager.ShowRandomDialogueByType(_triggerType);
+                dialogueManager.ShowRandomDialogueByType(_triggerType);
             }
 
-            gameObject.SetActive(false);
+            // 대화가 시작되면 트리거 자체는 비활성화할 수 있습니다.
+            //gameObject.SetActive(false);
         }
     }
     /// <summary>

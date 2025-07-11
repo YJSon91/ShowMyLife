@@ -192,13 +192,28 @@ public class PlayerGodModeController : MonoBehaviour
             _rigidbody.useGravity = _originalUseGravity;
             _rigidbody.isKinematic = _originalKinematicState;
             _rigidbody.constraints = _originalConstraints;
-            _rigidbody.velocity = Vector3.zero;
+            
+            // 회전 초기화 - 플레이어를 항상 위쪽을 향하도록 설정
+            transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+            
+            // 회전 모멘텀 제거
+            _rigidbody.angularVelocity = Vector3.zero;
+            
+            // 아래쪽 방향으로 초기 속도 부여
+            Vector3 initialFallVelocity = new Vector3(0f, -10f, 0f); // 아래쪽 방향으로 10 유닛/초의 초기 속도
+            _rigidbody.velocity = initialFallVelocity;
         }
         
         // 콜라이더 재활성화 (선택적)
         if (_capsuleCollider != null)
         {
             _capsuleCollider.isTrigger = false;
+        }
+        
+        // 지면 확인 강제 실행
+        if (_player != null && _player.MovementController != null)
+        {
+            _player.MovementController.GroundedCheck();
         }
     }
 
@@ -256,16 +271,21 @@ public class PlayerGodModeController : MonoBehaviour
         float currentSpeed = _godModeSpeed;
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             currentSpeed *= 2; // 쉬프트 키로 속도 증가
-            
-        // 리지드바디 속도 직접 설정
-        _rigidbody.velocity = _moveDirection.normalized * currentSpeed;
         
-        // 마우스 입력에 따른 회전 (선택적)
+        // Time.timeScale에 독립적인 이동 방식 사용
+        // Transform 직접 이동 (Time.unscaledDeltaTime 사용)
+        transform.position += _moveDirection.normalized * currentSpeed * Time.unscaledDeltaTime;
+        
+        // 리지드바디 속도 초기화 (물리 시스템이 위치 변경을 방해하지 않도록)
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
+        
+        // 마우스 입력에 따른 회전 (Time.unscaledDeltaTime 사용)
         if (_inputReader.LookInput.magnitude > 0 && _player.MainCameraTransform != null)
         {
             // 카메라 방향으로 플레이어 회전
             Quaternion targetRotation = Quaternion.LookRotation(_player.MainCameraTransform.forward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _godModeRotationSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.unscaledDeltaTime * _godModeRotationSpeed);
         }
     }
 
