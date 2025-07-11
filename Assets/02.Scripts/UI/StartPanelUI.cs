@@ -18,7 +18,7 @@ public class StartPanelUI : UiBase
     {
         GameManager.Instance.UIManager.Add<StartPanelUI>(this);
         // UIManager를 통해 다른 UI를 찾아올 수 있습니다.
-        _fadePanel = GameManager.Instance.UIManager.Get<FadePanelUI>();
+        _fadePanel = GameManager.Instance.UIManager.Get<FadePanelUI>();        
     }
 
     // StartPanel이 화면에 표시될 때 연출을 시작합니다.
@@ -66,22 +66,26 @@ public class StartPanelUI : UiBase
         _keyInputEnabled = false;
 
         // --- 초기 상태 설정 ---
-        // FadePanel을 검은색 반투명 상태로 시작
-        if (_backgroundImage != null)
-        {
-            _backgroundImage.color = new Color(0, 0, 0, 0); // 완전 투명에서 시작
-        }
+        if (_backgroundImage != null) _backgroundImage.color = Color.black; // 배경은 처음부터 보이도록
         if (_titleText != null) _titleText.alpha = 0;
         if (_pressKeyText != null) _pressKeyText.alpha = 0;
         // --- 초기 상태 설정 끝 ---
 
-        // DOTween 시퀀스를 생성합니다.
-        Sequence introSequence = DOTween.Sequence();
 
-        // 타임라인에 따라 애니메이션을 순서대로 추가합니다.
-        introSequence
-            // 2.0초: 로고 등장
+        // --- 시퀀스 1: 배경 이미지 깜빡임 ---
+        if (_backgroundImage != null)
+        {
+            // 4초 주기로 부드럽게 사라졌다 나타나는 것을 무한 반복합니다.
+            _backgroundImage.DOFade(0f, 4f).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo);
+        }
+
+
+        // --- 시퀀스 2: 로고 및 텍스트 연출 ---
+        Sequence contentSequence = DOTween.Sequence();
+        contentSequence
+            // 2.0초 대기
             .AppendInterval(2f)
+            // 로고 등장
             .AppendCallback(() => {
                 if (_titleText != null)
                 {
@@ -90,8 +94,9 @@ public class StartPanelUI : UiBase
                     _titleText.DOFade(1f, 1f);
                 }
             })
-            // 3.0초: "PRESS ANY KEY" 텍스트 점멸 시작
+            // 3.0초: 1초 추가 대기
             .AppendInterval(1f)
+            // "PRESS ANY KEY" 텍스트 점멸 시작
             .AppendCallback(() => {
                 if (_pressKeyText != null)
                 {
@@ -99,7 +104,7 @@ public class StartPanelUI : UiBase
                     _pressKeyText.DOFade(0f, 1.5f).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo);
                 }
             })
-            // 4.0초: 1초 후부터 키 입력 활성화
+            // 4.0초: 1초 추가 대기 후 키 입력 활성화
             .AppendInterval(1f)
             .OnComplete(() => {
                 _keyInputEnabled = true;

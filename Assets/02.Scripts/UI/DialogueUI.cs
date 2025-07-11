@@ -24,7 +24,7 @@ public class DialogueUI : UiBase
         {
             // <mark> 태그를 사용해 텍스트 뒤에 반투명한 검은색 음영을 추가합니다.
             // #000000은 검은색, 90은 투명도(00~FF)를 의미합니다.
-            string textWithShadow = $"<mark=#00000090>{message}</mark>";
+            string textWithShadow = message;
             _dialogueText.text = textWithShadow;
         }
     }
