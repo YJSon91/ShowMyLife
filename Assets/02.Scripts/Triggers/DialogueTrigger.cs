@@ -13,12 +13,18 @@ public class DialogueTrigger : MonoBehaviour
 
     [Tooltip("여러 대사를 순서대로 출력하려면 여기에 ID 목록을 추가하세요.")]
     [SerializeField] private string[] _dialogueIDs; // 여러 ID를 담을 배열 추가
+
+    [Tooltip("이 트리거를 한 번만 작동시킬지 여부를 설정합니다.")]
+    [SerializeField] private bool _isOneTimeTrigger = true;
+
     public string DialogueID => _dialogueID;
     public DialogueTriggerType TriggerType => _triggerType;
     private bool _hasBeenTriggered = false;
 
     private void OnTriggerEnter(Collider other)
     {
+        if (_isOneTimeTrigger && _hasBeenTriggered) return;
+
         if (!_hasBeenTriggered && other.CompareTag("Player"))
         {
             _hasBeenTriggered = true;
