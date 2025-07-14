@@ -105,7 +105,7 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// 지정된 타입의 SFX를 재생합니다.
     /// </summary>
-    public void PlaySFX(SfxType sfxType)
+    public void PlaySFX(SfxType sfxType, float volumeScale = 1.0f)
     {
         if (!sfxClips.ContainsKey(sfxType) || sfxClips[sfxType].Count == 0)
         {
@@ -115,7 +115,7 @@ public class SoundManager : MonoBehaviour
         List<AudioClip> clips = sfxClips[sfxType];
         AudioClip clip = clips[Random.Range(0, clips.Count)];
 
-        sfxSource.PlayOneShot(clip);
+        sfxSource.PlayOneShot(clip, volumeScale);
     }
     /// <summary>
     /// 이름으로 나레이션 클립을 찾아 재생합니다.
