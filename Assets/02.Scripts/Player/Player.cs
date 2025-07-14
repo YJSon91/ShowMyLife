@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     [Tooltip("플레이어 이동을 제어하는 컴포넌트")]
     [SerializeField] private PlayerMovementController _movementController;
     [Tooltip("플레이어 상태를 관리하는 컴포넌트")]
-    [SerializeField] private PlayerStateController _stateController;
+    [SerializeField] public PlayerStateController _stateController;
     [Tooltip("플레이어 갓모드를 제어하는 컴포넌트")]
     [SerializeField] private PlayerGodModeController _godModeController;
     #endregion

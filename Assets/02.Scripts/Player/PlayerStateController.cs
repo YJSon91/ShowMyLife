@@ -383,6 +383,7 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void EnterJumpState()
     {
+        
         // 애니메이션 설정
         _animationController.SetJumping(true);
 
@@ -398,17 +399,22 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void UpdateJumpState()
     {
+        
         // 리지드바디 사용 시 점프 상태 확인 로직 수정
         if (_movementController.IsGrounded)
         {
             // 지면에 도달하면 Movement 상태로 전환
             SwitchState(PlayerAnimationState.Movement);
         }
-        else if (_player.Rigidbody.velocity.y < -0.1f)
-        {
-            // 하강 중이면 Fall 상태로 전환
-            SwitchState(PlayerAnimationState.Fall);
-        }
+        // else if (_player.Rigidbody.velocity.y < -0.1f)
+        // {
+        //     // 하강 중이면 Fall 상태로 전환
+        //     SwitchState(PlayerAnimationState.Fall);
+        // }
+    }
+    public void PublicSwitchState()
+    {
+        SwitchState(PlayerAnimationState.Fall);
     }
 
     /// <summary>
@@ -416,6 +422,7 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void ExitJumpState()
     {
+        
         // 애니메이션 설정
         _animationController.SetJumping(false);
     }

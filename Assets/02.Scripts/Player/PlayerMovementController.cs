@@ -573,7 +573,7 @@ public class PlayerMovementController : MonoBehaviour
             // velocity.y = _jumpForce;
             // _rigidbody.velocity = velocity;
             
-            // _isGrounded = false;
+             _isGrounded = false;
             jumpRequest = true;
         }
     }

@@ -15,7 +15,7 @@ public class PlayerAnimationEventHandler : MonoBehaviour
         if (GameManager.Instance != null)
         {
             _soundManager = GameManager.Instance.SoundManager;
-            Debug.Log("[PlayerAnimationEventHandler] SoundManager 참조 설정 완료");
+            
         }
         
         if (_soundManager == null)
@@ -30,7 +30,7 @@ public class PlayerAnimationEventHandler : MonoBehaviour
     /// </summary>
     public void OnJumpAnimationEvent()
     {
-        Debug.Log("[PlayerAnimationEventHandler] 점프 애니메이션 이벤트 호출");
+        
         // 중복 재생 방지를 위한 상태 체크
         if (!_isJumping)
         {
@@ -38,7 +38,7 @@ public class PlayerAnimationEventHandler : MonoBehaviour
             if (_soundManager != null)
             {
                 _soundManager.PlaySFX(SfxType.Jump);
-                Debug.Log("[PlayerAnimationEventHandler] 점프 사운드 재생");
+                
             }
         }
     }
@@ -49,9 +49,10 @@ public class PlayerAnimationEventHandler : MonoBehaviour
     /// </summary>
     public void OnJumpAnimationEndEvent()
     {
+        GameManager.Instance.Player._stateController.PublicSwitchState();
         // 점프 상태 초기화
         _isJumping = false;
-        Debug.Log("[PlayerAnimationEventHandler] 점프 상태 초기화");
+        
     }
 
     /// <summary>
@@ -62,7 +63,7 @@ public class PlayerAnimationEventHandler : MonoBehaviour
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.Land);
-            Debug.Log("[PlayerAnimationEventHandler] 착지 사운드 재생");
+           
         }
     }
 
