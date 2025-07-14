@@ -114,7 +114,10 @@ public class SoundManager : MonoBehaviour
     public void SubscribeToPlayerEvents(InputReader inputReader)
     {
         if (inputReader == null) return;
-        inputReader.onJumpPerformed += HandlePlayerJump;
+        //inputReader.onJumpPerformed += HandlePlayerJump; 전에쓰던 인풋리더에서 불러오는 점프
+        // 점프 이벤트는 애니메이션 이벤트로 처리하므로 여기서 구독하지 않음
+        // inputReader.onJumpPerformed += HandlePlayerJump;
+        
         // TODO: PlayerController에서 OnLanded 이벤트가 구현되면 여기에 구독 코드를 추가합니다.
         // playerController.OnLanded += HandlePlayerLanded;
         Debug.Log("[SoundManager] Player 이벤트 구독 완료.");
@@ -126,7 +129,10 @@ public class SoundManager : MonoBehaviour
     public void UnsubscribeFromPlayerEvents(InputReader inputReader)
     {
         if (inputReader == null) return;
-        inputReader.onJumpPerformed -= HandlePlayerJump;
+        //inputReader.onJumpPerformed -= HandlePlayerJump; 전에쓰던 점프 인풋리더 불러오기
+        // 점프 이벤트는 애니메이션 이벤트로 처리하므로 여기서 구독 해제하지 않음
+        // inputReader.onJumpPerformed -= HandlePlayerJump;
+        
         // playerController.OnLanded -= HandlePlayerLanded;
         Debug.Log("[SoundManager] Player 이벤트 구독 해제.");
     }
