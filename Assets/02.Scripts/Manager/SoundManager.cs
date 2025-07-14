@@ -18,16 +18,30 @@ public enum SfxType
     Jump,
     Land,
     Walk,
-    Run
+    Run,
+   
+}
+
+public enum NarrationType
+{
+    Intro,
+    Tutorial,
+    Story,
+    Ending,
+    Narration1,
+    Narration2,
 }
 
 public class SoundManager : MonoBehaviour
 {
     private AudioSource bgmSource;
     private AudioSource sfxSource;
+    private AudioSource narrationSource;
 
     private Dictionary<BgmType, List<AudioClip>> bgmClips = new();
     private Dictionary<SfxType, List<AudioClip>> sfxClips = new();
+    private Dictionary<NarrationType, AudioClip> narrationClips = new(); // 나레이션 클립을 저장할 딕셔너리
+
 
     // Awake에서는 자신의 내부 컴포넌트만 준비합니다.
     private void Awake()
@@ -38,6 +52,7 @@ public class SoundManager : MonoBehaviour
         {
             bgmSource = audioSources[0];
             sfxSource = audioSources[1];
+            narrationSource = audioSources[2];
             bgmSource.loop = true; // BGM은 반복 재생
         }
         else
@@ -102,7 +117,36 @@ public class SoundManager : MonoBehaviour
 
         sfxSource.PlayOneShot(clip);
     }
+    /// <summary>
+    /// 이름으로 나레이션 클립을 찾아 재생합니다.
+    /// </summary>
+    /// <param name="clipName">재생할 오디오 클립의 파일 이름</param>
+    public void PlayNarration(string clipName)
+    {       
+        if (string.IsNullOrEmpty(clipName)) return;
 
+        // 1. 전달받은 문자열(string)을 NarrationType(enum)으로 변환합니다.
+        if (System.Enum.TryParse(clipName, out NarrationType type))
+        {
+            // 2. 변환에 성공했다면, 이제 올바른 모양의 열쇠(type)로 딕셔너리에서 클립을 찾습니다.
+            if (narrationClips.TryGetValue(type, out AudioClip clipToPlay))
+            {
+                narrationSource.Stop(); // 이전 나레이션 중지
+                narrationSource.clip = clipToPlay;
+                narrationSource.Play();
+                Debug.Log($"[SoundManager] 나레이션 재생: {clipName}");
+            }
+            else
+            {
+                Debug.LogWarning($"[SoundManager] '{clipName}' 타입의 나레이션 클립을 딕셔너리에서 찾을 수 없습니다.");
+            }
+        }
+        else
+        {
+            // 3. 만약 문자열을 enum으로 변환하는 것 자체를 실패했다면 경고를 보냅니다.
+            Debug.LogWarning($"[SoundManager] '{clipName}'은(는) 유효한 NarrationType이 아닙니다.");
+        }   
+    }
     public void StopBGM() => bgmSource.Stop();
 
 
@@ -160,6 +204,14 @@ public class SoundManager : MonoBehaviour
         foreach (SfxType type in System.Enum.GetValues(typeof(SfxType)))
         {
             sfxClips[type] = Resources.LoadAll<AudioClip>($"Sounds/SFX/{type}").ToList();
+        }
+        foreach(NarrationType type in System.Enum.GetValues(typeof(NarrationType)))
+{          
+            AudioClip clip = Resources.Load<AudioClip>($"Sounds/Narration/{type}");
+            if (clip != null)
+            {
+                narrationClips[type] = clip;
+            }         
         }
     }
 

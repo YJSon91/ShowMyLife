@@ -17,6 +17,12 @@ public class DialogueTrigger : MonoBehaviour
     [Tooltip("이 트리거를 한 번만 작동시킬지 여부를 설정합니다.")]
     [SerializeField] private bool _isOneTimeTrigger = true;
 
+    [Header("나레이션 설정")]
+    [Tooltip("이 대사에 나레이션을 재생할지 여부입니다.")]
+    [SerializeField] private bool _playNarration = false;
+    [Tooltip("재생할 나레이션 오디오 클립의 파일 이름을 정확히 입력하세요.")]
+    [SerializeField] private string _narrationClipName;
+
     public string DialogueID => _dialogueID;
     public DialogueTriggerType TriggerType => _triggerType;
     private bool _hasBeenTriggered = false;
@@ -47,6 +53,10 @@ public class DialogueTrigger : MonoBehaviour
             {
                 dialogueManager.ShowRandomDialogueByType(_triggerType);
             }
+            if (_playNarration)
+            {
+              GameManager.Instance.SoundManager.PlayNarration(_narrationClipName);
+            }
 
             // 대화가 시작되면 트리거 자체는 비활성화할 수 있습니다.
             //gameObject.SetActive(false);
@@ -63,5 +73,6 @@ public class DialogueTrigger : MonoBehaviour
     public void SetDialogueID(string newID)
     {
         this._dialogueID = newID;
-    }    
+    }
+   
 }
