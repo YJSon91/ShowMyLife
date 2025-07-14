@@ -78,5 +78,19 @@ public class PlayerAnimationEventHandler : MonoBehaviour
             // 현재는 걷기 사운드만 재생
             _soundManager.PlaySFX(SfxType.Walk);
         }
+    }  
+    
+    
+    /// <summary>
+    /// 발소리 애니메이션에서 호출될 이벤트 메서드
+    /// </summary>
+    public void OnFootstepSprintAnimationEvent()
+    {
+        if (_soundManager != null)
+        {
+            // 걷기/달리기 상태에 따라 다른 사운드 재생 가능
+            // 현재는 걷기 사운드만 재생
+            _soundManager.PlaySFX(SfxType.Run);
+        }
     }
 } 
