@@ -12,9 +12,13 @@ public class CameraManager : MonoBehaviour
     [Tooltip("연출용 카메라")]
     [SerializeField] private CinemachineVirtualCamera themeCamera;
 
-    [Tooltip("인풋 처리 스크립트")]
-    [SerializeField] private InputReader inputReader;
+    [Tooltip("플레이어 컨트롤 스크립트")]
+    [SerializeField] private PlayerMovementController movementController;
 
+    [Tooltip("메인 카메라")]
+    [SerializeField] private CinemachineBrain brain;
+
+    private bool isCurrentlyFalling = false;
     private CinemachinePOV pov;
 
     public float Sensitivity
@@ -63,6 +67,31 @@ public class CameraManager : MonoBehaviour
         else
         {
             Debug.LogWarning("[CameraManager] GameManager 인스턴스를 찾을 수 없습니다.");
+        }
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (movementController == null || brain == null)
+            return;
+
+        bool isFalling = !movementController.IsGrounded && movementController.Rigidbody.velocity.y < -0.2f;
+
+        if (isFalling != isCurrentlyFalling)
+        {
+            isCurrentlyFalling = isFalling;
+
+            if (isFalling)
+            {
+                brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.LateUpdate;
+                brain.m_BlendUpdateMethod = CinemachineBrain.BrainUpdateMethod.LateUpdate;
+            }
+            else
+            {
+                brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.FixedUpdate;
+                brain.m_BlendUpdateMethod = CinemachineBrain.BrainUpdateMethod.FixedUpdate;
+            }
         }
     }
 
