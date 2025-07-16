@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
+            Debug.Log("[GameManager] Awake 호출");
+
             // 1. 컨트롤러 인스턴스를 생성합니다.
             PlayerControls = new Controls();
 
@@ -178,16 +180,23 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
         }
     }
-    private void LoadAllKeybindings()
+    public void LoadAllKeybindings()
     {
-        if (_inputActions == null) return;
         string rebinds = PlayerPrefs.GetString("AllKeyRebinds", string.Empty);
-        if (string.IsNullOrEmpty(rebinds)) return;
 
-        // _inputActions 대신, 우리가 생성한 인스턴스에 오버라이드를 적용합니다.
+        if (string.IsNullOrEmpty(rebinds))
+        {
+           // Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
+            return;
+        }
+
+        // 2. 어떤 내용이 불러와졌는지 콘솔에 강력한 에러 로그로 출력합니다.
+      //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
+       
+        // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
-        Debug.Log("[GameManager] 저장된 모든 키 설정을 불러왔습니다.");
     }
+        
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>
