@@ -50,10 +50,17 @@ public class KeyBindingRowUI : MonoBehaviour
                 // 리바인딩이 완료되면 호출될 부분
                 operation.Dispose(); // 메모리 정리
 
-                // 변경된 키 바인딩 정보를 PlayerPrefs에 저장합니다.
+                // --- 이 부분이 핵심 디버깅 코드입니다 ---
+                // 1. 저장할 JSON 데이터를 먼저 변수에 담습니다.
                 string allRebindsJson = _targetAction.action.actionMap.asset.SaveBindingOverridesAsJson();
+
+                // 2. 어떤 내용이 저장되는지 콘솔에 강력한 경고 로그로 출력합니다.
+                Debug.LogWarning($"[저장 시도] PlayerPrefs에 저장할 데이터: {allRebindsJson}");
+
+                // 3. 데이터를 저장합니다.
                 PlayerPrefs.SetString("AllKeyRebinds", allRebindsJson);
                 PlayerPrefs.Save();
+                // --- 디버깅 끝 ---
                 UpdateUI(); // UI 텍스트를 새로운 키로 업데이트
                 _rebindButton.interactable = true; // 버튼 다시 활성화
                 Debug.Log($"'{_targetAction.action.name}' 액션의 키가 변경되고 저장되었습니다.");
