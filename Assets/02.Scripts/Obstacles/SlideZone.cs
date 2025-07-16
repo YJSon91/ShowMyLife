@@ -38,6 +38,13 @@ public class SlideZone : MonoBehaviour
 
     // 현재 활성화된 트윈 저장용
     private Tween _currentAccelerationTween;
+    
+    // 플레이어 참조 저장
+    private Player _currentPlayer;
+    // 원래 Sprint 이벤트 핸들러 저장
+    private System.Action _originalSprintActivated;
+    // Sprint 비활성화 상태 추적
+    private bool _isSprintDisabled = false;
 
     #endregion
 
@@ -65,7 +72,12 @@ public class SlideZone : MonoBehaviour
             var player = other.GetComponentInParent<Player>();
             if (player != null)
             {
+                _currentPlayer = player;
                 Vector3 slideDir = GetSlideDirection();
+                
+                // 달리기 입력 비활성화
+                DisableSprintInput(player);
+                Debug.Log("슬라이드존: 달리기 입력 비활성화됨");
                 
                 // 먼저 초기 슬라이딩 상태 활성화
                 player.MovementController.ActivateObstacleSlide(slideDir, _initialSlideSpeed, _slipGravityMultiplier, _inputReduction);
@@ -108,6 +120,11 @@ public class SlideZone : MonoBehaviour
                 
                 player.MovementController.DeactivateObstacleSlide();
                 Debug.Log("플레이어 슬립 종료");
+                
+                // 달리기 입력 다시 활성화
+                EnableSprintInput(player);
+                
+                _currentPlayer = null;
             }
         }
     }
@@ -119,6 +136,12 @@ public class SlideZone : MonoBehaviour
         {
             _currentAccelerationTween.Kill();
             _currentAccelerationTween = null;
+        }
+        
+        // 플레이어가 아직 존재하면 달리기 입력 복원
+        if (_currentPlayer != null && _isSprintDisabled)
+        {
+            EnableSprintInput(_currentPlayer);
         }
     }
 
@@ -222,6 +245,45 @@ public class SlideZone : MonoBehaviour
         UnityEditor.Handles.Label(endPos + Vector3.up * 0.5f, 
             $"슬립 방향\n초기 속도: {_initialSlideSpeed}\n최대 속도: {_slideForce}\n가속 시간: {_accelerationDuration}초\n중력: x{_slipGravityMultiplier}");
         #endif
+    }
+    
+    /// <summary>
+    /// 플레이어의 달리기 입력을 비활성화합니다
+    /// </summary>
+    private void DisableSprintInput(Player player)
+    {
+        if (player != null && player.InputReader != null && !_isSprintDisabled)
+        {
+            // 현재 달리기 상태 비활성화
+            player.InputReader.onSprintDeactivated?.Invoke();
+            
+            // 원래 이벤트 핸들러 저장
+            _originalSprintActivated = player.InputReader.onSprintActivated;
+            
+            // 달리기 활성화 이벤트를 빈 델리게이트로 대체
+            player.InputReader.onSprintActivated = () => { 
+                // 아무 작업도 수행하지 않음 (쉬프트키 입력 무시)
+                Debug.Log("슬라이드존: 달리기 입력 무시됨");
+            };
+            
+            _isSprintDisabled = true;
+            Debug.Log("슬라이드존: 달리기 입력 비활성화됨");
+        }
+    }
+    
+    /// <summary>
+    /// 플레이어의 달리기 입력을 다시 활성화합니다
+    /// </summary>
+    private void EnableSprintInput(Player player)
+    {
+        if (player != null && player.InputReader != null && _isSprintDisabled)
+        {
+            // 원래 이벤트 핸들러 복원
+            player.InputReader.onSprintActivated = _originalSprintActivated;
+            
+            _isSprintDisabled = false;
+            Debug.Log("슬라이드존: 달리기 입력 복원됨");
+        }
     }
 
     #endregion
