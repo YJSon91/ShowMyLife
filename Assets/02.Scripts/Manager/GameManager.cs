@@ -344,6 +344,12 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    [ContextMenu("Clear All PlayerPrefs Data")]
+    public void ClearAllPlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        Debug.LogWarning("!!! 모든 PlayerPrefs 데이터가 삭제되었습니다. !!!");
+    }
     /// <summary>
     /// 측정된 플레이 시간을 "00:00:00" 형식의 문자열로 변환하여 반환합니다.
     /// </summary>
