@@ -9,12 +9,18 @@ public class BookFallTrigger : MonoBehaviour
     [Tooltip("회전 시간")]
     [SerializeField] private float finalDuration = 1f;
 
+    [Tooltip("발판 오브젝트")]
+    [SerializeField] private GameObject objectToActivate2;
+
     private bool hasTriggered = false;
 
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered || !other.CompareTag("Player")) return;
         hasTriggered = true;
+
+        if (objectToActivate2 != null)
+            objectToActivate2.SetActive(true);
 
         Vector3 currentRotation = bookObject.localEulerAngles;
 
