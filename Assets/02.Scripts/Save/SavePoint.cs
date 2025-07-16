@@ -24,7 +24,7 @@ public class SavePoint : MonoBehaviour
             return;
         }
 
-        SaveManager.Save(saveId, other.transform.position);
+        SaveManager.Save(other.transform.position, saveId);
         Debug.Log($"[SavePoint] 저장됨 → ID: {saveId}, 위치: {other.transform.position}");
         hasSaved = true;
     }
