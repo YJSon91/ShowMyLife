@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1258787394}
-  m_IndirectSpecularColor: {r: 0.44583866, g: 0.6129179, b: 0.8193979, a: 1}
+  m_IndirectSpecularColor: {r: 0.4458386, g: 0.612918, b: 0.8193979, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1316,6 +1316,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ff8f06244fd1ec408a78b65afdab295, type: 3}
+--- !u!114 &3761448937134731189 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2859424433754225604, guid: 7ff8f06244fd1ec408a78b65afdab295,
+    type: 3}
+  m_PrefabInstance: {fileID: 3761448937134731188}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de267878abc4ac546b952dc65eaeec4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3874129244196754801 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4084874581082489083, guid: 7ff8f06244fd1ec408a78b65afdab295,
@@ -1332,6 +1344,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1793635190698465798, guid: 210dbdfbbbf1a8246b56a10633a04dd3,
         type: 3}
+      propertyPath: brain
+      value: 
+      objectReference: {fileID: 8173327504879501519}
+    - target: {fileID: 1793635190698465798, guid: 210dbdfbbbf1a8246b56a10633a04dd3,
+        type: 3}
       propertyPath: inputReader
       value: 
       objectReference: {fileID: 6978568341350717710}
@@ -1345,6 +1362,11 @@ PrefabInstance:
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 3559551252421352517}
+    - target: {fileID: 1793635190698465798, guid: 210dbdfbbbf1a8246b56a10633a04dd3,
+        type: 3}
+      propertyPath: movementController
+      value: 
+      objectReference: {fileID: 3761448937134731189}
     - target: {fileID: 2528660952931240132, guid: 210dbdfbbbf1a8246b56a10633a04dd3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1586,6 +1608,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40dd33c8abbbb8f4994c25302ab3c96b, type: 3}
+--- !u!114 &8173327504879501519 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5577806025210158605, guid: 40dd33c8abbbb8f4994c25302ab3c96b,
+    type: 3}
+  m_PrefabInstance: {fileID: 8173327504879501518}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
