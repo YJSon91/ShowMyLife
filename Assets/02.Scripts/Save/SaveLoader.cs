@@ -39,4 +39,19 @@ public static class SaveLoader
             return null;
         }
     }
+
+    public static void Delete()
+    {
+        if (File.Exists(SavePath))
+        {
+            File.Delete(SavePath);
+            Debug.Log("[SaveLoader] 저장 파일 삭제됨");
+        }
+    }
+
+    public static bool Exists()
+    {
+        return File.Exists(SavePath);
+    }
 }
+

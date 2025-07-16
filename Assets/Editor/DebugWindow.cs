@@ -23,7 +23,8 @@ public class DebugWindow : EditorWindow
                 return;
             }
 
-            if (SaveManager.Load(out string saveId) is Vector3 position)
+            Vector3? position = SaveManager.Load(out string saveId);
+            if (position.HasValue)
             {
                 GameObject player = GameObject.FindWithTag("Player");
                 if (player != null)
@@ -34,14 +35,14 @@ public class DebugWindow : EditorWindow
                     if (rb != null)
                     {
                         rb.velocity = Vector3.zero;
-                        rb.MovePosition(position);
+                        rb.MovePosition(position.Value);
                     }
                     else
                     {
-                        player.transform.position = position;
+                        player.transform.position = position.Value;
                     }
 
-                    Debug.Log($"[디버그] {saveId} 위치로 이동 완료: {position}");
+                    Debug.Log($"[디버그] {saveId} 위치로 이동 완료: {position.Value}");
                 }
                 else
                 {

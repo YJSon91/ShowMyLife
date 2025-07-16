@@ -1,18 +1,33 @@
 using UnityEngine;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class SaveData
 {
-    [JsonProperty("position")]
-    public Vector3 Position { get; set; }
+    [JsonIgnore]
+    public Vector3 Position
+    {
+        get => new(x, y, z);
+        set
+        {
+            x = value.x;
+            y = value.y;
+            z = value.z;
+        }
+    }
 
-    [JsonProperty("saveId")]
-    public string SaveId { get; set; }
+    [JsonProperty("x")] public float x;
+    [JsonProperty("y")] public float y;
+    [JsonProperty("z")] public float z;
+
+    [JsonProperty("saveId")] public string SaveId { get; set; }
 
     public SaveData(Vector3 position, string saveId)
     {
-        Position = position;
+        x = position.x;
+        y = position.y;
+        z = position.z;
         SaveId = saveId;
     }
+
+    public SaveData() { }
 }
