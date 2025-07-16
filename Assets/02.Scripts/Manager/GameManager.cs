@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     ///튜토리얼 판넬 동작 안하도록 true 상태, 튜토리얼 살리고 싶으면 false로
     ///MaingMenu에서 OnNewGameButton함수도 Tutorial로 수정필요
-    private static bool _isTutorialAlreadyShown = true; 
+    private static bool _isTutorialAlreadyShown = true;
 
     /// <summary>
     /// 게임 전체에서 공유될 컨트롤러 인스턴스입니다.
@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
     public Player Player { get; private set; }
     public CameraManager CameraManager { get; private set; }
     public DialogueManager DialogueManager { get; private set; }
-
+    public SaveManager SaveManager { get; private set; }
 
 
     // --- Unity 생명주기 메서드 ---
@@ -67,6 +67,8 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            Debug.Log("[GameManager] Awake 호출");
 
             // 1. 컨트롤러 인스턴스를 생성합니다.
             PlayerControls = new Controls();
@@ -102,6 +104,7 @@ public class GameManager : MonoBehaviour
     public void RegisterObstacleManager(ObstacleManager manager) => ObstacleManager = manager;
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
     public void RegisterDialogueManager(DialogueManager manager) => DialogueManager = manager;
+    public void RegisterSaveManager(SaveManager manager) => SaveManager = manager;
 
     public void RegisterPlayer(Player newPlayer)
     {
@@ -177,16 +180,23 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
         }
     }
-    private void LoadAllKeybindings()
+    public void LoadAllKeybindings()
     {
-        if (_inputActions == null) return;
         string rebinds = PlayerPrefs.GetString("AllKeyRebinds", string.Empty);
-        if (string.IsNullOrEmpty(rebinds)) return;
 
-        // _inputActions 대신, 우리가 생성한 인스턴스에 오버라이드를 적용합니다.
+        if (string.IsNullOrEmpty(rebinds))
+        {
+           // Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
+            return;
+        }
+
+        // 2. 어떤 내용이 불러와졌는지 콘솔에 강력한 에러 로그로 출력합니다.
+      //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
+       
+        // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
-        Debug.Log("[GameManager] 저장된 모든 키 설정을 불러왔습니다.");
     }
+        
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>
@@ -215,7 +225,7 @@ public class GameManager : MonoBehaviour
                     Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
                 }
                 break;
-                
+
             case GameState.Paused:
 
                 // 일시정지 상태에서는 UI 조작만 가능해야 합니다.
@@ -226,9 +236,9 @@ public class GameManager : MonoBehaviour
                // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
-            case GameState.Tutorial:                           
+            case GameState.Tutorial:
                 PlayerControls?.Player.Enable();
-                PlayerControls?.UI.Disable();                
+                PlayerControls?.UI.Disable();
                 break;
 
             case GameState.MainMenu:
@@ -245,8 +255,8 @@ public class GameManager : MonoBehaviour
                // GameManager.Instance.UIManager.Show<EndingUI>(true);
                 Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
-        }       
-        
+        }
+
         // 씬 로딩 로직
         if (newState == GameState.Playing || newState== GameState.Tutorial)
         {
@@ -299,10 +309,10 @@ public class GameManager : MonoBehaviour
         if (FindObjectOfType<EventSystem>() == null)
         {
             var eventSystemObj = new GameObject("EventSystem");
-            eventSystemObj.AddComponent<EventSystem>();           
+            eventSystemObj.AddComponent<EventSystem>();
         }
         // 2. 로드된 씬이 게임 씬인지 확인합니다.
-        if (scene.name == "MainScene") 
+        if (scene.name == "MainScene")
         {
             // 3. 튜토리얼을 아직 안 봤다면 Tutorial 상태로, 봤다면 Playing 상태로 바로 시작합니다.
             if (_isTutorialAlreadyShown)
@@ -363,5 +373,23 @@ public class GameManager : MonoBehaviour
             // 상태를 Playing으로 변경합니다.
             UpdateGameState(GameState.Playing);
         }
+    }
+    // 디버그용 초기화
+    public void InitializeManually(
+        SoundManager sound,
+        SaveManager save,
+        UIManager ui,
+        CameraManager cam,
+        DialogueManager dia,
+        StageManager stage,
+        ObstacleManager obs)
+    {
+        SoundManager = sound;
+        SaveManager = save;
+        UIManager = ui;
+        CameraManager = cam;
+        DialogueManager = dia;
+        StageManager = stage;
+        ObstacleManager = obs;
     }
 }

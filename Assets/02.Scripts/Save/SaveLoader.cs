@@ -1,33 +1,57 @@
+using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 
-public class SaveLoader : MonoBehaviour
+public static class SaveLoader
 {
-    private Transform player;
-    private static bool _alreadyLoaded = false;
+    private static readonly string SavePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
 
-    private void Awake()
+    public static void Save(SaveData data)
     {
-        if (_alreadyLoaded) return;
-
-        if (player == null)
+        try
         {
-            GameObject obj = GameObject.FindWithTag("Player");
-            if (obj != null)
-                player = obj.transform;
+            string json = JsonConvert.SerializeObject(data, Formatting.Indented);
+            File.WriteAllText(SavePath, json);
+            Debug.Log("[SaveLoader] 저장 성공");
         }
-
-        if (player == null)
+        catch (System.Exception e)
         {
-            Debug.LogWarning("[SaveLoader] 플레이어가 연결되지 않았습니다.");
-            return;
-        }
-
-        if (SaveManager.Load(out string saveId) is Vector3 pos)
-        {
-            player.position = pos;
-            Debug.Log($"[SaveLoader] 위치 로드 완료 → {saveId} at {pos}");
-            _alreadyLoaded = true;
+            Debug.LogError($"[SaveLoader] 저장 실패: {e.Message}");
         }
     }
 
+    public static SaveData Load()
+    {
+        if (!File.Exists(SavePath))
+        {
+            Debug.LogWarning("[SaveLoader] 저장 파일 없음");
+            return null;
+        }
+
+        try
+        {
+            string json = File.ReadAllText(SavePath);
+            return JsonConvert.DeserializeObject<SaveData>(json);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[SaveLoader] 불러오기 실패: {e.Message}");
+            return null;
+        }
+    }
+
+    public static void Delete()
+    {
+        if (File.Exists(SavePath))
+        {
+            File.Delete(SavePath);
+            Debug.Log("[SaveLoader] 저장 파일 삭제됨");
+        }
+    }
+
+    public static bool Exists()
+    {
+        return File.Exists(SavePath);
+    }
 }
+

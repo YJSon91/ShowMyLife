@@ -1,25 +1,27 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
 
 public class LoadButton : MonoBehaviour
 {
     [SerializeField] private Button loadButton;
+
     private Transform player;
 
     private void Start()
     {
-        if (player == null)
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null)
         {
-            GameObject obj = GameObject.FindWithTag("Player");
-            if (obj != null)
-                player = obj.transform;
-            else
-                Debug.LogWarning("[LoadButton] Player 태그 오브젝트를 찾을 수 없습니다.");
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogWarning("[LoadButton] Player 태그 오브젝트를 찾을 수 없습니다.");
+            loadButton.interactable = false;
+            return;
         }
 
-        string path = Path.Combine(Application.persistentDataPath, "SaveData.json");
-        if (!File.Exists(path))
+        if (!GameManager.Instance.SaveManager.Exists())
         {
             loadButton.interactable = false;
             return;
@@ -30,13 +32,9 @@ public class LoadButton : MonoBehaviour
 
     private void LoadSavedPosition()
     {
-        if (player == null)
-        {
-            Debug.LogWarning("[LoadButton] Player가 연결되지 않아 위치를 이동할 수 없습니다.");
-            return;
-        }
+        if (player == null) return;
 
-        if (SaveManager.Load(out string saveId) is Vector3 pos)
+        if (GameManager.Instance.SaveManager.TryLoad(out Vector3 pos, out string saveId))
         {
             Rigidbody rb = player.GetComponent<Rigidbody>();
             if (rb != null)
@@ -55,4 +53,3 @@ public class LoadButton : MonoBehaviour
         }
     }
 }
-

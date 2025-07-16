@@ -10,7 +10,7 @@ public class PlayerMovementController : MonoBehaviour
     [Header("필수 컴포넌트")]
     [Tooltip("플레이어 메인 컴포넌트")]
     [SerializeField] private Player _player;
-    
+
     // 내부 컴포넌트 참조 (초기화 시 할당)
     private Rigidbody _rigidbody;
     private CapsuleCollider _capsuleCollider;
@@ -87,7 +87,7 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _inclineAngle;
     [Tooltip("거친 지면에 유용함")]
     [SerializeField] private float _groundedOffset = -0.14f;
-    
+
     // 박스캐스트 관련 설정 추가
     [Header("박스캐스트 지면 확인")]
     [Tooltip("박스캐스트 너비 (x축)")]
@@ -107,7 +107,7 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _slipSpeed = 2.5f;
     [Tooltip("미끄러질 때 플레이어 입력 영향 감소 (0-1)")]
     [SerializeField] private float _slipInputReduction = 0.8f;
-    
+
     [Header("레이어별 경사면 제한")]
     [Tooltip("Obstacle 레이어가 아닌 오브젝트에 적용할 최대 경사 각도")]
     [SerializeField] private float _nonObstacleSlopeLimit = 5f;
@@ -129,14 +129,14 @@ public class PlayerMovementController : MonoBehaviour
     private bool _isLockedOn;
     public bool _cannotStandUp;
     private bool _isSliding;
-    
+
     // 슬립 관련 변수
     private bool _isSlipping;
     private Vector3 _slipDirection;
     private float _slipForce;
     private float _slipGravityMultiplier;
-    
-    
+
+
     public Vector3 _velocity;
     private Vector3 _moveDirection;
     private float _speed2D;
@@ -148,7 +148,7 @@ public class PlayerMovementController : MonoBehaviour
     private float _newDirectionDifferenceAngle;
     private Vector3 _targetVelocity;
     private Vector3 _cameraForward;
-    
+
     // 리지드바디 이동 관련 변수
     private Vector3 _desiredVelocity;
     private Vector3 _groundNormal = Vector3.up;
@@ -199,7 +199,7 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어가 스트레이핑 중인지 여부
     /// </summary>
     public bool IsStrafing => _isStrafing;
-    
+
     /// <summary>
     /// 플레이어의 이동 방향 벡터
     /// </summary>
@@ -225,6 +225,8 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public bool IsObstacleSliding => _isObstacleSliding;
 
+    public Rigidbody Rigidbody => _rigidbody;
+
     #endregion
 
     #region Unity 라이프사이클
@@ -237,7 +239,7 @@ public class PlayerMovementController : MonoBehaviour
     private void Start()
     {
         _isStrafing = _alwaysStrafe;
-        
+
         // 입력 이벤트 구독
         _inputReader.onWalkToggled += ToggleWalk;
         _inputReader.onSprintActivated += ActivateSprint;
@@ -246,25 +248,25 @@ public class PlayerMovementController : MonoBehaviour
         _inputReader.onCrouchDeactivated += DeactivateCrouch;
     }
 
-   
-    
+
+
     private void Update()
     {
         // 입력 처리 및 방향 계산은 Update에서 처리 (더 부드러운 응답성)
         CalculateMoveDirection();
-        
+
         // 지면에 있을 때만 회전 적용 (시각적 부드러움을 위해)
         if (_isGrounded)
         {
             FaceMoveDirection();
         }
     }
-    
+
     private void FixedUpdate()
     {
         //현재 위치 저장 (경사면 제한을 위해)
         _initialPosition = transform.position;
-        
+
         // 물리 기반 처리는 FixedUpdate에서 유지
         GroundedCheck();
 
@@ -286,7 +288,7 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     private bool jumpRequest= false;
-    
+
 
     private void OnDestroy()
     {
@@ -297,7 +299,7 @@ public class PlayerMovementController : MonoBehaviour
         _inputReader.onCrouchActivated -= ActivateCrouch;
         _inputReader.onCrouchDeactivated -= DeactivateCrouch;
     }
-    
+
     // 충돌 감지 이벤트
     private void OnCollisionStay(Collision collision)
     {
@@ -349,7 +351,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (_rigidbody == null)
             Debug.LogError("PlayerMovementController: Rigidbody가 할당되지 않았습니다!");
-            
+
         if (_capsuleCollider == null)
             Debug.LogError("PlayerMovementController: CapsuleCollider가 할당되지 않았습니다!");
 
@@ -375,11 +377,11 @@ public class PlayerMovementController : MonoBehaviour
             // 기존 AddForce 대신 velocity 직접 수정 방식으로 변경
             Vector3 moveForce = new Vector3(_targetVelocity.x, 0, _targetVelocity.z) - new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
             moveForce = Vector3.ClampMagnitude(moveForce * _speedChangeDamping, _currentMaxSpeed * 2);
-            
+
             // Time.deltaTime을 곱해 프레임 독립적인 이동 구현
             Vector3 velocityChange = moveForce * Time.deltaTime;
             Vector3 newVelocity = _rigidbody.velocity + velocityChange;
-            
+
             // y축 속도는 그대로 유지
             newVelocity.y = _rigidbody.velocity.y;
             _rigidbody.velocity = newVelocity;
@@ -390,12 +392,12 @@ public class PlayerMovementController : MonoBehaviour
             Vector3 currentVel = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
             Vector3 targetVel = new Vector3(_targetVelocity.x, 0, _targetVelocity.z);
             Vector3 newHorizontalVel = Vector3.Lerp(currentVel, targetVel, _speedChangeDamping * Time.fixedDeltaTime);
-            
+
             // y축 속도는 그대로 유지
             Vector3 newVelocity = new Vector3(newHorizontalVel.x, _rigidbody.velocity.y, newHorizontalVel.z);
             _rigidbody.velocity = newVelocity;
         }
-        
+
         // 현재 속도 저장 (애니메이션 등에서 사용)
         _velocity = _rigidbody.velocity;
         _speed2D = new Vector3(_velocity.x, 0f, _velocity.z).magnitude;
@@ -436,11 +438,11 @@ public class PlayerMovementController : MonoBehaviour
             _moveDirection = Vector3.Lerp(_slipDirection, playerInputDirection, 1f - _slipInputReduction);
             _targetMaxSpeed = _slipForce;
         }
-        
+
         else
         {
             _moveDirection = playerInputDirection;
-            
+
             if (!_isGrounded)
             {
                 _targetMaxSpeed = _currentMaxSpeed;
@@ -500,13 +502,13 @@ public class PlayerMovementController : MonoBehaviour
         {
             gravityMultiplier = _slipGravityMultiplier;
         }
-            
+
         // 리지드바디 속도에 중력 직접 적용 (Time.deltaTime 사용)
         Vector3 gravityVelocity = Physics.gravity * gravityMultiplier * Time.deltaTime;
         Vector3 currentVelocity = _rigidbody.velocity;
         currentVelocity.y += gravityVelocity.y;
         _rigidbody.velocity = currentVelocity;
-        
+
         // 지면에 있지 않을 때만 낙하 지속 시간 업데이트
         if (!_isGrounded)
         {
@@ -572,7 +574,7 @@ public class PlayerMovementController : MonoBehaviour
             // Vector3 velocity = _rigidbody.velocity;
             // velocity.y = _jumpForce;
             // _rigidbody.velocity = velocity;
-            
+
              _isGrounded = false;
             jumpRequest = true;
         }
@@ -585,10 +587,10 @@ public class PlayerMovementController : MonoBehaviour
     {
         // 지면 법선 벡터와 위쪽 벡터 사이의 각도 계산
         float slopeAngle = Vector3.Angle(_groundNormal, Vector3.up);
-        
+
         // 현재 충돌한 오브젝트의 레이어 확인
         int hitLayer = _groundHit.collider.gameObject.layer;
-        
+
         // 레이어에 따라 다른 경사각 제한 적용
         float currentSlopeLimit = ((1 << hitLayer) & _obstacleLayerMask.value) != 0 ? _slopeLimit : _nonObstacleSlopeLimit;
 
@@ -648,7 +650,7 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     private Vector3 GetBottomCapsulePoint()
     {
-        return transform.position + 
+        return transform.position +
                transform.up * (_capsuleCollider.center.y - _capsuleCollider.height / 2 + _capsuleCollider.radius);
     }
 
@@ -657,7 +659,7 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     private Vector3 GetTopCapsulePoint()
     {
-        return transform.position + 
+        return transform.position +
                transform.up * (_capsuleCollider.center.y + _capsuleCollider.height / 2 - _capsuleCollider.radius);
     }
 
@@ -685,24 +687,24 @@ public class PlayerMovementController : MonoBehaviour
         Vector3 boxHalfExtents = new Vector3(_boxCastWidth / 2f, 0.05f, _boxCastDepth / 2f);
         Quaternion orientation = transform.rotation;
         float distance = _capsuleCollider.height / 2 + _groundCheckDistance;
-        
+
         // 지면 확인 (바로 아래)
         bool groundHit = Physics.BoxCast(
-            boxCenter, 
-            boxHalfExtents, 
-            Vector3.down, 
-            out _groundHit, 
-            orientation, 
-            distance, 
-            _groundLayerMask, 
+            boxCenter,
+            boxHalfExtents,
+            Vector3.down,
+            out _groundHit,
+            orientation,
+            distance,
+            _groundLayerMask,
             QueryTriggerInteraction.Ignore
         );
-        
+
         if (groundHit)
         {
             _groundNormal = _groundHit.normal;
             _isGrounded = true;
-            
+
             // 지면에 있을 때 경사 확인
             GroundInclineCheck();
 
@@ -721,7 +723,7 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// 지면 경사를 확인합니다
     /// </summary>
@@ -789,10 +791,10 @@ public class PlayerMovementController : MonoBehaviour
     {
         // 지면 법선 벡터와 위쪽 벡터 사이의 각도 계산
         float slopeAngle = Vector3.Angle(_groundNormal, Vector3.up);
-        
+
         // 현재 충돌한 오브젝트의 레이어 확인
         int hitLayer = _groundHit.collider.gameObject.layer;
-        
+
         // 레이어에 따라 다른 미끄러짐 각도 적용
         float currentSlipAngle = ((1 << hitLayer) & _obstacleLayerMask.value) != 0 ? _slipAngle : _nonObstacleSlopeLimit;
 
@@ -923,7 +925,7 @@ public class PlayerMovementController : MonoBehaviour
         _slipForce = force;
         _slipGravityMultiplier = gravityMultiplier;
         _slipInputReduction = Mathf.Clamp01(inputReduction);
-        
+
         Debug.Log($"슬립 활성화: 방향={_slipDirection}, 힘={_slipForce}, 중력배수={_slipGravityMultiplier}");
     }
 
@@ -937,7 +939,7 @@ public class PlayerMovementController : MonoBehaviour
         _slipForce = 0f;
         _slipGravityMultiplier = 0f;
         _slipInputReduction = 0f;
-        
+
         Debug.Log("슬립 비활성화");
     }
 
@@ -1029,16 +1031,16 @@ public class PlayerMovementController : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         if (!Application.isPlaying || _capsuleCollider == null) return;
-        
+
         // 박스캐스트 시각화
         Vector3 boxCenter = _capsuleCollider.bounds.center;
         Vector3 boxHalfExtents = new Vector3(_boxCastWidth / 2f, 0.05f, _boxCastDepth / 2f);
         Vector3 endPosition = boxCenter + Vector3.down * (_capsuleCollider.height / 2 + _groundCheckDistance);
-        
+
         // 기본 지면 확인 박스
         Gizmos.color = _isGrounded ? Color.green : Color.red;
         Gizmos.DrawWireCube(boxCenter, boxHalfExtents * 2);
         Gizmos.DrawWireCube(endPosition, boxHalfExtents * 2);
         Gizmos.DrawLine(boxCenter, endPosition);
     }
-} 
+}
