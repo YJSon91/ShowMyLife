@@ -181,20 +181,17 @@ public class GameManager : MonoBehaviour
     }
     public void LoadAllKeybindings()
     {
-        // --- 이 부분이 핵심 디버깅 코드입니다 ---
-        // 1. PlayerPrefs에서 저장된 데이터를 읽어옵니다.
         string rebinds = PlayerPrefs.GetString("AllKeyRebinds", string.Empty);
 
         if (string.IsNullOrEmpty(rebinds))
         {
-            Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
+           // Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
             return;
         }
 
         // 2. 어떤 내용이 불러와졌는지 콘솔에 강력한 에러 로그로 출력합니다.
-        Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
-        // --- 디버깅 끝 ---
-
+      //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
+       
         // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
     }

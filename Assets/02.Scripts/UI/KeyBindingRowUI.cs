@@ -23,14 +23,14 @@ public class KeyBindingRowUI : MonoBehaviour
         {
             if (GameManager.Instance?.PlayerControls == null)
             {
-                Debug.LogError($"[KeyBindingRowUI] GameManager.PlayerControls가 null입니다!");
+              //  Debug.LogError($"[KeyBindingRowUI] GameManager.PlayerControls가 null입니다!");
                 return null;
             }
 
             var action = GameManager.Instance.PlayerControls.asset.FindAction(_targetAction.action.name);
             if (action == null)
             {
-                Debug.LogError($"[KeyBindingRowUI] 액션 '{_targetAction.action.name}'을 찾을 수 없습니다!");
+               // Debug.LogError($"[KeyBindingRowUI] 액션 '{_targetAction.action.name}'을 찾을 수 없습니다!");
             }
             return action;
         }

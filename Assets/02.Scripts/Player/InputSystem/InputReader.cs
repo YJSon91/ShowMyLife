@@ -44,14 +44,14 @@ using UnityEngine.Serialization;
             // GameManager의 PlayerControls가 준비될 때까지 대기
             if (_controls == null)
             {
-                Debug.LogWarning("[InputReader] GameManager의 PlayerControls가 아직 준비되지 않았습니다. 잠시 후 다시 시도합니다.");
+               // Debug.LogWarning("[InputReader] GameManager의 PlayerControls가 아직 준비되지 않았습니다. 잠시 후 다시 시도합니다.");
                 return;
             }
 
             _controls.Player.SetCallbacks(this);
             _controls.Player.Enable();
             
-            Debug.Log("[InputReader] GameManager의 PlayerControls를 사용하여 입력 시스템을 초기화했습니다.");
+          //  Debug.Log("[InputReader] GameManager의 PlayerControls를 사용하여 입력 시스템을 초기화했습니다.");
         }
 
         /// <inheritdoc cref="OnDisable" />
@@ -71,7 +71,7 @@ using UnityEngine.Serialization;
             {
                 _controls.Player.SetCallbacks(this);
                 _controls.Player.Enable();
-                Debug.Log("[InputReader] Start에서 GameManager의 PlayerControls를 성공적으로 연결했습니다.");
+              //  Debug.Log("[InputReader] Start에서 GameManager의 PlayerControls를 성공적으로 연결했습니다.");
             }
         }
 
@@ -234,11 +234,11 @@ using UnityEngine.Serialization;
             {
                 _controls.Player.SetCallbacks(this);
                 _controls.Player.Enable();
-                Debug.Log("[InputReader] EnableInput: PlayerControls 활성화됨");
+              //  Debug.Log("[InputReader] EnableInput: PlayerControls 활성화됨");
             }
             else
             {
-                Debug.LogWarning("[InputReader] EnableInput: GameManager의 PlayerControls가 아직 준비되지 않았습니다.");
+                //Debug.LogWarning("[InputReader] EnableInput: GameManager의 PlayerControls가 아직 준비되지 않았습니다.");
             }
         }
         
@@ -252,7 +252,7 @@ using UnityEngine.Serialization;
             {
                 _controls.Player.SetCallbacks(null);
                 _controls.Player.Disable();
-                Debug.Log("[InputReader] DisableInput: PlayerControls 비활성화됨");
+              //  Debug.Log("[InputReader] DisableInput: PlayerControls 비활성화됨");
             }
         }
     }
