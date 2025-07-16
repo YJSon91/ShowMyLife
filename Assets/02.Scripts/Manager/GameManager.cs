@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
+            Debug.Log("[GameManager] Awake 호출");
+
             // 1. 컨트롤러 인스턴스를 생성합니다.
             PlayerControls = new Controls();
 
@@ -177,7 +179,7 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
         }
     }
-    private void LoadAllKeybindings()
+    public void LoadAllKeybindings()
     {
         // --- 이 부분이 핵심 디버깅 코드입니다 ---
         // 1. PlayerPrefs에서 저장된 데이터를 읽어옵니다.
@@ -196,6 +198,7 @@ public class GameManager : MonoBehaviour
         // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
     }
+        
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>
@@ -343,12 +346,6 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
-    }
-    [ContextMenu("Clear All PlayerPrefs Data")]
-    public void ClearAllPlayerPrefs()
-    {
-        PlayerPrefs.DeleteAll();
-        Debug.LogWarning("!!! 모든 PlayerPrefs 데이터가 삭제되었습니다. !!!");
     }
     /// <summary>
     /// 측정된 플레이 시간을 "00:00:00" 형식의 문자열로 변환하여 반환합니다.

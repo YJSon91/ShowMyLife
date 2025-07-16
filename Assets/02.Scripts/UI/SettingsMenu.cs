@@ -188,8 +188,9 @@ public class SettingsMenu : UiBase
         OnCameraSensitivityChanged();
         OnMasterVolumeChanged();
         OnBGMVolumeChanged();
-        OnSFXVolumeChanged();     
-       
+        OnSFXVolumeChanged();
+        GameManager.Instance.LoadAllKeybindings();
+
         Debug.Log("변경된 설정이 게임에 즉시 적용되었습니다.");
     }
     /// <summary>

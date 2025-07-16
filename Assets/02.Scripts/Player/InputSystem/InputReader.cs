@@ -12,7 +12,8 @@ using UnityEngine.Serialization;
         public float _movementInputDuration;
         public bool _movementInputDetected;
 
-        private Controls _controls;
+        // GameManager의 PlayerControls를 사용하도록 변경
+        private Controls _controls => GameManager.Instance?.PlayerControls;
 
         public Action onAimActivated;
         public Action onAimDeactivated;
@@ -39,41 +40,39 @@ using UnityEngine.Serialization;
         /// <inheritdoc cref="OnEnable" />
         private void OnEnable()
         {
+            Debug.Log("[InputReader] OnEnable 호출");
+            // GameManager의 PlayerControls가 준비될 때까지 대기
             if (_controls == null)
             {
-                _controls = new Controls();
-                _controls.Player.SetCallbacks(this);
+                Debug.LogWarning("[InputReader] GameManager의 PlayerControls가 아직 준비되지 않았습니다. 잠시 후 다시 시도합니다.");
+                return;
             }
 
+            _controls.Player.SetCallbacks(this);
             _controls.Player.Enable();
+            
+            Debug.Log("[InputReader] GameManager의 PlayerControls를 사용하여 입력 시스템을 초기화했습니다.");
         }
 
         /// <inheritdoc cref="OnDisable" />
-        public void OnDisable()
-        {
-            _controls.Player.Disable();
-        }
-        
-        /// <summary>
-        /// 외부에서 호출 가능한 입력 활성화 메서드
-        /// </summary>
-        public void EnableInput()
-        {
-            if (_controls == null)
-            {
-                _controls = new Controls();
-                _controls.Player.SetCallbacks(this);
-            }
-            _controls.Player.Enable();
-        }
-        
-        /// <summary>
-        /// 외부에서 호출 가능한 입력 비활성화 메서드
-        /// </summary>
-        public void DisableInput()
+        private void OnDisable()
         {
             if (_controls != null)
+            {
+                _controls.Player.SetCallbacks(null);
                 _controls.Player.Disable();
+            }
+        }
+
+        private void Start()
+        {
+            // Start에서 다시 한 번 시도 (GameManager가 초기화된 후)
+            if (_controls != null && !_controls.Player.enabled)
+            {
+                _controls.Player.SetCallbacks(this);
+                _controls.Player.Enable();
+                Debug.Log("[InputReader] Start에서 GameManager의 PlayerControls를 성공적으로 연결했습니다.");
+            }
         }
 
         /// <summary>
@@ -223,6 +222,38 @@ using UnityEngine.Serialization;
             }
 
             OnGodModeToggled?.Invoke();
+        }
+
+        /// <summary>
+        /// 외부에서 호출 가능한 입력 활성화 메서드
+        /// GameManager의 PlayerControls를 사용합니다.
+        /// </summary>
+        public void EnableInput()
+        {
+            if (_controls != null)
+            {
+                _controls.Player.SetCallbacks(this);
+                _controls.Player.Enable();
+                Debug.Log("[InputReader] EnableInput: PlayerControls 활성화됨");
+            }
+            else
+            {
+                Debug.LogWarning("[InputReader] EnableInput: GameManager의 PlayerControls가 아직 준비되지 않았습니다.");
+            }
+        }
+        
+        /// <summary>
+        /// 외부에서 호출 가능한 입력 비활성화 메서드
+        /// GameManager의 PlayerControls를 사용합니다.
+        /// </summary>
+        public void DisableInput()
+        {
+            if (_controls != null)
+            {
+                _controls.Player.SetCallbacks(null);
+                _controls.Player.Disable();
+                Debug.Log("[InputReader] DisableInput: PlayerControls 비활성화됨");
+            }
         }
     }
 
