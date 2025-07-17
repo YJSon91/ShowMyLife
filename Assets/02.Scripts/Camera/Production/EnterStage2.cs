@@ -1,7 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class BookFallTrigger : MonoBehaviour
+public class EnterStage2 : MonoBehaviour
 {
     [Tooltip("책")]
     [SerializeField] private Transform bookObject;
@@ -32,6 +32,7 @@ public class BookFallTrigger : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    //범위표시
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(0.5f, 0.8f, 1f, 0.4f);

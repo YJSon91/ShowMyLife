@@ -20,20 +20,18 @@ public class PostProcessingManager : MonoBehaviour
     }
 
     // 색상 필터를 지정된 색으로 부드럽게 전환
-    public void ApplyColorFilter(Color targetColor)
+    public void ApplyColorFilter(Color targetColor, float duration)
     {
         if (colorAdjustments != null)
         {
             if (colorLerpRoutine != null)
-            {
                 StopCoroutine(colorLerpRoutine);
-            }
-            colorLerpRoutine = StartCoroutine(LerpColorFilter(targetColor, 1f));
+            colorLerpRoutine = StartCoroutine(LerpColorFilter(targetColor, duration));
         }
     }
 
     // 색상 필터를 기본 값으로 되돌림
-    public void ResetToDefault()
+    public void ResetToDefault(float duration = 1f)
     {
         if (colorAdjustments != null)
         {
@@ -41,7 +39,7 @@ public class PostProcessingManager : MonoBehaviour
             {
                 StopCoroutine(colorLerpRoutine);
             }
-            colorLerpRoutine = StartCoroutine(LerpColorFilter(Color.white, 1f));
+            colorLerpRoutine = StartCoroutine(LerpColorFilter(Color.white, duration));
         }
     }
 

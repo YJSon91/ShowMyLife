@@ -1,12 +1,9 @@
 using UnityEngine;
 
-public class DisableOnPlayerTouch : MonoBehaviour
+public class EnterStage1 : MonoBehaviour
 {
     [Tooltip("연출 매니저")]
     [SerializeField] private EmotionDirector emotionDirector;
-
-    [Tooltip("주시할 타겟")]
-    [SerializeField] private int focusTargetIndex = 4;
 
     [Tooltip("트리거 발동 지연 시간")]
     [SerializeField] private float triggerDelay = 0.5f;
@@ -51,7 +48,7 @@ public class DisableOnPlayerTouch : MonoBehaviour
         emotionDirector.DisablePlayerControl(playerTransform);
 
         emotionDirector.PlayLookAroundThenFocus(
-            focusTargetIndex,
+            4,
             playerTransform,
             sweepDuration,
             focusDuration,
