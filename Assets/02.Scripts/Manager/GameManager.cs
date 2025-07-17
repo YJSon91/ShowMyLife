@@ -192,11 +192,11 @@ public class GameManager : MonoBehaviour
 
         // 2. 어떤 내용이 불러와졌는지 콘솔에 강력한 에러 로그로 출력합니다.
       //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
-       
+
         // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
     }
-        
+
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>
@@ -373,23 +373,5 @@ public class GameManager : MonoBehaviour
             // 상태를 Playing으로 변경합니다.
             UpdateGameState(GameState.Playing);
         }
-    }
-    // 디버그용 초기화
-    public void InitializeManually(
-        SoundManager sound,
-        SaveManager save,
-        UIManager ui,
-        CameraManager cam,
-        DialogueManager dia,
-        StageManager stage,
-        ObstacleManager obs)
-    {
-        SoundManager = sound;
-        SaveManager = save;
-        UIManager = ui;
-        CameraManager = cam;
-        DialogueManager = dia;
-        StageManager = stage;
-        ObstacleManager = obs;
     }
 }

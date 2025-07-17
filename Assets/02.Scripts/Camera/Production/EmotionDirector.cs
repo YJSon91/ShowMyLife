@@ -49,6 +49,7 @@ public class EmotionDirector : MonoBehaviour
     private List<Transform> emotionLookTargets = new List<Transform>();
 
     public ThemeCameraController ThemeCamera => themeCamera;
+    public PostProcessingManager PostProcessing => postProcessing;
 
     public void PlayCommonEmotion(CommonEmotionType type, EmotionParams param)
     {
@@ -84,6 +85,7 @@ public class EmotionDirector : MonoBehaviour
                 break;
         }
     }
+
 
 
     #region 공용 연출
@@ -254,7 +256,26 @@ public class EmotionDirector : MonoBehaviour
         }
     }
 
+    //캐릭터 블라인드
+    public void SetPlayerVisible(Transform player, bool visible)
+    {
+        if (player == null) return;
+
+        var renderers = player.GetComponentsInChildren<Renderer>(true);
+        foreach (var renderer in renderers)
+        {
+            renderer.enabled = visible;
+        }
+    }
+    // 타켓 리스트
+    public Transform GetLookTargetTransform(int index)
+    {
+        if (index < 0 || index >= emotionLookTargets.Count) return null;
+        return emotionLookTargets[index];
+    }
+
     #endregion
+
 
 
     #region 플레이어 조작제한
@@ -310,6 +331,7 @@ public class EmotionDirector : MonoBehaviour
     #endregion
 
 
+
     #region 유치원 시네마틱
     public void StartFinishSkySweep(float delay, int targetIndex)
     {
@@ -341,7 +363,6 @@ public class EmotionDirector : MonoBehaviour
 
 
     #endregion
-
 
     #region 초등학교 시네마틱
 
@@ -384,7 +405,7 @@ public class EmotionDirector : MonoBehaviour
 
     #endregion
 
-
+    #region 도로 시네마틱
     public void PlayLookAroundThenFocus(int targetIndex, Transform player, float sweepDuration, float focusDuration,
         System.Action onComplete = null)
     {
@@ -451,4 +472,33 @@ public class EmotionDirector : MonoBehaviour
 
         yield return new WaitForSeconds(5f);
     }
+    #endregion
+
+    #region 시작 시네마틱
+    public void PlayMoveAndRotateToNeutral(Vector3 fromPos, Vector3 toPos, Quaternion fromRot, Quaternion toRot, float duration, System.Action onComplete = null)
+    {
+        StartCoroutine(MoveAndRotateToNeutralRoutine(fromPos, toPos, fromRot, toRot, duration, onComplete));
+    }
+
+    private IEnumerator MoveAndRotateToNeutralRoutine(Vector3 fromPos, Vector3 toPos, Quaternion fromRot, Quaternion toRot, float duration, System.Action onComplete)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            ThemeCamera.SetPosition(Vector3.Lerp(fromPos, toPos, t));
+            ThemeCamera.SetRotation(Quaternion.Slerp(fromRot, toRot, t).eulerAngles);
+
+            yield return null;
+        }
+
+        ThemeCamera.SetPosition(toPos);
+        ThemeCamera.SetRotation(toRot.eulerAngles);
+
+        onComplete?.Invoke();
+    }
+
+    #endregion
 }
