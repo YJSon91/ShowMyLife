@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour
     private void HandleGameStateChanged(GameManager.GameState newState)
     {
         // 일시정지 상태가 되거나 풀릴 때는 다른 UI를 끄지 않도록 예외 처리
+        Debug.Log($"<color=yellow>[{Time.time:.2f}초] UIManager가 {newState} 상태를 감지했습니다.</color>");
         if (newState == GameManager.GameState.Paused)
         {
             Show<PauseMenu>(true);
@@ -66,6 +67,7 @@ public class UIManager : MonoBehaviour
 
         // 그 외의 상태 변경 시에는 모든 패널을 숨기고 시작합니다.
         HideAll();
+        Show<FadePanelUI>(true); // 페이드 패널을 활성화합니다.
 
         // 새로운 상태에 맞는 UI만 활성화합니다.
         switch (newState)
@@ -165,6 +167,7 @@ public class UIManager : MonoBehaviour
     }
     public void HideAll()
     {
+        Debug.LogWarning($"<color=red>[{Time.time:.2f}초] UIManager가 HideAllPanels()를 호출! 모든 패널을 숨깁니다.</color>");
         foreach (var ui in _uiDictionary.Values)
         {
             ui.Show(false);
