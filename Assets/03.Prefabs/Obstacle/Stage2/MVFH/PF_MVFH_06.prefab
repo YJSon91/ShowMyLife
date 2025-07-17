@@ -191,13 +191,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2123550668305725936}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6849909271534793239}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!65 &8139036094605489571
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -464,14 +464,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0c9606cd463b734aa1b92cf86707cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _castDistance: 1
-  _margin: 0.05
-  _curveSenseSize: 0.21
-  _curveSenseOffset: 0.012
-  _playerRayOriginOffset: 0.2
-  _activationRange: 10
+  enablePlayerCarry: 1
   _moveTo: {x: 5, y: 0, z: 0}
   _moveTime: 3
+  _waitTime: 0.5
+  _useWaitTime: 1
   _forceMultiplier: 1
 --- !u!65 &2729845810135867590
 BoxCollider:
