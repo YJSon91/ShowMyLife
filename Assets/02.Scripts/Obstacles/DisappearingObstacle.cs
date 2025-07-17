@@ -5,7 +5,6 @@ using DG.Tweening;
 public class DisappearingObstacle : BaseObstacle
 {
     [Header("작동 방식 설정")]
-    [Tooltip("true면 자동 사라짐 반복, false면 플레이어 밟을 때 작동")]
     [SerializeField] private bool useAutoLoop = false;
 
     [Header("시간 설정")]
@@ -16,11 +15,21 @@ public class DisappearingObstacle : BaseObstacle
     [Tooltip("애니메이션 시간")]
     [SerializeField] private float fadeDuration = 0.5f;
 
+    [Header("흔들림 옵션")]
+    [Tooltip("흔들릴 모델(자식) 오브젝트")]
+    [SerializeField] private Transform shakeModel;
+    [Tooltip("흔들림 XYZ 범위 (local)")]
+    [SerializeField] private Vector3 shakeStrength = new Vector3(0.05f, 0.05f, 0.05f);
+    [Tooltip("흔들림 속도")]
+    [SerializeField] private float shakeVibrato = 20f;
+
     private Renderer rend;
     private Collider col;
     private Color originalColor;
     private bool isProcessing = false;
     private bool _wasPlayerOnPlatform = false;
+    private Tween _shakeTween;
+    private Vector3 _modelOriginPos;
 
     private void Awake()
     {
@@ -32,6 +41,8 @@ public class DisappearingObstacle : BaseObstacle
             rend.material = new Material(rend.material);
             originalColor = rend.material.color;
         }
+        if (shakeModel != null)
+            _modelOriginPos = shakeModel.localPosition;
     }
 
     private void Start()
@@ -60,10 +71,18 @@ public class DisappearingObstacle : BaseObstacle
     {
         while (true)
         {
-            yield return new WaitForSeconds(delayBeforeDisappear);
-            Disappear();
+            // 자동 반복: 사라지기 전 2초 동안 흔들림
+            if (shakeModel != null)
+                StartShake();
 
+            yield return new WaitForSeconds(2f);
+
+            StopShake();
+            yield return new WaitForSeconds(delayBeforeDisappear - 2f);
+
+            Disappear();
             yield return new WaitForSeconds(delayBeforeReappear);
+
             Reappear();
         }
     }
@@ -72,13 +91,51 @@ public class DisappearingObstacle : BaseObstacle
     {
         isProcessing = true;
 
-        yield return new WaitForSeconds(delayBeforeDisappear);
+        // 사라지기 전 2초 동안 흔들림
+        if (shakeModel != null)
+            StartShake();
+
+        yield return new WaitForSeconds(2f);
+
+        StopShake();
+
+        // 2초 뒤 ~ delayBeforeDisappear까지 대기
+        float remain = delayBeforeDisappear - 2f;
+        if (remain > 0)
+            yield return new WaitForSeconds(remain);
+
         Disappear();
 
         yield return new WaitForSeconds(delayBeforeReappear);
         Reappear();
 
         isProcessing = false;
+    }
+
+    private void StartShake()
+    {
+        // DOTween의 DOShakePosition으로 XYZ축 랜덤하게 흔들림
+        if (_shakeTween != null && _shakeTween.IsActive()) _shakeTween.Kill();
+        if (shakeModel != null)
+        {
+            shakeModel.localPosition = _modelOriginPos;
+            _shakeTween = shakeModel.DOShakePosition(
+                2f,          // duration (2초)
+                shakeStrength,
+                Mathf.RoundToInt(shakeVibrato),
+                90,          // randomness
+                false,       // fade out
+                true         // snapping
+            ).SetEase(Ease.Linear);
+        }
+    }
+
+    private void StopShake()
+    {
+        if (_shakeTween != null && _shakeTween.IsActive())
+            _shakeTween.Kill();
+        if (shakeModel != null)
+            shakeModel.localPosition = _modelOriginPos;
     }
 
     private void Disappear()
@@ -109,5 +166,13 @@ public class DisappearingObstacle : BaseObstacle
         {
             col.enabled = true;
         }
+
+        // 재등장하면 흔들림 초기화
+        StopShake();
+    }
+
+    private void OnDestroy()
+    {
+        StopShake();
     }
 }
