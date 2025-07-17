@@ -156,7 +156,7 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator SequentialDialogueRoutine(string[] dialogueIDs)
     {
         // 1. 플레이어의 조작을 잠시 멈춥니다 (선택 사항).
-        GameManager.Instance.PlayerControls.Player.Disable();
+       // GameManager.Instance.PlayerControls.Player.Disable();
 
         foreach (string id in dialogueIDs)
         {
@@ -171,7 +171,7 @@ public class DialogueManager : MonoBehaviour
 
         // 4. 모든 대사가 끝나면 UI를 숨기고 플레이어 조작을 다시 활성화합니다.
         GameManager.Instance.UIManager.Hide<DialogueUI>();
-        GameManager.Instance.PlayerControls.Player.Enable();
+        //GameManager.Instance.PlayerControls.Player.Enable();
     }
     /// </summary>
     public void StartSequentialDialogue(string[] dialogueIDs)

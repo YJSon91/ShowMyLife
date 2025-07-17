@@ -17,39 +17,6 @@ public class DebugWindow : EditorWindow
 
         GUI.enabled = Application.isPlaying;
 
-        if (GUILayout.Button("GameManager 임시 생성 및 연결"))
-        {
-            if (GameManager.Instance == null)
-            {
-                GameObject go = new GameObject("GameManager_Debug");
-                GameManager gm = go.AddComponent<GameManager>();
-
-                // 씬에 존재하는 매니저 찾기
-                var sound = FindObjectOfType<SoundManager>() ?? go.AddComponent<SoundManager>();
-                var save = FindObjectOfType<SaveManager>();
-                var ui = FindObjectOfType<UIManager>() ?? go.AddComponent<UIManager>();
-                var cam = FindObjectOfType<CameraManager>();
-                var dia = FindObjectOfType<DialogueManager>() ?? go.AddComponent<DialogueManager>();
-                var stage = FindObjectOfType<StageManager>() ?? go.AddComponent<StageManager>();
-                var obs = FindObjectOfType<ObstacleManager>() ?? go.AddComponent<ObstacleManager>();
-
-                if (save == null || cam == null)
-                {
-                    Debug.LogError("[DebugWindow] 필수 매니저(SaveManager, CameraManager)가 씬에 없습니다.");
-                    return;
-                }
-
-                gm.InitializeManually(sound, save, ui, cam, dia, stage, obs);
-
-                DontDestroyOnLoad(go);
-                Debug.Log("[DebugWindow] GameManager 임시 생성 및 매니저 연결 완료.");
-            }
-            else
-            {
-                Debug.Log("[DebugWindow] 이미 GameManager 인스턴스가 존재합니다.");
-            }
-        }
-
         if (GUILayout.Button("저장된 위치로 이동하기"))
         {
             if (GameManager.Instance == null || GameManager.Instance.SaveManager == null)

@@ -253,6 +253,11 @@ using UnityEngine.Serialization;
                 _controls.Player.SetCallbacks(null);
                 _controls.Player.Disable();
               //  Debug.Log("[InputReader] DisableInput: PlayerControls 비활성화됨");
+                
+                // 입력 비활성화 시 이동 관련 변수 초기화
+                _moveComposite = Vector2.zero;
+                _movementInputDetected = false;
+                _movementInputDuration = 0f;
             }
         }
     }
