@@ -405,6 +405,25 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     /// <summary>
+    /// 이동 방향과 속도를 완전히 초기화합니다.
+    /// 이벤트 시작/종료 시 호출하여 플레이어가 멈추도록 합니다.
+    /// </summary>
+    public void ResetMovement()
+    {
+        // 이동 방향 초기화
+        _moveDirection = Vector3.zero;
+        _targetVelocity = Vector3.zero;
+        
+        // 리지드바디 속도 초기화 (y축 속도는 유지)
+        Vector3 currentVelocity = _rigidbody.velocity;
+        _rigidbody.velocity = new Vector3(0f, currentVelocity.y, 0f);
+        
+        // 현재 속도 저장 변수도 초기화
+        _velocity = _rigidbody.velocity;
+        _speed2D = 0f;
+    }
+
+    /// <summary>
     /// 플레이어의 이동 방향을 계산합니다
     /// </summary>
     public void CalculateMoveDirection()
