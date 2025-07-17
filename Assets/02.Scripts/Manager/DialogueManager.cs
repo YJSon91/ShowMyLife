@@ -171,7 +171,7 @@ public class DialogueManager : MonoBehaviour
 
         // 4. 모든 대사가 끝나면 UI를 숨기고 플레이어 조작을 다시 활성화합니다.
         GameManager.Instance.UIManager.Hide<DialogueUI>();
-        GameManager.Instance.PlayerControls.Player.Enable();
+        //GameManager.Instance.PlayerControls.Player.Enable();
     }
     /// </summary>
     public void StartSequentialDialogue(string[] dialogueIDs)

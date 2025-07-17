@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using System.Collections;
+using DG.Tweening;
 
 /// <summary>
 /// 게임의 전체 상태와 다른 모든 매니저들을 총괄하는 최상위 싱글톤 클래스입니다.
@@ -192,11 +194,11 @@ public class GameManager : MonoBehaviour
 
         // 2. 어떤 내용이 불러와졌는지 콘솔에 강력한 에러 로그로 출력합니다.
       //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
-
+       
         // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
     }
-
+        
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>
@@ -257,13 +259,14 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        // 씬 로딩 로직
-        if (newState == GameState.Playing || newState== GameState.Tutorial)
+        // --- 씬 로딩 로직 ---
+        if (newState == GameState.Playing || newState == GameState.Tutorial)
         {
-            // 현재 씬이 IntroScene일 때만 게임 씬을 로드하도록 조건을 추가하면 더 안전합니다.
+            // 현재 씬이 IntroScene일 때만 게임 씬("MainScene")을 로드합니다.
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "IntroScene")
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene("MainScene");
+                // SceneManager.LoadScene("MainScene"); // 이 라인 대신,
+                StartCoroutine(LoadSceneRoutine("MainScene")); // 로딩 코루틴을 호출합니다.
             }
         }
 
@@ -373,5 +376,59 @@ public class GameManager : MonoBehaviour
             // 상태를 Playing으로 변경합니다.
             UpdateGameState(GameState.Playing);
         }
+    }
+    /// <summary>
+    /// DOTween 연출과 함께 지정된 씬을 비동기적으로 로드합니다.
+    /// </summary>
+    /// <param name="sceneName">로드할 씬의 이름</param>
+    private IEnumerator LoadSceneRoutine(string sceneName)
+    {
+        var fadePanel = UIManager?.Get<FadePanelUI>();
+        //UIManager.Show<FadePanelUI>(true);
+
+        // 1. 화면을 어둡게 만듭니다 (Fade In).
+        if (fadePanel != null)
+        {
+            // FadeIn 애니메이션을 실행하고, 끝날 때까지 기다립니다.
+            yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
+        }
+
+        // 2. 검은 화면 상태로 2초 동안 대기합니다.
+        Debug.Log("[GameManager] 로딩 화면 연출 시작 (2초 대기).");
+        yield return new WaitForSeconds(2f);    
+
+        // 3. 다음 씬을 백그라운드에서 로딩 시작합니다.
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        // 씬 로딩이 완료될 때까지 기다립니다.
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+
+        // 4. 새 씬 로딩이 완료된 후, 다시 화면을 밝게 만듭니다 (Fade Out).
+        if (fadePanel != null)
+        {
+            // FadeOut 애니메이션을 실행하고, 끝날 때까지 기다립니다.
+            yield return fadePanel.FadeOut(0.5f).WaitForCompletion();
+        }
+    }
+    // 디버그용 초기화
+    public void InitializeManually(
+        SoundManager sound,
+        SaveManager save,
+        UIManager ui,
+        CameraManager cam,
+        DialogueManager dia,
+        StageManager stage,
+        ObstacleManager obs)
+    {
+        SoundManager = sound;
+        SaveManager = save;
+        UIManager = ui;
+        CameraManager = cam;
+        DialogueManager = dia;
+        StageManager = stage;
+        ObstacleManager = obs;
     }
 }
