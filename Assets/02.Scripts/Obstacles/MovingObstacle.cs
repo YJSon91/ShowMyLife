@@ -7,21 +7,14 @@ public class MovingObstacle : BaseObstacle
     [Tooltip("이동할 거리")]
     [SerializeField] private Vector3 _moveTo = Vector3.zero;
 
-    [Tooltip("한 번 이동하는 데 걸리는 시간")]
-    [SerializeField] private float _moveTime = 1f;
+    [Tooltip("전체 이동 경로를 완료하는 데 걸리는 시간")]
+    [SerializeField] private float _totalPathTime = 4.2f;
     
-    [Tooltip("각 위치에 도달 후 대기 시간")]
-    [SerializeField] private float _waitTime = 0.5f;
-    
-    [Tooltip("대기 시간 사용 여부 (false면 대기 없이 즉시 이동)")]
-    [SerializeField] private bool _useWaitTime = true;
-
     [Tooltip("플레이어 이동 시 적용할 힘 배율")]
     [SerializeField] private float _forceMultiplier = 1.0f;
 
     private Vector3 _lastPosition;
     private Vector3 _startPosition;
-    private Sequence _moveSequence;
 
     private void Start()
     {
@@ -45,33 +38,18 @@ public class MovingObstacle : BaseObstacle
 
     private void StartMoving()
     {
-        _moveSequence = DOTween.Sequence();
-        
-        // 지정된 방향으로 이동
-        Vector3 targetPosition = _startPosition + _moveTo;
-        _moveSequence.Append(transform.DOMove(targetPosition, _moveTime)
-            .SetEase(Ease.InOutQuad)
-            .SetUpdate(UpdateType.Fixed));
-        
-        // 도달 후 대기 (옵션)
-        if (_useWaitTime && _waitTime > 0)
+        // 왕복 경로 정의 (시작점 -> 목표점 -> 시작점)
+        Vector3[] path = new Vector3[]
         {
-            _moveSequence.AppendInterval(_waitTime);
-        }
-        
-        // 시작 위치로 복귀
-        _moveSequence.Append(transform.DOMove(_startPosition, _moveTime)
-            .SetEase(Ease.InOutQuad)
-            .SetUpdate(UpdateType.Fixed));
-            
-        // 시작 위치에서 대기 (옵션)
-        if (_useWaitTime && _waitTime > 0)
-        {
-            _moveSequence.AppendInterval(_waitTime);
-        }
-        
-        // 무한 반복
-        _moveSequence.SetLoops(-1, LoopType.Restart);
+            _startPosition + _moveTo,  // 목표 위치
+            _startPosition             // 시작 위치로 돌아옴
+        };
+
+        // 경로를 따라 이동
+        transform.DOPath(path, _totalPathTime, PathType.Linear)
+            .SetEase(Ease.Linear)  // 일정한 속도로 이동
+            .SetLoops(-1, LoopType.Restart)
+            .SetUpdate(UpdateType.Fixed);
     }
 
     // OnCollision 방식으로 변경!
@@ -89,10 +67,6 @@ public class MovingObstacle : BaseObstacle
     
     private void OnDestroy()
     {
-        // 시퀀스 정리
-        if (_moveSequence != null && _moveSequence.IsActive())
-        {
-            _moveSequence.Kill();
-        }
+        DOTween.Kill(transform);
     }
 }
