@@ -406,11 +406,11 @@ public class PlayerStateController : MonoBehaviour
             // 지면에 도달하면 Movement 상태로 전환
             SwitchState(PlayerAnimationState.Movement);
         }
-        // else if (_player.Rigidbody.velocity.y < -0.1f)
-        // {
-        //     // 하강 중이면 Fall 상태로 전환
-        //     SwitchState(PlayerAnimationState.Fall);
-        // }
+        else if (_player.Rigidbody.velocity.y < -0.1f)
+        {
+            // 하강 중이면 Fall 상태로 전환
+            SwitchState(PlayerAnimationState.Fall);
+        }
     }
     public void PublicSwitchState()
     {
@@ -438,7 +438,7 @@ public class PlayerStateController : MonoBehaviour
     {
         // 낙하 지속 시간 초기화
         _movementController.ResetFallingDuration();
-        _movementController._velocity.y = 0f;
+        // _movementController._velocity.y = 0f;  // 낙하 속도를 유지하기 위해 제거
 
         // 웅크리기 비활성화
         _movementController.DeactivateCrouch();
@@ -450,6 +450,9 @@ public class PlayerStateController : MonoBehaviour
     /// </summary>
     private void UpdateFallState()
     {
+        // 낙하 지속 시간 업데이트 (지면 확인 전에 호출)
+        _movementController.UpdateFallingDuration();
+        
         // 지면 확인
         _movementController.GroundedCheck();
 
@@ -458,10 +461,7 @@ public class PlayerStateController : MonoBehaviour
         _movementController.FaceMoveDirection();
         _movementController.ApplyGravity();
         _movementController.Move();
-
-        // 낙하 지속 시간 업데이트
-        _movementController.UpdateFallingDuration();
-
+       
         // 지면에 착지하면 이동 상태로 전환
         if (_movementController.IsGrounded)
         {
