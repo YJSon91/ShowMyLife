@@ -30,12 +30,12 @@ public class DialogueManager : MonoBehaviour
     private void OnEnable()
     {
         // 플레이어의 낙하 이벤트를 구독합니다.
-        PlayerMovementController.OnPlayerLandedAfterFall += HandlePlayerFall;
+        //PlayerMovementController.OnPlayerLandedAfterFall += HandlePlayerFall;
     }
 
     private void OnDisable()
     {
-        PlayerMovementController.OnPlayerLandedAfterFall -= HandlePlayerFall;
+       // PlayerMovementController.OnPlayerLandedAfterFall -= HandlePlayerFall;
     }
     private void LoadDialogueData()
     {
