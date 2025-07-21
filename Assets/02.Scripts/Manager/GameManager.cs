@@ -384,8 +384,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator LoadSceneRoutine(string sceneName)
     {
         var fadePanel = UIManager?.Get<FadePanelUI>();
-        //UIManager.Show<FadePanelUI>(true);
-
+        
         // 1. 화면을 어둡게 만듭니다 (Fade In).
         if (fadePanel != null)
         {

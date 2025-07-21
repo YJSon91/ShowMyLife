@@ -7,10 +7,14 @@ using System;
 using System.Linq;
 using System.Collections;
 
+
 public class DialogueManager : MonoBehaviour
 {
+    [Header("낙하 대사 시간 기준")]
+    [SerializeField] private float _middleFallTimeThreshold = 2.5f; // 중간 낙하 기준 시간
+    [SerializeField] private float _highFallTimeThreshold = 4.0f;   // 높은 낙하 기준 시간
     // JSON 데이터를 담을 딕셔너리 <트리거타입, 대사목록>
-    // 2. 이제 Dictionary도 바로 JSON으로 변환할 수 있습니다!
+    // Dictionary도 바로 JSON으로 변환할 수 있습니다!
     private Dictionary<DialogueTriggerType, List<Dialogue>> _dialogueDatabase;
 
     private DialogueData _dialogueData;
@@ -23,7 +27,16 @@ public class DialogueManager : MonoBehaviour
         GameManager.Instance.RegisterDialogueManager(this);
         LoadDialogueData();
     }
-    
+    private void OnEnable()
+    {
+        // 플레이어의 낙하 이벤트를 구독합니다.
+        //PlayerMovementController.OnPlayerLandedAfterFall += HandlePlayerFall;
+    }
+
+    private void OnDisable()
+    {
+       // PlayerMovementController.OnPlayerLandedAfterFall -= HandlePlayerFall;
+    }
     private void LoadDialogueData()
     {
         // JSON 파일의 정확한 경로를 확인합니다.
@@ -179,5 +192,29 @@ public class DialogueManager : MonoBehaviour
         // 이미 다른 대사 시퀀스가 실행 중이라면 중복 실행을 막습니다.
         StopAllCoroutines();
         StartCoroutine(SequentialDialogueRoutine(dialogueIDs));
+    }
+    private void HandlePlayerFall(float fallDuration)
+    {
+        DialogueTriggerType fallType;
+
+        // 낙하 시간에 따라 대사 타입을 결정합니다.
+        if (fallDuration >= _highFallTimeThreshold)
+        {
+            fallType = DialogueTriggerType.Fall_High; // 이 enum 멤버들을 추가해야 합니다.
+        }
+        else if (fallDuration >= _middleFallTimeThreshold)
+        {
+            fallType = DialogueTriggerType.Fall_Middle;
+        }
+        else if (fallDuration >= 1.5f) // 1.5초 이상일 때만 Low로 간주
+        {
+            fallType = DialogueTriggerType.Fall_Low;
+        }
+        else
+        {
+            return; // 1.5초 미만의 짧은 낙하는 대사를 출력하지 않음
+        }
+
+        ShowRandomDialogueByType(fallType);
     }
 }
