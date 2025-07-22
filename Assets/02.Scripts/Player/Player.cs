@@ -29,6 +29,9 @@ public class Player : MonoBehaviour
     
     [Tooltip("InputReader는 플레이어 입력을 처리합니다")]
     [SerializeField] private InputReader _inputReader;
+    
+    [Tooltip("애니메이션 이벤트를 처리하는 컴포넌트")]
+    [SerializeField] private PlayerAnimationEventHandler _animationEventHandler;
 
     #endregion
 
@@ -52,6 +55,7 @@ public class Player : MonoBehaviour
     public PlayerMovementController MovementController => _movementController;
     public PlayerStateController StateController => _stateController;
     public PlayerGodModeController GodModeController => _godModeController;
+    public PlayerAnimationEventHandler AnimationEventHandler => _animationEventHandler;
 
     #endregion
 
@@ -123,6 +127,9 @@ public class Player : MonoBehaviour
 
         if (_animationController == null)
             _animationController = GetComponent<PlayerAnimationController>();
+            
+        if (_animationEventHandler == null)
+            _animationEventHandler = GetComponentInChildren<PlayerAnimationEventHandler>();
 
         if (_inputReader == null)
             _inputReader = GetComponent<InputReader>();
@@ -178,6 +185,9 @@ public class Player : MonoBehaviour
 
         if (_animationController == null)
             Debug.LogError("Player: PlayerAnimationController가 할당되지 않았습니다!");
+            
+        if (_animationEventHandler == null)
+            Debug.LogWarning("Player: PlayerAnimationEventHandler를 찾을 수 없습니다!");
 
         if (_inputReader == null)
             Debug.LogError("Player: InputReader가 할당되지 않았습니다!");       
