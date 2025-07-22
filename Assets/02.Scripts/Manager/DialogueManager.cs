@@ -27,17 +27,19 @@ public class DialogueManager : MonoBehaviour
         GameManager.Instance.RegisterDialogueManager(this);
         LoadDialogueData();
     }
-    private void OnEnable()
+    public void SubscribeToPlayerAnimationEvents(PlayerAnimationEventHandler eventHandler)
     {
-        // 플레이어의 낙하 이벤트를 구독합니다.
-        //PlayerMovementController.OnPlayerLandedAfterFall += HandlePlayerFall;
-        //PlayerAnimationEventHandler.OnLandHardAnimationEvent += HandlePlayerFall;
-    }
+        if (eventHandler == null) return;
 
-    private void OnDisable()
+        // 전달받은 '인스턴스'의 이벤트에 구독합니다.
+        eventHandler.OnLandingAnimationEvent += HandleNormalLanding;
+        eventHandler.OnLandingHardAnimationEvent += HandleHardLanding;
+    }
+    public void UnsubscribeFromPlayerAnimationEvents(PlayerAnimationEventHandler eventHandler)
     {
-        // PlayerMovementController.OnPlayerLandedAfterFall -= HandlePlayerFall;
-        //PlayerAnimationEventHandler.OnLandHardAnimationEvent -= HandlePlayerFall;
+        if (eventHandler == null) return;
+        eventHandler.OnLandingAnimationEvent -= HandleNormalLanding;
+        eventHandler.OnLandingHardAnimationEvent -= HandleHardLanding;
     }
     private void LoadDialogueData()
     {
@@ -88,10 +90,11 @@ public class DialogueManager : MonoBehaviour
     }
 
     public void ShowRandomDialogueByType(DialogueTriggerType type)
-    {
-        // 4. 데이터베이스에서 대사를 찾아오는 방식도 더 간단해집니다.
+    {        
         if (_dialogueDatabase.TryGetValue(type, out List<Dialogue> dialogues) && dialogues.Count > 0)
         {
+            Debug.Log($"<color=cyan>3. [DialogueManager] '{type}' 타입의 대사를 찾았습니다. 출력합니다: ");
+
             Dialogue randomDialogue = dialogues[UnityEngine.Random.Range(0, dialogues.Count)];
             var dialogueUI = GameManager.Instance.UIManager.Get<DialogueUI>();
             if (dialogueUI != null)
@@ -218,5 +221,19 @@ public class DialogueManager : MonoBehaviour
         }
 
         ShowRandomDialogueByType(fallType);
+    }
+    // "일반 착지" 애니메이션 방송을 들었을 때
+    private void HandleNormalLanding(PlayerAnimationEventHandler handler)
+    {
+        Debug.Log("<color=yellow>2. [DialogueManager] 일반 착지 신호 수신! 대사를 출력합니다.</color>");
+        ShowRandomDialogueByType(DialogueTriggerType.Fall);
+    }
+
+    // "세게 착지" 애니메이션 방송을 들었을 때
+    private void HandleHardLanding(PlayerAnimationEventHandler handler)
+    {
+        Debug.Log("<color=red>2. [DialogueManager] 세게 착지 신호 수신! 대사를 출력합니다.</color>");
+        // 여기서는 예시로 Middle과 High 대사 중 하나를 보여줍니다.
+        ShowRandomDialogueByType(DialogueTriggerType.Fall);
     }
 }

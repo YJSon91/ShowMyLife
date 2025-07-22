@@ -119,6 +119,14 @@ public class GameManager : MonoBehaviour
                 oldInputReader.OnPausePerformed -= TogglePauseState;
                 SoundManager?.UnsubscribeFromPlayerEvents(oldInputReader);
             }
+            if (this.DialogueManager != null)
+            {
+                PlayerAnimationEventHandler oldAnimHandler = this.Player.GetComponent<PlayerAnimationEventHandler>();
+                if (oldAnimHandler != null)
+                {
+                    this.DialogueManager.UnsubscribeFromPlayerAnimationEvents(oldAnimHandler);
+                }
+            }
         }
 
         // 새로운 플레이어 등록 및 이벤트 구독
@@ -130,6 +138,14 @@ public class GameManager : MonoBehaviour
             {
                 newInputReader.OnPausePerformed += TogglePauseState;
                 SoundManager?.SubscribeToPlayerEvents(newInputReader);
+            }
+        }
+        if (this.DialogueManager != null && newPlayer != null)
+        {
+            PlayerAnimationEventHandler animEventHandler = newPlayer.GetComponent<PlayerAnimationEventHandler>();
+            if (animEventHandler != null)
+            {
+                this.DialogueManager.SubscribeToPlayerAnimationEvents(animEventHandler);
             }
         }
     }
