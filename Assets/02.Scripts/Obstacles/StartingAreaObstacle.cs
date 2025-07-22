@@ -71,13 +71,13 @@ public class StartingAreaObstacle : BaseObstacle
     private void HandleLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
         // 일반 착지 시 시작 지점 UI 표시
-        ShowStartingAreaUI();
+         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_High);
     }
     
     private void HandleHardLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
         // 하드 착지 시 시작 지점 UI 표시
-        ShowStartingAreaUI();
+         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_High);
     }
     
     private void ShowStartingAreaUI()
@@ -86,7 +86,7 @@ public class StartingAreaObstacle : BaseObstacle
         if (GameManager.Instance != null && GameManager.Instance.UIManager != null)
         {
             Debug.Log($"시작 지점 UI 표시: {_areaName}");
-            //GameManager.Instance.UIManager.ShowStartingAreaUI(_areaName, transform.position);
+            GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_High);
         }
         else
         {

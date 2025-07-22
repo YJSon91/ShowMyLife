@@ -68,28 +68,22 @@ public class SaveObstacle : BaseObstacle
     private void HandleLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
         // 일반 착지 시 세이브 UI 표시
-        ShowSaveUI();
+        GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Low);
     }
     
     private void HandleHardLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
         // 하드 착지 시 세이브 UI 표시
-        ShowSaveUI();
+        GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_High);
+    }
+
+    private void HandlemiddleLandingEvent(PlayerAnimationEventHandler eventHandler)
+    {
+        // 일반 착지 시 세이브 UI 표시
+        GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Middle);
     }
     
-    private void ShowSaveUI()
-    {
-        // GameManager를 통해 UI 매니저에 접근하여 세이브 UI 표시
-        if (GameManager.Instance != null && GameManager.Instance.UIManager != null)
-        {
-            Debug.Log("세이브 UI 표시");
-            //GameManager.Instance.UIManager.ShowSaveUI();
-        }
-        else
-        {
-            Debug.LogWarning("GameManager 또는 UIManager를 찾을 수 없습니다.");
-        }
-    }
+    
     
     private void OnDestroy()
     {
