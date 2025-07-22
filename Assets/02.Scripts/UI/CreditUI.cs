@@ -20,7 +20,7 @@ public class CreditUI : UiBase
         {            
             _playtimeText.text = GameManager.Instance.GetFormattedPlaytime();
             StartScrolling();
-            Debug.Log("CreditUI is now visible, starting scroll animation.");
+            //Debug.Log("CreditUI is now visible, starting scroll animation.");
         }
     }
 

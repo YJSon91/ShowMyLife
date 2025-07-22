@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 /// <summary>
 /// 플레이어 애니메이션 이벤트를 처리하는 클래스
@@ -8,6 +9,11 @@ public class PlayerAnimationEventHandler : MonoBehaviour
 {
     private SoundManager _soundManager;
     private bool _isJumping = false;
+
+    // 랜딩 애니메이션 이벤트를 위한 델리게이트
+    public event Action<PlayerAnimationEventHandler> OnLandingAnimationEvent;
+    // 하드 랜딩 애니메이션 이벤트를 위한 델리게이트
+    public event Action<PlayerAnimationEventHandler> OnLandingHardAnimationEvent;
 
     private void Start()
     {
@@ -63,8 +69,27 @@ public class PlayerAnimationEventHandler : MonoBehaviour
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.Land);
-           
         }
+        Debug.Log("<color=lime>1. [AnimationEvent] OnLand() 함수 호출 성공!</color>");
+
+        // 착지 이벤트 발행
+        OnLandingAnimationEvent?.Invoke(this);
+    }
+    
+    /// <summary>
+    /// 하드 착지 애니메이션에서 호출될 이벤트 메서드
+    /// 높은 곳에서 떨어졌을 때 호출됨
+    /// </summary>
+    public void OnLandHardAnimationEvent()
+    {
+        if (_soundManager != null)
+        {
+            _soundManager.PlaySFX(SfxType.Land, 1.0f);
+        }
+        Debug.Log("<color=lime>1. [AnimationEvent] OnLandHard() 함수 호출 성공!</color>");
+
+        // 하드 착지 이벤트 발행
+        OnLandingHardAnimationEvent?.Invoke(this);
     }
 
     /// <summary>
