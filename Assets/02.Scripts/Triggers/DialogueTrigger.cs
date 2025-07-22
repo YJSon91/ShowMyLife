@@ -1,6 +1,10 @@
 using UnityEngine;
 
-public enum DialogueTriggerType { Fall, Cheer, Process, Reach, Start, End }
+public enum DialogueTriggerType
+{
+    Fall, Cheer, Process, Reach, Start, End,
+    Fall_Low, Fall_Middle, Fall_High // 높이별 낙하 타입을 추가
+}
 
 public class DialogueTrigger : MonoBehaviour
 {

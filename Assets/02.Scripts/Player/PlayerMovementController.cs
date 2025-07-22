@@ -533,10 +533,12 @@ public class PlayerMovementController : MonoBehaviour
         {
             UpdateFallingDuration();
         }
-        else
+        // 지면에 있을 때는 일정 시간이 지난 후에만 낙하 지속 시간 초기화
+        // 이렇게 하면 착지 애니메이션이 재생될 시간을 확보할 수 있음
+        else if (_fallingDuration > 0f)
         {
-            // 지면에 있을 때는 낙하 지속 시간 초기화
-            ResetFallingDuration();
+            // 낙하 지속 시간을 바로 초기화하지 않고 애니메이터가 값을 사용할 수 있도록 유지
+            // 다음 프레임에서 PlayerStateController가 상태를 변경할 때 ResetFallingDuration()이 호출됨
         }
     }
 
