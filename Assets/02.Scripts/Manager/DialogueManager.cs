@@ -31,11 +31,13 @@ public class DialogueManager : MonoBehaviour
     {
         // 플레이어의 낙하 이벤트를 구독합니다.
         //PlayerMovementController.OnPlayerLandedAfterFall += HandlePlayerFall;
+        //PlayerAnimationEventHandler.OnLandHardAnimationEvent += HandlePlayerFall;
     }
 
     private void OnDisable()
     {
-       // PlayerMovementController.OnPlayerLandedAfterFall -= HandlePlayerFall;
+        // PlayerMovementController.OnPlayerLandedAfterFall -= HandlePlayerFall;
+        //PlayerAnimationEventHandler.OnLandHardAnimationEvent -= HandlePlayerFall;
     }
     private void LoadDialogueData()
     {
@@ -124,7 +126,7 @@ public class DialogueManager : MonoBehaviour
     /// <summary>
     /// UIManager를 통해 대사 UI를 활성화하고 텍스트를 설정합니다. (코드 중복 방지)
     /// </summary>
-    private void ShowDialogueUI(string message)
+    public void ShowDialogueUI(string message)
     {
         var dialogueUI = GameManager.Instance.UIManager.Get<DialogueUI>();
         if (dialogueUI != null)
