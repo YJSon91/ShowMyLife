@@ -70,7 +70,8 @@ public class PlayerAnimationEventHandler : MonoBehaviour
         {
             _soundManager.PlaySFX(SfxType.Land);
         }
-        
+        Debug.Log("<color=lime>1. [AnimationEvent] OnLand() 함수 호출 성공!</color>");
+
         // 착지 이벤트 발행
         OnLandingAnimationEvent?.Invoke(this);
     }
@@ -85,7 +86,8 @@ public class PlayerAnimationEventHandler : MonoBehaviour
         {
             _soundManager.PlaySFX(SfxType.Land, 1.0f);
         }
-        
+        Debug.Log("<color=lime>1. [AnimationEvent] OnLandHard() 함수 호출 성공!</color>");
+
         // 하드 착지 이벤트 발행
         OnLandingHardAnimationEvent?.Invoke(this);
     }
