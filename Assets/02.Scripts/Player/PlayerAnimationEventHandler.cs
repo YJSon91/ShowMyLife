@@ -66,14 +66,13 @@ public class PlayerAnimationEventHandler : MonoBehaviour
     /// </summary>
     public void OnLandAnimationEvent()
     {
-        if (_soundManager != null)
-        {
-            _soundManager.PlaySFX(SfxType.Land);
-        }
-        Debug.Log("<color=lime>1. [AnimationEvent] OnLand() 함수 호출 성공!</color>");
-
-        // 착지 이벤트 발행
-        OnLandingAnimationEvent?.Invoke(this);
+        // if (_soundManager != null)
+        // {
+        //     _soundManager.PlaySFX(SfxType.Land);
+        // }
+        
+        // // 착지 이벤트 발행
+        // OnLandingAnimationEvent?.Invoke(this);
     }
     
     /// <summary>
@@ -82,14 +81,13 @@ public class PlayerAnimationEventHandler : MonoBehaviour
     /// </summary>
     public void OnLandHardAnimationEvent()
     {
-        if (_soundManager != null)
-        {
-            _soundManager.PlaySFX(SfxType.Land, 1.0f);
-        }
-        Debug.Log("<color=lime>1. [AnimationEvent] OnLandHard() 함수 호출 성공!</color>");
-
-        // 하드 착지 이벤트 발행
-        OnLandingHardAnimationEvent?.Invoke(this);
+        // if (_soundManager != null)
+        // {
+        //     _soundManager.PlaySFX(SfxType.Land, 1.0f);
+        // }
+        
+        // // 하드 착지 이벤트 발행
+        // OnLandingHardAnimationEvent?.Invoke(this);
     }
 
     /// <summary>
