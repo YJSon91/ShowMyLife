@@ -406,7 +406,7 @@ public class PlayerStateController : MonoBehaviour
             // 지면에 도달하면 Movement 상태로 전환
             SwitchState(PlayerAnimationState.Movement);
         }
-        else if (_player.Rigidbody.velocity.y < -0.1f)
+        else if (_player.Rigidbody.velocity.y < -2.0f)
         {
             // 하강 중이면 Fall 상태로 전환
             SwitchState(PlayerAnimationState.Fall);
