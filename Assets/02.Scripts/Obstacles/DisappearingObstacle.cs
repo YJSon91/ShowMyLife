@@ -1,9 +1,20 @@
 using System.Collections;
 using UnityEngine;
 using DG.Tweening;
+using System.Collections.Generic;
 
 public class DisappearingObstacle : BaseObstacle
 {
+    public enum DisappearMode
+    {
+        Transparency, // 투명도 변화로 사라짐
+        Deactivate    // 오브젝트 SetActive로 사라짐
+    }
+
+    [Header("사라짐 연출 방식")]
+    [Tooltip("사라지는 방식을 선택하세요 (Transparency: 투명도 변화, Deactivate: 오브젝트 ON/OFF)")]
+    [SerializeField] private DisappearMode disappearMode = DisappearMode.Transparency;
+
     [Header("작동 방식 설정")]
     [SerializeField] private bool useAutoLoop = false;
 
@@ -23,24 +34,29 @@ public class DisappearingObstacle : BaseObstacle
     [Tooltip("흔들림 속도")]
     [SerializeField] private float shakeVibrato = 20f;
 
-    private Renderer rend;
     private Collider col;
-    private Color originalColor;
     private bool isProcessing = false;
     private bool _wasPlayerOnPlatform = false;
     private Tween _shakeTween;
     private Vector3 _modelOriginPos;
 
+    // 모든 Renderer, 원본 알파값 저장용
+    private Renderer[] _allRenderers;
+    private Dictionary<Renderer, float> _originalAlphas = new Dictionary<Renderer, float>();
+
     private void Awake()
     {
-        rend = GetComponent<Renderer>();
+        // 모든 Renderer를 자식까지 다 찾고 알파값 저장, 머티리얼 분리
+        _allRenderers = GetComponentsInChildren<Renderer>(true);
+        foreach (var r in _allRenderers)
+        {
+            r.material = new Material(r.material); // 인스턴스화(분리)
+            SetMaterialToOpaque(r.material);       // 시작은 Opaque
+            _originalAlphas[r] = r.material.color.a;
+        }
+
         col = GetComponent<Collider>();
 
-        if (rend != null)
-        {
-            rend.material = new Material(rend.material);
-            originalColor = rend.material.color;
-        }
         if (shakeModel != null)
             _modelOriginPos = shakeModel.localPosition;
     }
@@ -71,7 +87,6 @@ public class DisappearingObstacle : BaseObstacle
     {
         while (true)
         {
-            // 자동 반복: 사라지기 전 2초 동안 흔들림
             if (shakeModel != null)
                 StartShake();
 
@@ -91,7 +106,6 @@ public class DisappearingObstacle : BaseObstacle
     {
         isProcessing = true;
 
-        // 사라지기 전 2초 동안 흔들림
         if (shakeModel != null)
             StartShake();
 
@@ -99,7 +113,6 @@ public class DisappearingObstacle : BaseObstacle
 
         StopShake();
 
-        // 2초 뒤 ~ delayBeforeDisappear까지 대기
         float remain = delayBeforeDisappear - 2f;
         if (remain > 0)
             yield return new WaitForSeconds(remain);
@@ -140,39 +153,114 @@ public class DisappearingObstacle : BaseObstacle
 
     private void Disappear()
     {
-        if (rend != null)
+        if (disappearMode == DisappearMode.Transparency)
         {
-            rend.material.DOFade(0f, fadeDuration);
+            // 모든 렌더러의 알파값 0으로 (자식 포함)
+            if (_allRenderers != null)
+            {
+                foreach (var r in _allRenderers)
+                {
+                    SetMaterialToTransparent(r.material);
+                    r.material.DOFade(0f, fadeDuration);
+                }
+            }
+            if (col != null)
+                col.enabled = false;
+        }
+        else if (disappearMode == DisappearMode.Deactivate)
+        {
+            // 오브젝트를 통째로 비활성화
+            gameObject.SetActive(false);
         }
 
-        if (col != null)
-        {
-            col.enabled = false;
-        }
-
-        // 플래그를 강제로 해제!
+        // 플레이어 상태 리셋
         _playerOnPlatform = null;
         _playerRigidbody = null;
     }
 
     private void Reappear()
     {
-        if (rend != null)
+        if (disappearMode == DisappearMode.Transparency)
         {
-            rend.material.DOFade(originalColor.a, fadeDuration);
-        }
+            // 모든 렌더러의 알파값 원본값으로 복원
+            if (_allRenderers != null)
+            {
+                foreach (var r in _allRenderers)
+                {
+                    float originAlpha = 1f;
+                    if (_originalAlphas.TryGetValue(r, out originAlpha))
+                    {
+                        r.material.DOFade(originAlpha, fadeDuration)
+                            .OnComplete(() => SetMaterialToOpaque(r.material));
+                    }
+                    else
+                    {
+                        r.material.DOFade(1f, fadeDuration)
+                            .OnComplete(() => SetMaterialToOpaque(r.material));
+                    }
+                }
+            }
+            if (col != null)
+                col.enabled = true;
 
-        if (col != null)
+            StopShake();
+        }
+        else if (disappearMode == DisappearMode.Deactivate)
         {
-            col.enabled = true;
+            // 오브젝트를 통째로 활성화
+            gameObject.SetActive(true);
+            // 필요시 흔들림 상태/이펙트/이벤트 복구 추가 가능
         }
-
-        // 재등장하면 흔들림 초기화
-        StopShake();
     }
 
     private void OnDestroy()
     {
         StopShake();
+    }
+
+    // === 머티리얼 렌더링모드 제어 함수 ===
+    private void SetMaterialToTransparent(Material mat)
+    {
+        if (mat.shader.name.Contains("Universal Render Pipeline/Lit"))
+        {
+            mat.SetFloat("_Surface", 1); // 1=Transparent
+            mat.SetFloat("_Blend", 0);
+            mat.SetInt("_ZWrite", 0);
+            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            mat.renderQueue = 3000;
+        }
+        else if (mat.HasProperty("_Mode")) // Standard Shader
+        {
+            mat.SetFloat("_Mode", 2); // Fade
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetInt("_ZWrite", 0);
+            mat.DisableKeyword("_ALPHATEST_ON");
+            mat.EnableKeyword("_ALPHABLEND_ON");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.renderQueue = 3000;
+        }
+    }
+
+    private void SetMaterialToOpaque(Material mat)
+    {
+        if (mat.shader.name.Contains("Universal Render Pipeline/Lit"))
+        {
+            mat.SetFloat("_Surface", 0); // 0=Opaque
+            mat.SetInt("_ZWrite", 1);
+            mat.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            mat.renderQueue = -1;
+        }
+        else if (mat.HasProperty("_Mode")) // Standard Shader
+        {
+            mat.SetFloat("_Mode", 0); // Opaque
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+            mat.SetInt("_ZWrite", 1);
+            mat.DisableKeyword("_ALPHATEST_ON");
+            mat.DisableKeyword("_ALPHABLEND_ON");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.renderQueue = -1;
+        }
     }
 }

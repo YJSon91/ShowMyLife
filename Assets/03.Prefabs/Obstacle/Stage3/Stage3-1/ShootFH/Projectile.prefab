@@ -95,7 +95,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c60c72ff33c21c4b9ced6d348159c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lifetime: 3
+  pushForce: 15
+  upwardForce: 2
+  pushDuration: 1
+  inputReduction: 0.8
+  destroyDelayAfterPush: 0
+  lifeTime: 3
+  pushCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.0017089844
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  disablePlayerInput: 1
+  inputDisableDuration: 0.3
 --- !u!1 &930957189256093682
 GameObject:
   m_ObjectHideFlags: 0
