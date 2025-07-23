@@ -2,12 +2,20 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ParticleType
+{
+    None,
+    Petals1,
+    Petals2,
+    EndingSparkle
+}
 public class UIManager : MonoBehaviour
 {
     // UIManager는 이제 GameManager에 의해 관리되므로 싱글톤이 아닙니다.
 
     // Type을 Key로 사용하여, 모든 UI 인스턴스를 저장하는 딕셔너리
     private Dictionary<Type, UiBase> _uiDictionary = new();
+    private List<ParticleUI> _particleUIs = new List<ParticleUI>();
 
     private void Start()
     {
@@ -21,7 +29,8 @@ public class UIManager : MonoBehaviour
             Debug.LogError("[UIManager] GameManager가 씬에 존재하지 않습니다!");
             return;
         }
-
+        // 시작할 때 모든 ParticleUI를 찾아 리스트에 추가합니다.
+        _particleUIs.AddRange(GetComponentsInChildren<ParticleUI>(true)); 
         // 2. 자식 UI들을 찾아 초기화 및 등록
         UiBase[] allUIs = GetComponentsInChildren<UiBase>(true);
         foreach (UiBase ui in allUIs)
@@ -73,7 +82,7 @@ public class UIManager : MonoBehaviour
         switch (newState)
         {
             case GameManager.GameState.Start:
-                Show<StartPanelUI>(true);
+                Show<StartPanelUI>(true);                
                 break;
 
             case GameManager.GameState.Tutorial:
@@ -82,6 +91,8 @@ public class UIManager : MonoBehaviour
 
             case GameManager.GameState.MainMenu:
                 // 메인 메뉴로 전환 시, 페이드 연출을 사용합니다.
+                ShowParticle(ParticleType.Petals1, false); 
+                ShowParticle(ParticleType.Petals2, false);
                 var fadePanel = Get<FadePanelUI>();
                 if (fadePanel != null)
                 {
@@ -112,6 +123,8 @@ public class UIManager : MonoBehaviour
 
             case GameManager.GameState.LevelClear:
                 // 레벨 클리어 UI(엔딩)를 보여줍니다.
+                ShowParticle(ParticleType.Petals1, true);
+                ShowParticle(ParticleType.Petals2, true);
                 Show<EndingUI>(true);
                 Debug.Log("레벨 클리어! 엔딩 UI를 표시합니다.");
                 break;
@@ -171,6 +184,18 @@ public class UIManager : MonoBehaviour
         foreach (var ui in _uiDictionary.Values)
         {
             ui.Show(false);
+        }
+    }
+    public void ShowParticle(ParticleType particleType, bool show)
+    {
+        // 리스트에서 타입이 일치하는 파티클을 찾습니다.
+        foreach (var particle in _particleUIs)
+        {
+            if (particle.ParticleType == particleType)
+            {
+                particle.Show(show);
+                return; // 찾았으면 함수 종료
+            }
         }
     }
 }
