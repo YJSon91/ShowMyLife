@@ -236,7 +236,7 @@ public class PlayerAnimationController : MonoBehaviour
         // 리플렉션 대신 직접 이벤트에 구독
         if (_stateController != null)
         {
-            _stateController.OnStateChanged += HandleStateChanged;
+            //_stateController.OnStateChanged += HandleStateChanged;
             _stateController.OnGaitChanged += HandleGaitChanged;
         }
     }
@@ -249,7 +249,7 @@ public class PlayerAnimationController : MonoBehaviour
         // 이벤트 구독 해제
         if (_stateController != null)
         {
-            _stateController.OnStateChanged -= HandleStateChanged;
+            //_stateController.OnStateChanged -= HandleStateChanged;
             _stateController.OnGaitChanged -= HandleGaitChanged;
         }
     }
@@ -260,14 +260,14 @@ public class PlayerAnimationController : MonoBehaviour
     private void HandleStateChanged(PlayerAnimationState previousState, PlayerAnimationState newState)
     {
         // 상태에 따른 애니메이션 처리
-        if (newState == PlayerAnimationState.Jump)
-        {
-            _animator.SetBool(_isJumpingAnimHash, true);
-        }
-        else
-        {
-            _animator.SetBool(_isJumpingAnimHash, false);
-        }
+        //if (newState == PlayerAnimationState.Jump)
+        //{
+         //   _animator.SetBool(_isJumpingAnimHash, true);
+        //}
+        //else
+        //{
+           // _animator.SetBool(_isJumpingAnimHash, false);
+       // }
     }
 
     /// <summary>

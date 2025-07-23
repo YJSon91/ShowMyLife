@@ -292,6 +292,7 @@ public class PlayerStateController : MonoBehaviour
                 // 지면에 있을 때만 점프 가능
                  _movementController.Jump();
                 SwitchState(PlayerAnimationState.Jump);
+                
             }
         }
     }
@@ -386,7 +387,7 @@ public class PlayerStateController : MonoBehaviour
         
         // 애니메이션 설정
         _animationController.SetJumping(true);
-
+        
         // 슬라이딩 비활성화
         _movementController.DeactivateSliding();
 
@@ -406,15 +407,16 @@ public class PlayerStateController : MonoBehaviour
             // 지면에 도달하면 Movement 상태로 전환
             SwitchState(PlayerAnimationState.Movement);
         }
-        else if (_player.Rigidbody.velocity.y < -0.1f)
-        {
-            // 하강 중이면 Fall 상태로 전환
-            SwitchState(PlayerAnimationState.Fall);
-        }
+         else if (_player.Rigidbody.velocity.y < -2.0f)
+         {
+             // 하강 중이면 Fall 상태로 전환
+             SwitchState(PlayerAnimationState.Fall);
+         }
     }
     public void PublicSwitchState()
     {
         SwitchState(PlayerAnimationState.Fall);
+        
     }
 
     /// <summary>
@@ -425,6 +427,7 @@ public class PlayerStateController : MonoBehaviour
         
         // 애니메이션 설정
         _animationController.SetJumping(false);
+        
     }
 
     #endregion
