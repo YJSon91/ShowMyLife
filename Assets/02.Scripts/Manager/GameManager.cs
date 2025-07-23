@@ -404,6 +404,8 @@ public class GameManager : MonoBehaviour
         // 1. 화면을 어둡게 만듭니다 (Fade In).
         if (fadePanel != null)
         {
+            UIManager?.ShowParticle(ParticleType.Petals1, true);
+            UIManager?.ShowParticle(ParticleType.Petals2, true);
             // FadeIn 애니메이션을 실행하고, 끝날 때까지 기다립니다.
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
         }
@@ -424,6 +426,8 @@ public class GameManager : MonoBehaviour
         // 4. 새 씬 로딩이 완료된 후, 다시 화면을 밝게 만듭니다 (Fade Out).
         if (fadePanel != null)
         {
+            UIManager?.ShowParticle(ParticleType.Petals1, false);
+            UIManager?.ShowParticle(ParticleType.Petals2, false);
             // FadeOut 애니메이션을 실행하고, 끝날 때까지 기다립니다.
             yield return fadePanel.FadeOut(0.5f).WaitForCompletion();
         }

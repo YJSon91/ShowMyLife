@@ -1,18 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ParticleUI : MonoBehaviour
+[RequireComponent(typeof(ParticleSystem))]
+public class ParticleUI : UiBase
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    [SerializeField] private ParticleType _particleType;
+    public ParticleType ParticleType => _particleType;
+
+    private ParticleSystem _particleSystem;
+    
+    public override void Init()
+    {        
+        _particleSystem = GetComponent<ParticleSystem>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Show(bool show)
     {
-        
+        if (show)
+        {
+            gameObject.SetActive(true);
+            _particleSystem.Play();
+        }
+        else
+        {
+            _particleSystem.Stop();
+            gameObject.SetActive(false);
+        }
     }
 }

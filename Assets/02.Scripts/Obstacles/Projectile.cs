@@ -1,55 +1,107 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [Header("플레이어 밀어내는 힘")]
-    [SerializeField] private float _pushForce = 15f;
-    [Header("투사체 생존 시간")]
-    [SerializeField] private float _lifetime = 3f;
+    [Header("투사체 밀림 설정")]
+    [Tooltip("플레이어에게 가할 힘의 크기")]
+    [SerializeField] private float pushForce = 10f;
+    [Tooltip("Y축(수직) 추가 힘")]
+    [SerializeField] private float upwardForce = 2f;
+    [Tooltip("밀림 지속 시간")]
+    [SerializeField] private float pushDuration = 0.4f;
+    [Tooltip("입력 저감(1=완전 불가, 0=완전 가능)")]
+    [SerializeField] private float inputReduction = 0.8f;
+    [Tooltip("밀림 종료 후 투사체 삭제까지의 딜레이(초)")]
+    [SerializeField] private float destroyDelayAfterPush = 0.0f;
+    [Tooltip("자동 삭제 시간(초)")]
+    [SerializeField] private float lifeTime = 3f;
+    [Tooltip("힘 감소 커브(없으면 Ease.OutQuad)")]
+    [SerializeField] private AnimationCurve pushCurve;
+    [Tooltip("플레이어 입력 비활성화")]
+    [SerializeField] private bool disablePlayerInput = true;
+    [Tooltip("입력 비활성화 시간")]
+    [SerializeField] private float inputDisableDuration = 0.3f;
 
-    private Rigidbody _rb;
-    private bool _isPaused = false;
-    private Vector3 _savedVelocity;
-
-    private void Awake()
-    {
-        _rb = GetComponent<Rigidbody>();
-    }
+    private Tween _currentPushTween;
+    private bool _hasPushed = false; // 1회만 발동
 
     private void Start()
     {
-        Destroy(gameObject, _lifetime);
-    }
+        // 감속이 자연스러운 커브 기본값 제공 (인스펙터에서 없을 때만 세팅)
+        if (pushCurve == null || pushCurve.keys.Length == 0)
+            pushCurve = new AnimationCurve(
+                new Keyframe(0f, 1f),     // 시작(100%)
+                new Keyframe(0.1f, 0.6f), // 아주 빠르게 감소
+                new Keyframe(0.3f, 0.25f),
+                new Keyframe(0.6f, 0.08f),
+                new Keyframe(1f, 0f)      // 끝(멈춤)
+            );
 
-    private void FixedUpdate()
-    {
-        // 정지 시 물리 멈춤
-        if (_isPaused && _rb != null)
-        {
-            _rb.velocity = Vector3.zero;
-            _rb.isKinematic = true;
-        }
-        else if (!_isPaused && _rb != null)
-        {
-            _rb.isKinematic = false;
-        }
+        Destroy(gameObject, lifeTime); // 자동 삭제
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (_hasPushed) return;
         if (!collision.gameObject.CompareTag("Player")) return;
 
-        Rigidbody playerRb = collision.gameObject.GetComponent<Rigidbody>();
-        if (playerRb == null)
-            playerRb = collision.gameObject.GetComponentInChildren<Rigidbody>();
+        Player player = collision.gameObject.GetComponent<Player>()
+                     ?? collision.gameObject.GetComponentInParent<Player>();
+        if (player == null) return;
 
-        if (playerRb != null)
-        {
-            Vector3 forceDir = collision.contacts[0].normal * -1f;
-            playerRb.AddForce(forceDir.normalized * _pushForce, ForceMode.VelocityChange);
-        }
+        _hasPushed = true; // 단 1회만 발동
+
+        // 투사체 진행 방향(velocity)으로 밀기 (y는 upwardForce 적용)
+        Vector3 pushDir = GetComponent<Rigidbody>().velocity;
+        pushDir.y = 0;
+        if (pushDir.sqrMagnitude < 0.01f)
+            pushDir = transform.forward; // 예외 fallback
+
+        pushDir.Normalize();
+        Vector3 finalPushDir = (pushDir + Vector3.up * upwardForce).normalized;
+
+        // 이전 트윈이 있으면 Kill
+        _currentPushTween?.Kill();
+
+        // 플레이어 속도 초기화(물리)
+        player.MovementController.Rigidbody.velocity = Vector3.zero;
+
+        // 플레이어 입력 잠시 제한 (선택)
+        if (disablePlayerInput && player.InputReader != null)
+            StartCoroutine(DisablePlayerInputTemporarily(player.InputReader));
+
+        // Slide 효과 시작
+        player.MovementController.ActivateObstacleSlide(finalPushDir, pushForce, pushDuration, inputReduction);
+
+        // DOTween을 통해 힘 점진적 감소 → 연출 끝나면 투사체 삭제
+        _currentPushTween = DOVirtual.Float(pushForce, 0f, pushDuration, (force) => {
+            player.MovementController.UpdateObstacleSlideSpeed(force);
+        })
+        .SetEase(pushCurve) // 곡선 적용!
+        .OnComplete(() => {
+            player.MovementController.DeactivateObstacleSlide();
+            Invoke(nameof(DestroySelf), destroyDelayAfterPush);
+        });
+    }
+
+    private void DestroySelf()
+    {
         Destroy(gameObject);
+    }
+
+    private IEnumerator DisablePlayerInputTemporarily(InputReader inputReader)
+    {
+        inputReader.DisableInput();
+        yield return new WaitForSeconds(inputDisableDuration);
+        inputReader.EnableInput();
+    }
+
+    private void OnDestroy()
+    {
+        _currentPushTween?.Kill();
+        _currentPushTween = null;
     }
 }
