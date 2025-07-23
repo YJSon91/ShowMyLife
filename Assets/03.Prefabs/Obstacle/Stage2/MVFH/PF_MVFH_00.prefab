@@ -301,7 +301,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 418936559694265458}
@@ -354,14 +354,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0c9606cd463b734aa1b92cf86707cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _castDistance: 1
-  _margin: 0.05
-  _curveSenseSize: 0.21
-  _curveSenseOffset: 0.012
-  _playerRayOriginOffset: 0.2
-  _activationRange: 10
+  _senseMode: 0
+  enablePlayerCarry: 1
   _moveTo: {x: 0, y: 0, z: 0}
-  _moveTime: 3
+  _totalPathTime: 4.2
   _forceMultiplier: 1
 --- !u!65 &3063268050907489585
 BoxCollider:
