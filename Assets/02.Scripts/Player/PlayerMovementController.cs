@@ -71,6 +71,12 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
     [SerializeField] private float _groundCheckDistance = 0.2f;
+    [Tooltip("점프 쿨타임 (초)")]
+    [SerializeField] private float _jumpCooldown = 1.0f;
+
+    // 점프 쿨타임 관련 변수
+    private float _jumpCooldownTimer = 0f;
+    private bool _isJumpOnCooldown = false;
 
     #endregion
 
@@ -227,6 +233,16 @@ public class PlayerMovementController : MonoBehaviour
 
     public Rigidbody Rigidbody => _rigidbody;
 
+    /// <summary>
+    /// 점프 쿨타임이 활성화되어 있는지 확인합니다
+    /// </summary>
+    public bool IsJumpOnCooldown => _isJumpOnCooldown;
+    
+    /// <summary>
+    /// 현재 점프 쿨타임 타이머 값을 반환합니다 (0~1 사이의 값, 1이 쿨타임 시작, 0이 쿨타임 종료)
+    /// </summary>
+    public float JumpCooldownNormalized => _isJumpOnCooldown ? _jumpCooldownTimer / _jumpCooldown : 0f;
+
     #endregion
 
     #region Unity 라이프사이클
@@ -260,6 +276,9 @@ public class PlayerMovementController : MonoBehaviour
         {
             FaceMoveDirection();
         }
+        
+        // 점프 쿨타임 업데이트
+        UpdateJumpCooldown();
     }
 
     private void FixedUpdate()
@@ -589,16 +608,24 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        if (_isGrounded)
+        // 쿨타임 중이거나 지면에 있지 않으면 점프할 수 없음
+        if (_isJumpOnCooldown || !_isGrounded)
         {
-            // 속도를 직접 설정하여 프레임 레이트에 독립적인 일관된 점프 구현
-            // Vector3 velocity = _rigidbody.velocity;
-            // velocity.y = _jumpForce;
-            // _rigidbody.velocity = velocity;
-
-             _isGrounded = false;
-            jumpRequest = true;
+            if (_isJumpOnCooldown)
+            {
+                Debug.Log($"점프 쿨타임 중: {_jumpCooldownTimer:F1}초 남음");
+            }
+            return;
         }
+
+        // 점프 실행
+        _isGrounded = false;
+        jumpRequest = true;
+        
+        // 쿨타임 시작
+        _isJumpOnCooldown = true;
+        _jumpCooldownTimer = _jumpCooldown;
+        Debug.Log($"점프 실행! 쿨타임 {_jumpCooldown}초 시작");
     }
 
     /// <summary>
@@ -1063,5 +1090,22 @@ public class PlayerMovementController : MonoBehaviour
         Gizmos.DrawWireCube(boxCenter, boxHalfExtents * 2);
         Gizmos.DrawWireCube(endPosition, boxHalfExtents * 2);
         Gizmos.DrawLine(boxCenter, endPosition);
+    }
+
+    /// <summary>
+    /// 점프 쿨타임을 업데이트합니다
+    /// </summary>
+    private void UpdateJumpCooldown()
+    {
+        if (_isJumpOnCooldown)
+        {
+            _jumpCooldownTimer -= Time.deltaTime;
+            
+            if (_jumpCooldownTimer <= 0f)
+            {
+                _isJumpOnCooldown = false;
+                _jumpCooldownTimer = 0f;
+            }
+        }
     }
 }
