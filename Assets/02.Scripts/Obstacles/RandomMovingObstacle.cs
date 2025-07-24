@@ -16,6 +16,15 @@ public class RandomMovingObstacle : BaseObstacle
 
     private Vector3 _startPos;
     private Vector3 _endPos;
+    private Rigidbody _rb;
+    private Tweener _moveTween;
+
+    private void Awake()
+    {
+        _rb = GetComponent<Rigidbody>();
+        _rb.isKinematic = true; // 필수: 외부 힘 영향 안받고 직접 이동
+        _rb.collisionDetectionMode = CollisionDetectionMode.Continuous; // 빠른 충돌감지
+    }
 
     private void Start()
     {
@@ -29,16 +38,26 @@ public class RandomMovingObstacle : BaseObstacle
         while (true)
         {
             // [A->B]로 이동
-            yield return transform.DOMove(_endPos, _moveTime)
-                .SetEase(Ease.InOutQuad)
-                .SetUpdate(UpdateType.Fixed)
-                .WaitForCompletion();
+            yield return DOTween.To(
+                () => _rb.position,
+                pos => _rb.MovePosition(pos),
+                _endPos,
+                _moveTime
+            )
+            .SetEase(Ease.InOutQuad)
+            .SetUpdate(UpdateType.Fixed)
+            .WaitForCompletion();
 
             // [B->A]로 복귀
-            yield return transform.DOMove(_startPos, _moveTime)
-                .SetEase(Ease.InOutQuad)
-                .SetUpdate(UpdateType.Fixed)
-                .WaitForCompletion();
+            yield return DOTween.To(
+                () => _rb.position,
+                pos => _rb.MovePosition(pos),
+                _startPos,
+                _moveTime
+            )
+            .SetEase(Ease.InOutQuad)
+            .SetUpdate(UpdateType.Fixed)
+            .WaitForCompletion();
 
             // [A]에 도착하면 랜덤 대기
             float randomWait = Random.Range(_minRandomDelay, _maxRandomDelay);
@@ -48,6 +67,6 @@ public class RandomMovingObstacle : BaseObstacle
 
     private void OnDestroy()
     {
-        DOTween.Kill(transform); // 안전하게 Tween 종료
+        DOTween.Kill(_rb); // 안전하게 Tween 종료
     }
 }
