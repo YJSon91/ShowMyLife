@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 8207091368859833329}
   - component: {fileID: 8094334118733489244}
   - component: {fileID: 6841566957940342953}
+  - component: {fileID: 364678521646702710}
   m_Layer: 0
-  m_Name: Projectile
+  m_Name: testprojectilte
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +43,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 526277819409342421}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c60c72ff33c21c4b9ced6d348159c60, type: 3}
   m_Name: 
@@ -97,6 +98,34 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &364678521646702710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526277819409342421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a5b4f3d8c7e9a24f8d7e5c6b3a2f1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _senseMode: 0
+  enablePlayerCarry: 1
+  bounceForce: 5
+  upwardForce: 2
+  bounceDuration: 0.5
+  inputReduction: 0.8
+  decelerationDuration: 0.3
+  cooldownTime: 0.5
+  bounceCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  disablePlayerInput: 1
+  inputDisableDuration: 0.5
 --- !u!1 &1126974353790818656
 GameObject:
   m_ObjectHideFlags: 0
