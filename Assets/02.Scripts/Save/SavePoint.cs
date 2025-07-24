@@ -50,15 +50,23 @@ public class SavePoint : MonoBehaviour
             hasSaved = false;
         }
     }
-
+    //범위표시
     private void OnDrawGizmos()
     {
-        BoxCollider box = GetComponent<BoxCollider>();
-        if (box == null) return;
+        Gizmos.color = new Color(0f, 0.4f, 0f, 0.4f);
 
-        Gizmos.color = Color.cyan;
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawWireCube(box.center, box.size);
+        Collider col = GetComponent<Collider>();
+        if (col is BoxCollider box)
+        {
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawCube(box.center, box.size);
+        }
+        else if (col is SphereCollider sphere)
+        {
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawSphere(sphere.center, sphere.radius);
+        }
         UnityEditor.Handles.Label(transform.position + Vector3.up, $"Save: {saveId}");
     }
+
 }
