@@ -32,20 +32,36 @@ public class MaterialFixer : EditorWindow
                 shaderName == "Hidden/InternalErrorShader" ||
                 shaderName.Contains("Standard") ||
                 shaderName.StartsWith("Unreal/") ||
-                shaderName == "Nimikko/MasterShader"; // ← 사용자 정의 셰이더 추가
+                shaderName == "Nimikko/MasterShader";
 
             if (!isConvertible)
                 continue;
 
             string materialName = Path.GetFileNameWithoutExtension(path);
-            string baseName = materialName.StartsWith("M_") ? materialName.Substring(2) : materialName;
+            string baseName = materialName;
 
-            string folder = Path.GetDirectoryName(path).Replace("Materials", "Textures");
+            if (baseName.StartsWith("M_")) baseName = baseName.Substring(2);
+            else if (baseName.StartsWith("MI_")) baseName = baseName.Substring(3);
+            else if (baseName.StartsWith("Material_")) baseName = baseName.Substring(9);
 
-            // 이름 기반 텍스처 찾기
-            Texture baseMap = FindTexture(folder, baseName, new[] { "Albedo", "BaseColor", "BC" });
-            Texture normalMap = FindTexture(folder, baseName, new[] { "Normal", "N" });
-            Texture maskMap = FindTexture(folder, baseName, new[] { "Mask", "Masks", "AO_R_MT", "OcclusionRoughnessMetallic" });
+            string folder = Path.GetDirectoryName(path);
+            string texturesFolder = folder.Replace("Materials", "Textures");
+
+            // 이름 기반 텍스처 찾기 (우선순위: 추정 경로 → 동일 폴더 → 전체 경로)
+            Texture baseMap =
+                FindTexture(texturesFolder, baseName, new[] { "Albedo", "BaseColor", "BC" }) ??
+                FindTexture(folder, baseName, new[] { "Albedo", "BaseColor", "BC" }) ??
+                FindTexture("Assets/99.Externals", baseName, new[] { "Albedo", "BaseColor", "BC" });
+
+            Texture normalMap =
+                FindTexture(texturesFolder, baseName, new[] { "Normal", "N" }) ??
+                FindTexture(folder, baseName, new[] { "Normal", "N" }) ??
+                FindTexture("Assets/99.Externals", baseName, new[] { "Normal", "N" });
+
+            Texture maskMap =
+                FindTexture(texturesFolder, baseName, new[] { "Mask", "Masks", "AO_R_MT", "OcclusionRoughnessMetallic" }) ??
+                FindTexture(folder, baseName, new[] { "Mask", "Masks", "AO_R_MT", "OcclusionRoughnessMetallic" }) ??
+                FindTexture("Assets/99.Externals", baseName, new[] { "Mask", "Masks", "AO_R_MT", "OcclusionRoughnessMetallic" });
 
             // 셰이더 교체
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
