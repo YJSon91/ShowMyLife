@@ -89,35 +89,23 @@ public class MaterialFixer : EditorWindow
     // 이름 기반 텍스처 검색
     private static Texture FindTexture(string folder, string baseName, string[] suffixes)
     {
-        string[] exts = { ".png", ".tga", ".jpg", ".jpeg", ".psd" };
-
-        if (!Directory.Exists(folder))
-            return null;
-
-        string[] allFiles = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
-
-        foreach (string file in allFiles)
+        string[] guids = AssetDatabase.FindAssets("t:Texture", new[] { folder });
+        foreach (string guid in guids)
         {
-            string lowerFile = file.ToLower();
-
-            if (!exts.Any(ext => lowerFile.EndsWith(ext)))
-                continue;
-
-            string fileName = Path.GetFileNameWithoutExtension(file);
+            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            string fileName = Path.GetFileNameWithoutExtension(assetPath).ToLower();
+            string baseLower = baseName.ToLower();
 
             foreach (string suffix in suffixes)
             {
-                if (fileName.ToLower().Contains(baseName.ToLower()) &&
-                    fileName.ToLower().Contains(suffix.ToLower()))
+                if (fileName.Contains(baseLower) && fileName.Contains(suffix.ToLower()))
                 {
-                    string assetPath = file.Replace(Application.dataPath, "Assets").Replace("\\", "/");
                     Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
                     if (tex != null)
                         return tex;
                 }
             }
         }
-
         return null;
     }
 }
