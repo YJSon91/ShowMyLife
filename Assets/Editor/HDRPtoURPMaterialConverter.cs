@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Linq;
 
 public class MaterialFixer : EditorWindow
 {
@@ -24,6 +25,7 @@ public class MaterialFixer : EditorWindow
             if (shaderName == "Universal Render Pipeline/Lit")
                 continue;
 
+            // 변환 가능한 셰이더들
             bool isConvertible =
                 shaderName.StartsWith("Shader Graphs/") ||
                 shaderName.Contains("HDRP") ||
@@ -45,7 +47,7 @@ public class MaterialFixer : EditorWindow
             Texture normalMap = FindTexture(folder, baseName, new[] { "N", "Normal" });
             Texture maskMap = FindTexture(folder, baseName, new[] { "AO_R_MT", "OcclusionRoughnessMetallic" });
 
-            // 셰이더 교체 (단, 'Nimikko/MasterShader'도 포함하여 강제 전환)
+            // 셰이더 교체
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
 
             // 텍스처 할당
@@ -65,7 +67,7 @@ public class MaterialFixer : EditorWindow
                 mat.SetFloat("_Metallic", 1f);
             }
 
-            // 색상/속성
+            // 색상/속성 복사
             Color baseColor = Color.white;
             if (mat.HasProperty("_BaseColor")) baseColor = mat.GetColor("_BaseColor");
             else if (mat.HasProperty("_Color")) baseColor = mat.GetColor("_Color");
@@ -84,19 +86,38 @@ public class MaterialFixer : EditorWindow
         Debug.Log($"[MaterialFixer] 변환 완료: {convertedCount}개 머티리얼");
     }
 
+    // 이름 기반 텍스처 검색
     private static Texture FindTexture(string folder, string baseName, string[] suffixes)
     {
-        foreach (string suffix in suffixes)
+        string[] exts = { ".png", ".tga", ".jpg", ".jpeg", ".psd" };
+
+        if (!Directory.Exists(folder))
+            return null;
+
+        string[] allFiles = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
+
+        foreach (string file in allFiles)
         {
-            string[] exts = { ".png", ".tga", ".jpg", ".jpeg", ".psd" };
-            foreach (string ext in exts)
+            string lowerFile = file.ToLower();
+
+            if (!exts.Any(ext => lowerFile.EndsWith(ext)))
+                continue;
+
+            string fileName = Path.GetFileNameWithoutExtension(file);
+
+            foreach (string suffix in suffixes)
             {
-                string texPath = Path.Combine(folder, $"T_{baseName}_{suffix}{ext}").Replace("\\", "/");
-                Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(texPath);
-                if (tex != null)
-                    return tex;
+                if (fileName.ToLower().Contains(baseName.ToLower()) &&
+                    fileName.ToLower().Contains(suffix.ToLower()))
+                {
+                    string assetPath = file.Replace(Application.dataPath, "Assets").Replace("\\", "/");
+                    Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
+                    if (tex != null)
+                        return tex;
+                }
             }
         }
+
         return null;
     }
 }
