@@ -29,7 +29,8 @@ public class MaterialFixer : EditorWindow
                 shaderName.Contains("HDRP") ||
                 shaderName == "Hidden/InternalErrorShader" ||
                 shaderName.Contains("Standard") ||
-                shaderName.StartsWith("Unreal/");
+                shaderName.StartsWith("Unreal/") ||
+                shaderName == "Nimikko/MasterShader";
 
             if (!isConvertible)
                 continue;
@@ -44,7 +45,7 @@ public class MaterialFixer : EditorWindow
             Texture normalMap = FindTexture(folder, baseName, new[] { "N", "Normal" });
             Texture maskMap = FindTexture(folder, baseName, new[] { "AO_R_MT", "OcclusionRoughnessMetallic" });
 
-            // 셰이더 교체
+            // 셰이더 교체 (단, 'Nimikko/MasterShader'도 포함하여 강제 전환)
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
 
             // 텍스처 할당
