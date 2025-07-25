@@ -32,7 +32,7 @@ public class MaterialFixer : EditorWindow
                 shaderName == "Hidden/InternalErrorShader" ||
                 shaderName.Contains("Standard") ||
                 shaderName.StartsWith("Unreal/") ||
-                shaderName == "Nimikko/MasterShader";
+                shaderName == "Nimikko/MasterShader"; // ← 사용자 정의 셰이더 추가
 
             if (!isConvertible)
                 continue;
