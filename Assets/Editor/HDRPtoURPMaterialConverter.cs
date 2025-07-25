@@ -37,17 +37,16 @@ public class MaterialFixer : EditorWindow
             Texture baseMap = mat.GetTexture("_BaseMap")
                             ?? mat.GetTexture("_MainTex")
                             ?? mat.GetTexture("_Albedo")
-                            ?? mat.GetTexture("BC");
+                            ?? mat.GetTexture("BC")
+                            ?? AssetDatabase.LoadAssetAtPath<Texture>($"{System.IO.Path.GetDirectoryName(path)}/T_Walls_BC.png");
 
             Texture normalMap = mat.GetTexture("_NormalMap")
                               ?? mat.GetTexture("_BumpMap")
-                              ?? mat.GetTexture("N");
+                              ?? mat.GetTexture("N")
+                              ?? AssetDatabase.LoadAssetAtPath<Texture>($"{System.IO.Path.GetDirectoryName(path)}/T_Walls_N.png");
 
             Texture maskMap = mat.GetTexture("_MaskMap")
-                            ?? mat.GetTexture("_MetallicGlossMap")
-                            ?? mat.GetTexture("_SpecGlossMap")
-                            ?? mat.GetTexture("_RMAMap")
-                            ?? mat.GetTexture("AO_R_MT");
+                            ?? mat.GetTexture("T_Floor_R");
 
             // 색상 추출
             Color baseColor = Color.white;
@@ -63,11 +62,14 @@ public class MaterialFixer : EditorWindow
 
             // 텍스처 재설정
             if (baseMap) mat.SetTexture("_BaseMap", baseMap);
+            else Debug.LogWarning($"[MaterialFixer] BaseMap 없음: {path}");
+
             if (normalMap)
             {
                 mat.SetTexture("_BumpMap", normalMap);
                 mat.EnableKeyword("_NORMALMAP");
             }
+
             if (maskMap)
             {
                 mat.SetTexture("_MaskMap", maskMap);
