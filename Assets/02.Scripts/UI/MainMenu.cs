@@ -19,6 +19,7 @@ public class MainMenu : UiBase
         // GameManager에게 게임 시작을 요청합니다.        
        //GameManager.Instance.UpdateGameState(GameManager.GameState.Tutorial);
        GameManager.Instance.UpdateGameState(GameManager.GameState.Playing); // 게임 상태를 로딩으로 변경합니다.
+        
     }
 
     // '이어하기' 버튼을 위한 함수
