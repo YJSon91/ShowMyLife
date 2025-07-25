@@ -40,12 +40,10 @@ public class MaterialFixer : EditorWindow
             string materialName = Path.GetFileNameWithoutExtension(path);
             string baseName = materialName.StartsWith("M_") ? materialName.Substring(2) : materialName;
 
-            string folder = Path.GetDirectoryName(path).Replace("Materials", "Textures");
-
             // 이름 기반 텍스처 찾기
-            Texture baseMap = FindTexture(folder, baseName, new[] { "BC", "BaseColor" });
-            Texture normalMap = FindTexture(folder, baseName, new[] { "N", "Normal" });
-            Texture maskMap = FindTexture(folder, baseName, new[] { "AO_R_MT", "OcclusionRoughnessMetallic" });
+            Texture baseMap = FindTextureByGuess(baseName, new[] { "BC", "BaseColor", "Albedo" });
+            Texture normalMap = FindTextureByGuess(baseName, new[] { "N", "Normal" }, true);
+            Texture maskMap = FindTextureByGuess(baseName, new[] { "AO_R_MT", "Mask", "ORM" });
 
             // 셰이더 교체
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
@@ -87,25 +85,36 @@ public class MaterialFixer : EditorWindow
     }
 
     // 이름 기반 텍스처 검색
-    private static Texture FindTexture(string folder, string baseName, string[] suffixes)
+    private static Texture FindTextureByGuess(string baseName, string[] suffixes, bool markAsNormalMap = false)
     {
-        string[] guids = AssetDatabase.FindAssets("t:Texture", new[] { folder });
+        string[] guids = AssetDatabase.FindAssets("t:Texture");
+
         foreach (string guid in guids)
         {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            string fileName = Path.GetFileNameWithoutExtension(assetPath).ToLower();
-            string baseLower = baseName.ToLower();
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            string fileName = Path.GetFileNameWithoutExtension(path).ToLower();
 
-            foreach (string suffix in suffixes)
+            if (!fileName.Contains(baseName.ToLower()))
+                continue;
+
+            if (!suffixes.Any(suffix => fileName.Contains(suffix.ToLower())))
+                continue;
+
+            if (markAsNormalMap)
             {
-                if (fileName.Contains(baseLower) && fileName.Contains(suffix.ToLower()))
+                TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (importer != null && importer.textureType != TextureImporterType.NormalMap)
                 {
-                    Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
-                    if (tex != null)
-                        return tex;
+                    importer.textureType = TextureImporterType.NormalMap;
+                    importer.SaveAndReimport();
                 }
             }
+
+            Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(path);
+            if (tex != null)
+                return tex;
         }
+
         return null;
     }
 }
