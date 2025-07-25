@@ -628,6 +628,21 @@ public class PlayerMovementController : MonoBehaviour
         Debug.Log($"점프 실행! 쿨타임 {_jumpCooldown}초 시작");
     }
 
+    public void ExternalJump(Vector3 velocity)
+    {
+        // 기존 y속도를 새로운 값으로 대체 (XZ도 원하는 경우엔 같이 적용)
+        Vector3 v = _rigidbody.velocity;
+        v.y = velocity.y;
+        // 만약 XZ도 통째로 덮고 싶으면 아래처럼:
+        // v.x = velocity.x;
+        // v.z = velocity.z;
+        _rigidbody.velocity = v;
+
+        _isGrounded = false;
+        jumpRequest = false;
+        // 필요하면 점프 애니메이션 등도 여기서 처리
+    }
+
     /// <summary>
     /// 경사면 제한 기능을 적용합니다. 플레이어가 너무 가파른 경사면을 올라가지 못하게 합니다.
     /// </summary>

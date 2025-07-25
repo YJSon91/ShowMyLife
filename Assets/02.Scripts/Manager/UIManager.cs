@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterUIManager(this);
+            GameManager.Instance.PreloadMainScene();
         }
         else
         {
