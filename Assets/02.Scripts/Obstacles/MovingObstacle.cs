@@ -5,25 +5,25 @@ public class MovingObstacle : BaseObstacle
 {
     [Header("이동 설정")]
     [Tooltip("이동할 거리")]
-    [SerializeField] private Vector3 _moveTo = Vector3.zero;
+    [SerializeField] protected Vector3 _moveTo = Vector3.zero;
 
     [Tooltip("전체 이동 경로를 완료하는 데 걸리는 시간")]
-    [SerializeField] private float _totalPathTime = 4.2f;
+    [SerializeField] protected float _totalPathTime = 4.2f;
     
     [Tooltip("플레이어 이동 시 적용할 힘 배율")]
-    [SerializeField] private float _forceMultiplier = 1.0f;
+    [SerializeField] protected float _forceMultiplier = 1.0f;
 
-    private Vector3 _lastPosition;
-    private Vector3 _startPosition;
+    protected Vector3 _lastPosition;
+    protected Vector3 _startPosition;
 
-    private void Start()
+    protected virtual void Start()
     {
         _startPosition = transform.position;
         _lastPosition = transform.position;
         StartMoving();
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         Vector3 currentPosition = transform.position;
         Vector3 delta = currentPosition - _lastPosition;
@@ -36,7 +36,7 @@ public class MovingObstacle : BaseObstacle
         _lastPosition = currentPosition;
     }
 
-    private void StartMoving()
+    protected virtual void StartMoving()
     {
         // 왕복 경로 정의 (시작점 -> 목표점 -> 시작점)
         Vector3[] path = new Vector3[]
@@ -65,7 +65,7 @@ public class MovingObstacle : BaseObstacle
         }
     }
     
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         DOTween.Kill(transform);
     }
