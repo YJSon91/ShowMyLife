@@ -119,18 +119,17 @@ public class MaterialFixer : EditorWindow
             if (!exts.Any(ext => lowerFile.EndsWith(ext)))
                 continue;
 
-            string fileName = Path.GetFileNameWithoutExtension(file);
+            string fileName = Path.GetFileNameWithoutExtension(file).ToLower();
 
-            foreach (string suffix in suffixes)
+            bool nameMatch = suffixes.Any(suffix => fileName.Contains(suffix.ToLower()));
+            bool baseMatch = fileName.Contains(baseName.ToLower()) || baseName.ToLower().Contains(fileName);
+
+            if (nameMatch && baseMatch)
             {
-                if (fileName.ToLower().Contains(baseName.ToLower()) &&
-                    fileName.ToLower().Contains(suffix.ToLower()))
-                {
-                    string assetPath = file.Replace(Application.dataPath, "Assets").Replace("\\", "/");
-                    Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
-                    if (tex != null)
-                        return tex;
-                }
+                string assetPath = file.Replace(Application.dataPath, "Assets").Replace("\\", "/");
+                Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
+                if (tex != null)
+                    return tex;
             }
         }
 
