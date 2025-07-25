@@ -262,6 +262,7 @@ public class GameManager : MonoBehaviour
 
             case GameState.MainMenu:
                 SoundManager?.PlayBGM(BgmType.Main);
+                PreloadMainScene();
                 break;
 
             case GameState.LevelClear:
@@ -401,6 +402,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PreloadSceneRoutine(string sceneName)
     {
+        if (_loadingOperation != null && !_loadingOperation.isDone)
+        {
+            yield break;
+        }
         Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 시작...");
         _loadingOperation = SceneManager.LoadSceneAsync(sceneName);
         _loadingOperation.allowSceneActivation = false;
@@ -426,6 +431,7 @@ public class GameManager : MonoBehaviour
         if (fadePanel != null)
         {
             UIManager?.ShowParticle(ParticleType.Petals1, true);
+            UIManager?.ShowParticle(ParticleType.Petals2, true);
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
         }
 
@@ -438,12 +444,14 @@ public class GameManager : MonoBehaviour
             _loadingOperation.allowSceneActivation = true;
             // 씬 활성화가 끝날 때까지 잠시 대기합니다.
             yield return new WaitForEndOfFrame();
+            _loadingOperation = null;
         }
 
         // 4. 새 씬 로딩 후, 파티클을 끕니다.
         if (UIManager != null)
         {
             UIManager?.ShowParticle(ParticleType.Petals1, false);
+            UIManager?.ShowParticle(ParticleType.Petals2, false);
         }
 
         // 5. 다시 화면을 밝게 만듭니다 (Fade Out).
