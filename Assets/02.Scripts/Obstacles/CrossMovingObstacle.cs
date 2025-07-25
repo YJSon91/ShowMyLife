@@ -4,7 +4,17 @@ using System.Collections.Generic;
 
 public class CrossMovingObstacle : BaseObstacle
 {
+    public enum MovementPattern
+    {
+        RightFirst,  // 오른쪽->중앙->왼쪽->중앙->위쪽->중앙->아래쪽->중앙
+        LeftFirst,   // 왼쪽->중앙->오른쪽->중앙->위쪽->중앙->아래쪽->중앙
+        UpFirst      // 위쪽->중앙->아래쪽->중앙->오른쪽->중앙->왼쪽->중앙
+    }
+
     [Header("이동 설정")]
+    [Tooltip("이동 패턴 선택")]
+    [SerializeField] private MovementPattern _movementPattern = MovementPattern.RightFirst;
+
     [Tooltip("십자 모양 이동 반경")]
     [SerializeField] private float _moveRadius = 3.0f;
 
@@ -39,18 +49,56 @@ public class CrossMovingObstacle : BaseObstacle
 
     private void StartMoving()
     {
-        // 십자 모양의 경로 정의 (중앙->오른쪽->중앙->왼쪽->중앙->위쪽->중앙->아래쪽->중앙)
-        Vector3[] path = new Vector3[]
+        Vector3[] path;
+
+        switch (_movementPattern)
         {
-            _startPosition + Vector3.right * _moveRadius,    // 오른쪽
-            _startPosition,                                  // 중앙
-            _startPosition + Vector3.left * _moveRadius,     // 왼쪽
-            _startPosition,                                  // 중앙
-            _startPosition + Vector3.forward * _moveRadius,  // 위쪽
-            _startPosition,                                  // 중앙
-            _startPosition + Vector3.back * _moveRadius,     // 아래쪽
-            _startPosition                                   // 중앙
-        };
+            case MovementPattern.RightFirst:
+                path = new Vector3[]
+                {
+                    _startPosition + Vector3.right * _moveRadius,    // 오른쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.left * _moveRadius,     // 왼쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.forward * _moveRadius,  // 위쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.back * _moveRadius,     // 아래쪽
+                    _startPosition                                   // 중앙
+                };
+                break;
+
+            case MovementPattern.LeftFirst:
+                path = new Vector3[]
+                {
+                    _startPosition + Vector3.left * _moveRadius,     // 왼쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.right * _moveRadius,    // 오른쪽
+                    _startPosition,                                  // 중앙           
+                    _startPosition + Vector3.forward * _moveRadius,  // 위쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.back * _moveRadius,     // 아래쪽
+                    _startPosition                                   // 중앙
+                };
+                break;
+
+            case MovementPattern.UpFirst:
+                path = new Vector3[]
+                {
+                    _startPosition + Vector3.forward * _moveRadius,  // 위쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.back * _moveRadius,     // 아래쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.right * _moveRadius,    // 오른쪽
+                    _startPosition,                                  // 중앙
+                    _startPosition + Vector3.left * _moveRadius,     // 왼쪽
+                    _startPosition                                   // 중앙
+                };
+                break;
+
+            default:
+                path = new Vector3[] { _startPosition };
+                break;
+        }
 
         // 경로를 따라 이동
         transform.DOPath(path, _totalPathTime, PathType.Linear)
