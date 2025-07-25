@@ -26,6 +26,8 @@ public class Projectile : MonoBehaviour
 
     private Tween _currentPushTween;
     private bool _hasPushed = false; // 1회만 발동
+    private Coroutine _autoDestroyCoroutine;
+    private PlayerMovementController _pushedPlayerController;
 
     private void Start()
     {
@@ -39,7 +41,13 @@ public class Projectile : MonoBehaviour
                 new Keyframe(1f, 0f)      // 끝(멈춤)
             );
 
-        Destroy(gameObject, lifeTime); // 자동 삭제
+        _autoDestroyCoroutine = StartCoroutine(AutoDestroyTimer());
+    }
+
+    private IEnumerator AutoDestroyTimer()
+    {
+        yield return new WaitForSeconds(lifeTime);
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -51,7 +59,16 @@ public class Projectile : MonoBehaviour
                      ?? collision.gameObject.GetComponentInParent<Player>();
         if (player == null) return;
 
-        _hasPushed = true; // 단 1회만 발동
+        _hasPushed = true;
+
+        // 충돌 시 자동삭제 예약 해제
+        if (_autoDestroyCoroutine != null)
+        {
+            StopCoroutine(_autoDestroyCoroutine);
+            _autoDestroyCoroutine = null;
+        }
+
+        _pushedPlayerController = player.MovementController;
 
         // 투사체 진행 방향(velocity)으로 밀기 (y는 upwardForce 적용)
         Vector3 pushDir = GetComponent<Rigidbody>().velocity;
@@ -77,17 +94,18 @@ public class Projectile : MonoBehaviour
 
         // DOTween을 통해 힘 점진적 감소 → 연출 끝나면 투사체 삭제
         _currentPushTween = DOVirtual.Float(pushForce, 0f, pushDuration, (force) => {
-            player.MovementController.UpdateObstacleSlideSpeed(force);
+            _pushedPlayerController.UpdateObstacleSlideSpeed(force);
         })
         .SetEase(pushCurve) // 곡선 적용!
         .OnComplete(() => {
-            player.MovementController.DeactivateObstacleSlide();
-            Invoke(nameof(DestroySelf), destroyDelayAfterPush);
+            _pushedPlayerController.DeactivateObstacleSlide();
+            StartCoroutine(DestroyAfterDelay(1.0f));
         });
     }
 
-    private void DestroySelf()
+    private IEnumerator DestroyAfterDelay(float delay)
     {
+        yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
 
@@ -102,5 +120,9 @@ public class Projectile : MonoBehaviour
     {
         _currentPushTween?.Kill();
         _currentPushTween = null;
+
+        // 혹시라도 슬라이드 효과가 남아있는 상황 방지
+        _pushedPlayerController?.DeactivateObstacleSlide();
+        _pushedPlayerController = null;
     }
 }
