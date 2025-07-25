@@ -28,7 +28,7 @@ public class MaterialFixer : EditorWindow
                 shaderName.Contains("HDRP") ||
                 shaderName == "Hidden/InternalErrorShader" ||
                 shaderName.Contains("Standard") ||
-                shaderName.StartsWith("Unreal/"); // ✅ Unreal 셰이더 지원 추가
+                shaderName.StartsWith("Unreal/");
 
             if (!isConvertible)
                 continue;
@@ -43,10 +43,11 @@ public class MaterialFixer : EditorWindow
                               ?? mat.GetTexture("_BumpMap")
                               ?? mat.GetTexture("N");
 
-            Texture metallicMap = mat.GetTexture("_MetallicGlossMap")
-                                ?? mat.GetTexture("_SpecGlossMap")
-                                ?? mat.GetTexture("_RMAMap")
-                                ?? mat.GetTexture("AO_R_MT");
+            Texture maskMap = mat.GetTexture("_MaskMap")
+                            ?? mat.GetTexture("_MetallicGlossMap")
+                            ?? mat.GetTexture("_SpecGlossMap")
+                            ?? mat.GetTexture("_RMAMap")
+                            ?? mat.GetTexture("AO_R_MT");
 
             // 색상 추출
             Color baseColor = Color.white;
@@ -60,10 +61,19 @@ public class MaterialFixer : EditorWindow
             // 셰이더 교체
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
 
-            // 속성 재설정
+            // 텍스처 재설정
             if (baseMap) mat.SetTexture("_BaseMap", baseMap);
-            if (normalMap) mat.SetTexture("_BumpMap", normalMap);
-            if (metallicMap) mat.SetTexture("_MetallicGlossMap", metallicMap);
+            if (normalMap)
+            {
+                mat.SetTexture("_BumpMap", normalMap);
+                mat.EnableKeyword("_NORMALMAP");
+            }
+            if (maskMap)
+            {
+                mat.SetTexture("_MaskMap", maskMap);
+                mat.EnableKeyword("_MASKMAP");
+                mat.SetFloat("_Metallic", 1.0f);
+            }
 
             mat.SetColor("_BaseColor", baseColor);
             mat.SetFloat("_Smoothness", smoothness);
