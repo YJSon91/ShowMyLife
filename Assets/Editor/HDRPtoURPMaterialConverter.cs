@@ -5,10 +5,12 @@ using System.Linq;
 
 public class MaterialFixer : EditorWindow
 {
+    private const string CORRECTION_PATH = "Assets/99.Externals/Correction";
+
     [MenuItem("도구/머테리얼 수정")]
     public static void ConvertAllMaterialsToURP()
     {
-        string[] guids = AssetDatabase.FindAssets("t:Material", new[] { "Assets/99.Externals" });
+        string[] guids = AssetDatabase.FindAssets("t:Material", new[] { CORRECTION_PATH });
 
         int convertedCount = 0;
 
@@ -33,15 +35,12 @@ public class MaterialFixer : EditorWindow
 
             string materialName = Path.GetFileNameWithoutExtension(path);
             string baseName = NormalizeName(materialName);
-            string folder = Path.GetDirectoryName(path);
-            string texturesFolder = folder.Replace("Materials", "Textures");
 
-            // 텍스처 연결 시 이름 정규화 비교
-            Texture baseMap = FindTexture("Assets/99.Externals", baseName, new[] { "Albedo", "BaseColor", "BC" });
-            Texture normalMap = FindTexture("Assets/99.Externals", baseName, new[] { "Normal", "N" });
-            Texture maskMap = FindTexture("Assets/99.Externals", baseName, new[] { "Mask", "Masks", "AO_R_MT", "OcclusionRoughnessMetallic" });
+            // Correction 폴더 내에서만 텍스처 검색
+            Texture baseMap = FindTexture(CORRECTION_PATH, baseName, new[] { "albedo", "basecolor", "bc" });
+            Texture normalMap = FindTexture(CORRECTION_PATH, baseName, new[] { "normal", "n" });
+            Texture maskMap = FindTexture(CORRECTION_PATH, baseName, new[] { "mask", "masks", "ao_r_mt", "occlusionroughnessmetallic" });
 
-            // 셰이더 교체
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
 
             if (baseMap) mat.SetTexture("_BaseMap", baseMap);
@@ -60,7 +59,6 @@ public class MaterialFixer : EditorWindow
                 mat.SetFloat("_Metallic", 1f);
             }
 
-            // 색상/속성 유지
             Color baseColor = mat.HasProperty("_BaseColor") ? mat.GetColor("_BaseColor") : Color.white;
             mat.SetColor("_BaseColor", baseColor);
             mat.SetFloat("_Smoothness", mat.HasProperty("_Smoothness") ? mat.GetFloat("_Smoothness") : 0.8f);
@@ -73,7 +71,6 @@ public class MaterialFixer : EditorWindow
         Debug.Log($"[MaterialFixer] 변환 완료: {convertedCount}개 머티리얼");
     }
 
-    // 이름 정규화
     private static string NormalizeName(string name)
     {
         return name.ToLower()
@@ -90,30 +87,26 @@ public class MaterialFixer : EditorWindow
             .Trim();
     }
 
-    // 비교
     private static Texture FindTexture(string root, string baseName, string[] suffixes)
     {
         string[] exts = { ".png", ".tga", ".jpg", ".jpeg", ".psd" };
-        string[] files = Directory.GetFiles(root, "*.*", SearchOption.AllDirectories);
-
         string baseNorm = NormalizeName(baseName);
 
-        foreach (string file in files)
+        foreach (string file in Directory.GetFiles(root, "*.*", SearchOption.AllDirectories))
         {
-            if (!exts.Any(e => file.ToLower().EndsWith(e))) continue;
+            string lower = file.ToLower();
+            if (!exts.Any(ext => lower.EndsWith(ext))) continue;
 
             string fileName = Path.GetFileNameWithoutExtension(file);
             string fileNorm = NormalizeName(fileName);
 
-            bool suffixMatch = suffixes.Any(suf => fileNorm.Contains(suf.ToLower()));
-            bool baseMatch = fileNorm.Contains(baseNorm) || baseNorm.Contains(fileNorm);
+            bool suffixMatch = suffixes.Any(suffix => fileNorm.EndsWith(suffix.ToLower()));
+            bool baseMatch = fileNorm.StartsWith(baseNorm) || baseNorm.StartsWith(fileNorm);
 
             if (suffixMatch && baseMatch)
             {
                 string assetPath = file.Replace(Application.dataPath, "Assets").Replace("\\", "/");
-                Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
-                if (tex != null)
-                    return tex;
+                return AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
             }
         }
 
