@@ -11,7 +11,6 @@ public class MaterialFixer : EditorWindow
     public static void ConvertAllMaterialsToURP()
     {
         string[] guids = AssetDatabase.FindAssets("t:Material", new[] { CORRECTION_PATH });
-
         int convertedCount = 0;
 
         foreach (string guid in guids)
@@ -36,10 +35,15 @@ public class MaterialFixer : EditorWindow
             string materialName = Path.GetFileNameWithoutExtension(path);
             string baseName = NormalizeName(materialName);
 
-            // Correction 폴더 내에서만 텍스처 검색
             Texture baseMap = FindTexture(CORRECTION_PATH, baseName, new[] { "albedo", "basecolor", "bc" });
             Texture normalMap = FindTexture(CORRECTION_PATH, baseName, new[] { "normal", "n" });
             Texture maskMap = FindTexture(CORRECTION_PATH, baseName, new[] { "mask", "masks", "ao_r_mt", "occlusionroughnessmetallic" });
+
+            // ⬇️ baseMap이 없고, normalMap이 있을 때 → normalMap 이름으로 유추해서 baseMap 다시 탐색
+            if (baseMap == null && normalMap != null)
+            {
+                baseMap = FindTextureFromNormal(CORRECTION_PATH, normalMap, new[] { "albedo", "basecolor", "bc" });
+            }
 
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
 
@@ -78,12 +82,8 @@ public class MaterialFixer : EditorWindow
             .Replace("ml_", "")
             .Replace("m_", "")
             .Replace("material_", "")
-            .Replace("default", "")
-            .Replace("_mat", "")
-            .Replace("_01", "")
             .Replace("mat_", "")
-            .Replace("mat", "")
-            .Replace("_", "")
+            .Replace("-", "")
             .Trim();
     }
 
@@ -92,7 +92,7 @@ public class MaterialFixer : EditorWindow
         string[] exts = { ".png", ".tga", ".jpg", ".jpeg", ".psd" };
         string baseNorm = NormalizeName(baseName);
 
-        foreach (string file in Directory.GetFiles(root, "*.*", SearchOption.AllDirectories))
+        foreach (string file in Directory.GetFiles(root, "*.*", SearchOption.TopDirectoryOnly))
         {
             string lower = file.ToLower();
             if (!exts.Any(ext => lower.EndsWith(ext))) continue;
@@ -100,12 +100,8 @@ public class MaterialFixer : EditorWindow
             string fileName = Path.GetFileNameWithoutExtension(file);
             string fileNorm = NormalizeName(fileName);
 
-            // 수정된 조건: 끝에 붙거나, 포함만 되어도 허용
-            bool suffixMatch = suffixes.Any(suffix =>
-                fileNorm.EndsWith(suffix.ToLower()) || fileNorm.Contains(suffix.ToLower())
-            );
-
-            bool baseMatch = fileNorm.Contains(baseNorm) || baseNorm.Contains(fileNorm);
+            bool suffixMatch = suffixes.Any(suffix => fileNorm.EndsWith(suffix.ToLower()));
+            bool baseMatch = fileNorm.StartsWith(baseNorm);
 
             if (suffixMatch && baseMatch)
             {
@@ -114,6 +110,43 @@ public class MaterialFixer : EditorWindow
             }
         }
 
+        return null;
+    }
+
+    private static Texture FindTextureFromNormal(string root, Texture normalMap, string[] baseSuffixes)
+    {
+        if (normalMap == null) return null;
+
+        string normalPath = AssetDatabase.GetAssetPath(normalMap);
+        string normalName = Path.GetFileNameWithoutExtension(normalPath).ToLower();
+
+        string baseNameGuess = normalName
+            .Replace("_normal", "")
+            .Replace("_n", "")
+            .Replace("normal", "")
+            .TrimEnd('_');
+
+        string[] exts = { ".png", ".tga", ".jpg", ".jpeg", ".psd" };
+
+        foreach (string file in Directory.GetFiles(root, "*.*", SearchOption.TopDirectoryOnly))
+        {
+            string lower = file.ToLower();
+            if (!exts.Any(ext => lower.EndsWith(ext))) continue;
+
+            string fileName = Path.GetFileNameWithoutExtension(file).ToLower();
+
+            bool suffixMatch = baseSuffixes.Any(suffix => fileName.Contains(suffix));
+            bool fuzzyMatch = fileName.Contains(baseNameGuess);
+
+            if (suffixMatch && fuzzyMatch)
+            {
+                string assetPath = file.Replace(Application.dataPath, "Assets").Replace("\\", "/");
+                Debug.Log($"[MaterialFixer] 노말 기반 매칭 성공 → {fileName}");
+                return AssetDatabase.LoadAssetAtPath<Texture>(assetPath);
+            }
+        }
+
+        Debug.LogWarning($"[MaterialFixer] 노말 기반 BaseMap 추정 실패: {normalName}");
         return null;
     }
 }
