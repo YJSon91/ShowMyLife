@@ -100,8 +100,12 @@ public class MaterialFixer : EditorWindow
             string fileName = Path.GetFileNameWithoutExtension(file);
             string fileNorm = NormalizeName(fileName);
 
-            bool suffixMatch = suffixes.Any(suffix => fileNorm.EndsWith(suffix.ToLower()));
-            bool baseMatch = fileNorm.StartsWith(baseNorm) || baseNorm.StartsWith(fileNorm);
+            // 수정된 조건: 끝에 붙거나, 포함만 되어도 허용
+            bool suffixMatch = suffixes.Any(suffix =>
+                fileNorm.EndsWith(suffix.ToLower()) || fileNorm.Contains(suffix.ToLower())
+            );
+
+            bool baseMatch = fileNorm.Contains(baseNorm) || baseNorm.Contains(fileNorm);
 
             if (suffixMatch && baseMatch)
             {
