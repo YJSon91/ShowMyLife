@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 public class MaterialFixer : EditorWindow
 {
@@ -33,34 +34,20 @@ public class MaterialFixer : EditorWindow
             if (!isConvertible)
                 continue;
 
-            // 텍스처 추출
-            Texture baseMap = mat.GetTexture("_BaseMap")
-                            ?? mat.GetTexture("_MainTex")
-                            ?? mat.GetTexture("_Albedo")
-                            ?? mat.GetTexture("BC")
-                            ?? AssetDatabase.LoadAssetAtPath<Texture>($"{System.IO.Path.GetDirectoryName(path)}/T_Walls_BC.png");
+            string materialName = Path.GetFileNameWithoutExtension(path);
+            string baseName = materialName.StartsWith("M_") ? materialName.Substring(2) : materialName;
 
-            Texture normalMap = mat.GetTexture("_NormalMap")
-                              ?? mat.GetTexture("_BumpMap")
-                              ?? mat.GetTexture("N")
-                              ?? AssetDatabase.LoadAssetAtPath<Texture>($"{System.IO.Path.GetDirectoryName(path)}/T_Walls_N.png");
+            string folder = Path.GetDirectoryName(path).Replace("Materials", "Textures");
 
-            Texture maskMap = mat.GetTexture("_MaskMap")
-                            ?? mat.GetTexture("T_Floor_R");
-
-            // 색상 추출
-            Color baseColor = Color.white;
-            if (mat.HasProperty("_BaseColor")) baseColor = mat.GetColor("_BaseColor");
-            else if (mat.HasProperty("_Color")) baseColor = mat.GetColor("_Color");
-            else if (mat.HasProperty("_BaseMapTint")) baseColor = mat.GetColor("_BaseMapTint");
-
-            float smoothness = 0.8f;
-            if (mat.HasProperty("_Smoothness")) smoothness = mat.GetFloat("_Smoothness");
+            // 이름 기반 텍스처 찾기
+            Texture baseMap = FindTexture(folder, baseName, new[] { "BC", "BaseColor" });
+            Texture normalMap = FindTexture(folder, baseName, new[] { "N", "Normal" });
+            Texture maskMap = FindTexture(folder, baseName, new[] { "AO_R_MT", "OcclusionRoughnessMetallic" });
 
             // 셰이더 교체
             mat.shader = Shader.Find("Universal Render Pipeline/Lit");
 
-            // 텍스처 재설정
+            // 텍스처 할당
             if (baseMap) mat.SetTexture("_BaseMap", baseMap);
             else Debug.LogWarning($"[MaterialFixer] BaseMap 없음: {path}");
 
@@ -74,11 +61,19 @@ public class MaterialFixer : EditorWindow
             {
                 mat.SetTexture("_MaskMap", maskMap);
                 mat.EnableKeyword("_MASKMAP");
-                mat.SetFloat("_Metallic", 1.0f);
+                mat.SetFloat("_Metallic", 1f);
             }
 
+            // 색상/속성
+            Color baseColor = Color.white;
+            if (mat.HasProperty("_BaseColor")) baseColor = mat.GetColor("_BaseColor");
+            else if (mat.HasProperty("_Color")) baseColor = mat.GetColor("_Color");
             mat.SetColor("_BaseColor", baseColor);
-            mat.SetFloat("_Smoothness", smoothness);
+
+            if (mat.HasProperty("_Smoothness"))
+                mat.SetFloat("_Smoothness", mat.GetFloat("_Smoothness"));
+            else
+                mat.SetFloat("_Smoothness", 0.8f);
 
             EditorUtility.SetDirty(mat);
             convertedCount++;
@@ -86,5 +81,21 @@ public class MaterialFixer : EditorWindow
 
         AssetDatabase.SaveAssets();
         Debug.Log($"[MaterialFixer] 변환 완료: {convertedCount}개 머티리얼");
+    }
+
+    private static Texture FindTexture(string folder, string baseName, string[] suffixes)
+    {
+        foreach (string suffix in suffixes)
+        {
+            string[] exts = { ".png", ".tga", ".jpg", ".jpeg", ".psd" };
+            foreach (string ext in exts)
+            {
+                string texPath = Path.Combine(folder, $"T_{baseName}_{suffix}{ext}").Replace("\\", "/");
+                Texture tex = AssetDatabase.LoadAssetAtPath<Texture>(texPath);
+                if (tex != null)
+                    return tex;
+            }
+        }
+        return null;
     }
 }
