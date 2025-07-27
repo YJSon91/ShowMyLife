@@ -28,7 +28,8 @@ public class MaterialFixer : EditorWindow
                 shaderName == "Hidden/InternalErrorShader" ||
                 shaderName.Contains("Standard") ||
                 shaderName.StartsWith("Unreal/") ||
-                shaderName == "Nimikko/MasterShader";
+                shaderName == "Nimikko/MasterShader" ||
+                shaderName == "Autodesk Interactive";;
 
             if (!isConvertible) continue;
 
