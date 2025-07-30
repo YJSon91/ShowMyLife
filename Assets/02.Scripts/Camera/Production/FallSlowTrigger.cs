@@ -24,10 +24,8 @@ public class FallSlowTrigger : MonoBehaviour
 
         Transform player = other.transform;
 
-        // 조작 제한
         emotionDirector.DisablePlayerControl(player);
 
-        // 슬로우 인트로 시작 (SetActive는 루틴 안에서 처리)
         StartCoroutine(GradualSlowRoutine());
     }
 
@@ -42,7 +40,6 @@ public class FallSlowTrigger : MonoBehaviour
             elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / transitionDuration);
 
-            // 곡선 감속: 처음 빠르게, 뒤로 갈수록 천천히
             float curveT = Mathf.SmoothStep(0f, 1f, t);
             float scale = Mathf.Lerp(start, end, curveT);
 
@@ -54,14 +51,11 @@ public class FallSlowTrigger : MonoBehaviour
             yield return null;
         }
 
-        // 마지막 값 보정
         Time.timeScale = end;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
 
-        // 슬로우 유지 시간 (조작 제한 유지)
         yield return new WaitForSecondsRealtime(slowHoldDuration);
 
-        // ❗코루틴이 끝난 시점에서 비활성화 (이제 끊기지 않음)
         gameObject.SetActive(false);
     }
 
