@@ -108,6 +108,14 @@ public class GameManager : MonoBehaviour
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
     public void RegisterDialogueManager(DialogueManager manager) => DialogueManager = manager;
     public void RegisterSaveManager(SaveManager manager) => SaveManager = manager;
+#if UNITY_EDITOR // 에디터 전용 매니저이므로, 전처리기 지시문으로 감싸줍니다.
+    
+        public RecordingManager RecordingManager { get; private set; }
+        public void RegisterRecordingManager(RecordingManager manager)
+        {
+            RecordingManager = manager;
+        }    
+#endif
 
     public void RegisterPlayer(Player newPlayer)
     {
@@ -172,7 +180,6 @@ public class GameManager : MonoBehaviour
         PlayerControls?.UI.Disable();
     }
 
-    // OnDestroy도 동일한 안전장치를 추가해주는 것이 좋습니다.
     private void OnDestroy()
     {
         if (Instance != this) return;
@@ -272,7 +279,7 @@ public class GameManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
                 _isTimerRunning = false;
-               // GameManager.Instance.UIManager.Show<EndingUI>(true);
+                GameManager.Instance.UIManager.Show<EndingUI>(true);
                 Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }
