@@ -167,6 +167,16 @@ public class PlayerMovementController : MonoBehaviour
     private float _obstacleSlideGravityMultiplier;
     private float _obstacleSlideInputReduction;
 
+    // 슬로우존 관리
+    private float _baseRunSpeed;
+    private float _baseSprintSpeed;
+    private int _slowZoneCount = 0;
+    private float _currentSlowMultiplier = 1f;
+    // 슬로우존 이동속도 복구 관련 
+    private bool _isRestoringSpeed = false;
+    private float _restoreTimer = 0f;
+    private float _restoreDuration = 0f;
+
     #endregion
 
     #region 공개 속성
@@ -250,6 +260,9 @@ public class PlayerMovementController : MonoBehaviour
     private void Awake()
     {
         InitializeComponents();
+        _baseRunSpeed = _runSpeed;
+        _baseSprintSpeed = _sprintSpeed;
+
     }
 
     private void Start()
@@ -279,6 +292,32 @@ public class PlayerMovementController : MonoBehaviour
         
         // 점프 쿨타임 업데이트
         UpdateJumpCooldown();
+
+        if (_isRestoringSpeed)
+        {
+            if (_restoreDuration > 0f)
+            {
+                _restoreTimer += Time.deltaTime;
+                float t = Mathf.Clamp01(_restoreTimer / _restoreDuration);
+                _runSpeed = Mathf.Lerp(_runSpeed, _baseRunSpeed, t);
+                _sprintSpeed = Mathf.Lerp(_sprintSpeed, _baseSprintSpeed, t);
+
+                if (t >= 1f || Mathf.Abs(_runSpeed - _baseRunSpeed) < 0.01f)
+                {
+                    _runSpeed = _baseRunSpeed;
+                    _sprintSpeed = _baseSprintSpeed;
+                    _isRestoringSpeed = false;
+                    _currentSlowMultiplier = 1f;
+                }
+            }
+            else
+            {
+                _runSpeed = _baseRunSpeed;
+                _sprintSpeed = _baseSprintSpeed;
+                _isRestoringSpeed = false;
+                _currentSlowMultiplier = 1f;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -1121,6 +1160,32 @@ public class PlayerMovementController : MonoBehaviour
                 _isJumpOnCooldown = false;
                 _jumpCooldownTimer = 0f;
             }
+        }
+    }
+
+    // 슬로우존 진입
+    public void EnterSlowZone(float multiplier, float restoreDuration)
+    {
+        _slowZoneCount++;
+        // 첫 진입이거나 더 강한 슬로우일 때만 적용
+        if (_slowZoneCount == 1 || multiplier < _currentSlowMultiplier)
+        {
+            _currentSlowMultiplier = multiplier;
+            _runSpeed = _baseRunSpeed * _currentSlowMultiplier;
+            _sprintSpeed = _baseSprintSpeed * _currentSlowMultiplier;
+            _isRestoringSpeed = false;
+        }
+        _restoreDuration = restoreDuration;
+    }
+
+    // 슬로우존 이탈
+    public void ExitSlowZone()
+    {
+        _slowZoneCount = Mathf.Max(0, _slowZoneCount - 1);
+        if (_slowZoneCount == 0)
+        {
+            _isRestoringSpeed = true;
+            _restoreTimer = 0f;
         }
     }
 }
