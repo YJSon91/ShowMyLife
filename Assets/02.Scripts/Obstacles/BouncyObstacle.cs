@@ -38,14 +38,13 @@ public class BouncyObstacle : BaseObstacle
 
     // 현재 활성화된 트윈 저장용
     private Tween _currentBounceTween;
-    
     // 마지막 튕겨내기 시간
     private float _lastBounceTime = -10f;
 
     private void Start()
     {
         // 효과 곡선이 비어있으면 기본 곡선 생성
-        if (bounceCurve.keys.Length == 0)
+        if (bounceCurve == null || bounceCurve.keys.Length == 0)
         {
             bounceCurve = new AnimationCurve(
                 new Keyframe(0, 1, 0, -2),
@@ -54,12 +53,15 @@ public class BouncyObstacle : BaseObstacle
         }
     }
 
+    /// <summary>
+    /// 플레이어가 접촉 시 튕겨내기 효과 적용
+    /// </summary>
     protected override void OnCollisionEnter(Collision collision)
     {
         base.OnCollisionEnter(collision);
 
         if (!collision.gameObject.CompareTag("Player")) return;
-        
+
         // 쿨타임 체크
         if (Time.time - _lastBounceTime < cooldownTime) return;
         _lastBounceTime = Time.time;
@@ -67,70 +69,53 @@ public class BouncyObstacle : BaseObstacle
         // 플레이어 컴포넌트 가져오기
         Player player = collision.gameObject.GetComponent<Player>();
         if (player == null)
-        {
             player = collision.gameObject.GetComponentInParent<Player>();
-            if (player == null) return;
-        }
+        if (player == null) return;
 
-        // 충돌 정보에서 반발 방향 계산
-        Vector3 bounceDirection = Vector3.zero;
-        Vector3 contactPoint = Vector3.zero;
-        
-        // 모든 접촉점 중 첫 번째 것 사용 (또는 평균 계산 가능)
-        if (collision.contacts.Length > 0)
+        // --- [핵심] 튕겨낼 방향 계산 ---
+        // 1. 장애물과 플레이어의 중심 상대 위치 (Y축 무시)
+        Vector3 delta = player.transform.position - transform.position;
+        Vector2 delta2D = new Vector2(delta.x, delta.z);
+
+        Vector3 bounceDir = Vector3.zero;
+        if (Mathf.Abs(delta2D.x) > Mathf.Abs(delta2D.y))
         {
-            ContactPoint contact = collision.contacts[0];
-            contactPoint = contact.point;
-            
-            // 충돌 법선의 반대 방향 사용 (플레이어가 부딪힌 방향)
-            bounceDirection = -contact.normal;
-            
-            Debug.Log($"충돌 지점: {contactPoint}, 법선 벡터: {contact.normal}, 반발 방향: {bounceDirection}");
+            // X축 방향(좌/우)으로 튕김
+            bounceDir = delta2D.x > 0 ? Vector3.right : Vector3.left;
         }
         else
         {
-            // 장애물에서 플레이어 방향의 반대 방향
-            bounceDirection = (transform.position - player.transform.position).normalized;
-            Debug.Log($"접촉점 없음, 계산된 반발 방향: {bounceDirection}");
+            // Z축 방향(앞/뒤)으로 튕김
+            bounceDir = delta2D.y > 0 ? Vector3.forward : Vector3.back;
         }
-        
-        // 수평 방향만 사용하고 정규화
-        Vector3 horizontalBounceDir = new Vector3(bounceDirection.x, 0, bounceDirection.z).normalized;
-        
-        // 최종 튕겨내기 방향 (수평 방향 + 상향 힘)
-        Vector3 finalBounceDir = horizontalBounceDir + Vector3.up * upwardForce;
-        finalBounceDir.Normalize();
-        
+
+        // 위쪽 힘 추가 (upwardForce가 0이면 옆방향만)
+        Vector3 finalBounceDir = (bounceDir + Vector3.up * upwardForce).normalized;
+
         // 기존 트윈이 있으면 중단
         if (_currentBounceTween != null && _currentBounceTween.IsActive())
-        {
             _currentBounceTween.Kill();
-        }
-        
+
         // 플레이어 속도 초기화 (선택적)
         player.MovementController.Rigidbody.velocity = Vector3.zero;
-        
+
         // 플레이어 입력 비활성화 (옵션에 따라)
         if (disablePlayerInput && player.InputReader != null)
-        {
             StartCoroutine(DisablePlayerInputTemporarily(player.InputReader));
-        }
-        
-        // 플레이어에게 미끄럼틀 효과 적용 (ActivateObstacleSlide 사용)
-        player.MovementController.ActivateObstacleSlide(finalBounceDir, bounceForce, 0.5f, inputReduction);
-        
-        Debug.Log($"플레이어 튕겨내기 시작 - 방향: {finalBounceDir}, 힘: {bounceForce}");
-        
-        // DOTween을 사용하여 시간에 따라 튕겨내기 힘 감소
+
+        // 플레이어에게 슬라이드(튕겨나감) 효과 적용
+        player.MovementController.ActivateObstacleSlide(finalBounceDir, bounceForce, bounceDuration, inputReduction);
+
+        // DOTween을 사용하여 힘을 서서히 감소시키며 슬라이드 효과 적용
         _currentBounceTween = DOVirtual.Float(bounceForce, 0f, bounceDuration, (force) => {
-            // 현재 힘 업데이트
             player.MovementController.UpdateObstacleSlideSpeed(force);
         }).SetEase(bounceCurve)
         .OnComplete(() => {
-            // 튕겨내기 효과 종료
             player.MovementController.DeactivateObstacleSlide();
-            Debug.Log("플레이어 튕겨내기 종료");
         });
+
+        // (디버그용) 실제 튕겨낸 방향과 힘 확인
+        Debug.Log($"튕김 방향: {finalBounceDir}, 힘: {bounceForce}, Upward: {upwardForce}");
     }
 
     /// <summary>
@@ -138,14 +123,11 @@ public class BouncyObstacle : BaseObstacle
     /// </summary>
     private IEnumerator DisablePlayerInputTemporarily(InputReader inputReader)
     {
-        // 입력 비활성화
         inputReader.DisableInput();
         Debug.Log($"플레이어 입력 비활성화: {inputDisableDuration}초 동안");
-        
-        // 지정된 시간 동안 대기
+
         yield return new WaitForSeconds(inputDisableDuration);
-        
-        // 입력 다시 활성화
+
         inputReader.EnableInput();
         Debug.Log("플레이어 입력 다시 활성화됨");
     }
@@ -165,15 +147,14 @@ public class BouncyObstacle : BaseObstacle
         // 튕겨내기 효과 범위를 시각화
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f);
         Gizmos.DrawSphere(transform.position, 0.5f);
-        
+
         // 콜라이더가 있으면 그 크기도 표시
         Collider collider = GetComponent<Collider>();
-        if (collider != null && collider is BoxCollider)
+        if (collider != null && collider is BoxCollider boxCollider)
         {
-            BoxCollider boxCollider = collider as BoxCollider;
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.1f);
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.DrawCube(boxCollider.center, boxCollider.size);
         }
     }
-} 
+}
