@@ -432,17 +432,22 @@ public class GameManager : MonoBehaviour
     private IEnumerator ActivateSceneRoutine()
     {
         var fadePanel = UIManager?.Get<FadePanelUI>();
+        var tutorialPanel = UIManager?.Get<TutorialPanelUI>();
 
         // 1. 화면을 어둡게 만듭니다 (Fade In).
         if (fadePanel != null)
         {
             UIManager?.ShowParticle(ParticleType.Petals1, true);
-            UIManager?.ShowParticle(ParticleType.Petals2, true);
+            UIManager?.ShowParticle(ParticleType.Petals2, true);            
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
+        }
+        if (tutorialPanel != null)
+        {
+            tutorialPanel.Show(true);
         }
 
         // 2. 검은 화면 상태로 잠시 대기합니다 (연출).
-        yield return new WaitForSeconds(1f); // 1초 대기 (기존 2초에서 조정)
+        yield return new WaitForSeconds(3f); // 1초 대기 (기존 2초에서 조정)
 
         // 3. 이제 씬을 활성화할 준비가 되었습니다.
         if (_loadingOperation != null)
@@ -452,7 +457,10 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             _loadingOperation = null;
         }
-
+        if (tutorialPanel != null)
+        {
+            tutorialPanel.Show(false);
+        }
         // 4. 새 씬 로딩 후, 파티클을 끕니다.
         if (UIManager != null)
         {
