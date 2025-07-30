@@ -50,6 +50,7 @@ public class EmotionDirector : MonoBehaviour
 
     public ThemeCameraController ThemeCamera => themeCamera;
     public PostProcessingManager PostProcessing => postProcessing;
+    public TimeEffectManager TimeEffect => timeEffect;
 
     public void PlayCommonEmotion(CommonEmotionType type, EmotionParams param)
     {
@@ -320,7 +321,7 @@ public class EmotionDirector : MonoBehaviour
                 movement.enabled = true;
                 Debug.Log("이동 활성화");
             }
-            
+
             var inputReader = playerComponent.GetComponent<InputReader>();
             if (inputReader != null)
             {

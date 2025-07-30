@@ -58,7 +58,7 @@ public class EntranceTriggerDirector2 : MonoBehaviour
 
         gameObject.SetActive(false);
     }
-
+    // 범위 표시
     private void OnDrawGizmos()
     {
         Collider col = GetComponent<Collider>();
