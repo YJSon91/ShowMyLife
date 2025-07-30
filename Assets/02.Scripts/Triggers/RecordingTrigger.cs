@@ -11,20 +11,23 @@ public class RecordingTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            var recorder = GameManager.Instance.RecordingManager;
-            if (recorder == null) return;
+            if (other.CompareTag("Player"))
+            {               
+#if UNITY_EDITOR
+                var recorder = GameManager.Instance.RecordingManager;
+                if (recorder == null) return;
 
-            if (_isStartTrigger)
-            {
-                recorder.StartRecording(_clipName);
+                if (_isStartTrigger)
+                {
+                    recorder.StartRecording(_clipName);
+                }
+                else
+                {
+                    recorder.StopRecording();
+                }
+#endif
+               gameObject.SetActive(false);
             }
-            else
-            {
-                recorder.StopRecording();
-            }
-
-            // 한 번만 작동하도록 비활성화
-            gameObject.SetActive(false);
         }
     }
 }

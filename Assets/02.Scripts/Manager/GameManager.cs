@@ -62,7 +62,6 @@ public class GameManager : MonoBehaviour
     public DialogueManager DialogueManager { get; private set; }
     public SaveManager SaveManager { get; private set; }
 
-
     // --- Unity 생명주기 메서드 ---
     private void Awake()
     {
@@ -108,13 +107,13 @@ public class GameManager : MonoBehaviour
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
     public void RegisterDialogueManager(DialogueManager manager) => DialogueManager = manager;
     public void RegisterSaveManager(SaveManager manager) => SaveManager = manager;
-#if UNITY_EDITOR // 에디터 전용 매니저이므로, 전처리기 지시문으로 감싸줍니다.
-    
-        public RecordingManager RecordingManager { get; private set; }
-        public void RegisterRecordingManager(RecordingManager manager)
-        {
-            RecordingManager = manager;
-        }    
+#if UNITY_EDITOR
+    public RecordingManager RecordingManager { get; private set; }
+
+    public void RegisterRecordingManager(RecordingManager manager)
+    {
+        RecordingManager = manager;
+    }
 #endif
 
     public void RegisterPlayer(Player newPlayer)
@@ -268,7 +267,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.MainMenu:
-                SoundManager?.PlayBGM(BgmType.Main);
+                SoundManager?.PlayBGM(BgmType.Main);               
                 PreloadMainScene();
                 break;
 

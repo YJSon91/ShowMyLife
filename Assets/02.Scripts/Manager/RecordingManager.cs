@@ -8,7 +8,7 @@ public class RecordingManager : MonoBehaviour
     private RecorderController _recorderController;
     private bool _isRecording = false;
 
-    private void Awake()
+    private void Start()
     {
         // GameManager에 자신을 등록합니다.
         if (GameManager.Instance != null)

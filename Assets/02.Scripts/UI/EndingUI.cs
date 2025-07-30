@@ -42,11 +42,22 @@ public class EndingUI : UiBase
     private void FindAllVideoClips()
     {
         _videoClipPaths.Clear();
-        // TODO: 녹화 파일이 저장되는 실제 경로로 변경해야 합니다.
-        string savePath = Application.persistentDataPath; 
-        //_videoClipPaths.AddRange(Directory.GetFiles(savePath, "Clip_*.mp4"));
-    }
+        // Unity Recorder가 영상을 저장하는 기본 경로
+        // "C:/Users/[사용자이름]/AppData/LocalLow/[회사이름]/[게임이름]/" 와 같은 경로입니다.
+        string savePath = Application.persistentDataPath;
 
+        // 해당 경로에 파일이 있는지 확인합니다.
+        if (System.IO.Directory.Exists(savePath))
+        {
+            // "Clip_*.mp4" 패턴을 가진 모든 파일의 경로를 찾아 리스트에 추가합니다.
+            _videoClipPaths.AddRange(System.IO.Directory.GetFiles(savePath, "Recording_*.mp4"));
+            Debug.Log($"[EndingUI] {_videoClipPaths.Count}개의 녹화 클립을 찾았습니다.");
+        }
+        else
+        {
+            Debug.LogWarning($"[EndingUI] 녹화 파일 저장 경로를 찾을 수 없습니다: {savePath}");
+        }
+    }
     // 다음 비디오 클립을 재생합니다.
     private void PlayNextClip()
     {
