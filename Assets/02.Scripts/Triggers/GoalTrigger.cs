@@ -20,11 +20,13 @@ public class GoalTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // GameManager를 통해 StageManager에게 레벨 클리어 사실을 '보고'합니다.
-            if (GameManager.Instance != null && GameManager.Instance.StageManager != null)
-            {
-                GameManager.Instance.StageManager.OnPlayerReachedGoal();
-            }
-
+            //if (GameManager.Instance != null && GameManager.Instance.StageManager != null)
+            //{
+            //    GameManager.Instance.StageManager.OnPlayerReachedGoal();
+            //    Debug.Log("[GoalTrigger] Player has reached the goal!");
+            //}
+            GameManager.Instance.StageManager.OnPlayerReachedGoal();
+            Debug.Log("[GoalTrigger] Player has reached the goal!");
             // 한 번만 작동하도록 트리거를 비활성화합니다.
             gameObject.SetActive(false);
         }
