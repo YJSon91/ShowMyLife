@@ -12,7 +12,7 @@ public class StageManager : MonoBehaviour
 
     // --- Unity 생명주기 메서드 ---
 
-    private void Awake()
+    private void Start()
     {
         // GameManager에 자신을 'StageManager'로 등록합니다.
         if (GameManager.Instance != null)
@@ -46,6 +46,7 @@ public class StageManager : MonoBehaviour
         Debug.Log("[StageManager] 플레이어 목표 지점 도착! GameManager에 레벨 클리어를 요청합니다.");
         // GameManager에게 게임 상태를 'LevelClear'로 변경하도록 '요청'합니다.
         GameManager.Instance.UpdateGameState(GameManager.GameState.LevelClear);
+        Debug.Log("[StageManager] 레벨 클리어 상태로 변경하도록 요청했습니다.");
     }
 
     /// <summary>

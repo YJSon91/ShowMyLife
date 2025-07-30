@@ -62,7 +62,6 @@ public class GameManager : MonoBehaviour
     public DialogueManager DialogueManager { get; private set; }
     public SaveManager SaveManager { get; private set; }
 
-
     // --- Unity 생명주기 메서드 ---
     private void Awake()
     {
@@ -108,6 +107,14 @@ public class GameManager : MonoBehaviour
     public void RegisterCameraManager(CameraManager manager) => CameraManager = manager;
     public void RegisterDialogueManager(DialogueManager manager) => DialogueManager = manager;
     public void RegisterSaveManager(SaveManager manager) => SaveManager = manager;
+#if UNITY_EDITOR
+    public RecordingManager RecordingManager { get; private set; }
+
+    public void RegisterRecordingManager(RecordingManager manager)
+    {
+        RecordingManager = manager;
+    }
+#endif
 
     public void RegisterPlayer(Player newPlayer)
     {
@@ -172,7 +179,6 @@ public class GameManager : MonoBehaviour
         PlayerControls?.UI.Disable();
     }
 
-    // OnDestroy도 동일한 안전장치를 추가해주는 것이 좋습니다.
     private void OnDestroy()
     {
         if (Instance != this) return;
@@ -261,7 +267,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.MainMenu:
-                SoundManager?.PlayBGM(BgmType.Main);
+                SoundManager?.PlayBGM(BgmType.Main);               
                 PreloadMainScene();
                 break;
 
@@ -272,7 +278,7 @@ public class GameManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
                 _isTimerRunning = false;
-               // GameManager.Instance.UIManager.Show<EndingUI>(true);
+                GameManager.Instance.UIManager.Show<EndingUI>(true);
                 Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }
@@ -426,17 +432,22 @@ public class GameManager : MonoBehaviour
     private IEnumerator ActivateSceneRoutine()
     {
         var fadePanel = UIManager?.Get<FadePanelUI>();
+        var tutorialPanel = UIManager?.Get<TutorialPanelUI>();
 
         // 1. 화면을 어둡게 만듭니다 (Fade In).
         if (fadePanel != null)
         {
             UIManager?.ShowParticle(ParticleType.Petals1, true);
-            UIManager?.ShowParticle(ParticleType.Petals2, true);
+            UIManager?.ShowParticle(ParticleType.Petals2, true);            
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
+        }
+        if (tutorialPanel != null)
+        {
+            tutorialPanel.Show(true);
         }
 
         // 2. 검은 화면 상태로 잠시 대기합니다 (연출).
-        yield return new WaitForSeconds(1f); // 1초 대기 (기존 2초에서 조정)
+        yield return new WaitForSeconds(3f); // 1초 대기 (기존 2초에서 조정)
 
         // 3. 이제 씬을 활성화할 준비가 되었습니다.
         if (_loadingOperation != null)
@@ -446,7 +457,10 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             _loadingOperation = null;
         }
-
+        if (tutorialPanel != null)
+        {
+            tutorialPanel.Show(false);
+        }
         // 4. 새 씬 로딩 후, 파티클을 끕니다.
         if (UIManager != null)
         {
