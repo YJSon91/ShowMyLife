@@ -1,5 +1,7 @@
 using UnityEngine;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class SavePoint : MonoBehaviour
 {
     public static float SaveDisableUntil = 0f;
@@ -66,7 +68,9 @@ public class SavePoint : MonoBehaviour
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.DrawSphere(sphere.center, sphere.radius);
         }
+#if UNITY_EDITOR
         UnityEditor.Handles.Label(transform.position + Vector3.up, $"Save: {saveId}");
+#endif
     }
 
 }
