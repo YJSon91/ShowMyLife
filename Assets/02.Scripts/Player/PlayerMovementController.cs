@@ -75,8 +75,7 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _jumpCooldown = 1.0f;
     [Tooltip("코요테 타임 길이 (초)")]
     [SerializeField] private float _coyoteTimeThreshold = 0.25f;
-    [Tooltip("점프 버퍼 시간 (초)")]
-    [SerializeField] private float _jumpBufferTime = 0.25f;
+
 
     // 점프 쿨타임 관련 변수
     private float _jumpCooldownTimer = 0f;
@@ -86,8 +85,6 @@ public class PlayerMovementController : MonoBehaviour
     private float _coyoteTimeCounter;
     private bool _canCoyoteJump;
 
-    // 점프 버퍼 관련 변수
-    private float _jumpBufferCounter;
 
     #endregion
 
@@ -315,18 +312,7 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
         
-        // 점프 버퍼 업데이트
-        if (_jumpBufferCounter > 0)
-        {
-            _jumpBufferCounter -= Time.deltaTime;
-            
-            // 지면에 있거나 코요테 타임 중이고 쿨다운이 아니면 점프 실행
-            if ((_isGrounded || _canCoyoteJump) && !_isJumpOnCooldown)
-            {
-                Jump();
-                _jumpBufferCounter = 0;
-            }
-        }
+
         
         // 슬로우 복구 처리
         if (_isRestoringSpeed)
@@ -1252,6 +1238,10 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     private void OnJumpInput()
     {
-        _jumpBufferCounter = _jumpBufferTime;
+        // 지면에 있거나 코요테 타임 중이고 쿨다운이 아니면 점프 실행
+        if ((_isGrounded || _canCoyoteJump) && !_isJumpOnCooldown)
+        {
+            Jump();
+        }
     }
 }
