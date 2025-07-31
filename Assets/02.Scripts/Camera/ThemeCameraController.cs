@@ -131,6 +131,31 @@ public class ThemeCameraController : MonoBehaviour
         themeCamera.DestroyCinemachineComponent<CinemachineFramingTransposer>();
     }
 
+    // Body 설정을 특정 타입으로 변경
+    public void SetBody<T>() where T : CinemachineComponentBase
+    {
+        if (themeCamera == null) return;
+
+        themeCamera.DestroyCinemachineComponent<CinemachineTransposer>();
+        themeCamera.DestroyCinemachineComponent<CinemachineFramingTransposer>();
+        themeCamera.DestroyCinemachineComponent<CinemachineTrackedDolly>();
+        themeCamera.DestroyCinemachineComponent<Cinemachine3rdPersonFollow>();
+
+        themeCamera.AddCinemachineComponent<T>();
+    }
+
+    // Do Nothing 상태로 전환
+    public void ClearBody()
+    {
+        if (themeCamera == null) return;
+
+        themeCamera.DestroyCinemachineComponent<CinemachineTransposer>();
+        themeCamera.DestroyCinemachineComponent<CinemachineFramingTransposer>();
+        themeCamera.DestroyCinemachineComponent<CinemachineTrackedDolly>();
+        themeCamera.DestroyCinemachineComponent<Cinemachine3rdPersonFollow>();
+    }
+
+
     public void SetFOV(float fov)
     {
         if (themeCamera != null)

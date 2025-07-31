@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using Cinemachine;
 
 
 public enum CommonEmotionType
@@ -268,11 +269,33 @@ public class EmotionDirector : MonoBehaviour
             renderer.enabled = visible;
         }
     }
+
     // 타켓 리스트
     public Transform GetLookTargetTransform(int index)
     {
         if (index < 0 || index >= emotionLookTargets.Count) return null;
         return emotionLookTargets[index];
+    }
+
+    // 보디값
+    public void SetBody<T>() where T : CinemachineComponentBase
+    {
+        themeCamera?.SetBody<T>();
+    }
+    // 보디리셋
+    public void ClearBody()
+    {
+        themeCamera?.ClearBody();
+    }
+    // 룩값
+    public void SetAim<T>() where T : CinemachineComponentBase
+    {
+        themeCamera?.SetAim<T>();
+    }
+    // 룩리셋
+    public void ClearAim()
+    {
+        themeCamera?.ClearAim();
     }
 
     #endregion
