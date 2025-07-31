@@ -153,6 +153,15 @@ public class PlayerMovementController : MonoBehaviour
     private float _slipForce;
     private float _slipGravityMultiplier;
 
+    // --- 슬로우존 관리 ---
+    private float _baseRunSpeed;
+    private float _baseSprintSpeed;
+    private int _slowZoneCount = 0;
+    private float _currentSlowMultiplier = 1f;
+    // --- restoreDuration 복구 관련 ---
+    private bool _isRestoringSpeed = false;
+    private float _restoreTimer = 0f;
+    private float _restoreDuration = 0f;
 
     public Vector3 _velocity;
     private Vector3 _moveDirection;
@@ -177,6 +186,8 @@ public class PlayerMovementController : MonoBehaviour
     private float _obstacleSlideForce;
     private float _obstacleSlideGravityMultiplier;
     private float _obstacleSlideInputReduction;
+
+    
 
     #endregion
 
@@ -261,6 +272,8 @@ public class PlayerMovementController : MonoBehaviour
     private void Awake()
     {
         InitializeComponents();
+        _baseRunSpeed = _runSpeed;
+        _baseSprintSpeed = _sprintSpeed;
     }
 
     private void Start()
@@ -312,6 +325,33 @@ public class PlayerMovementController : MonoBehaviour
             {
                 Jump();
                 _jumpBufferCounter = 0;
+            }
+        }
+        
+        // 슬로우 복구 처리
+        if (_isRestoringSpeed)
+        {
+            if (_restoreDuration > 0f)
+            {
+                _restoreTimer += Time.deltaTime;
+                float t = Mathf.Clamp01(_restoreTimer / _restoreDuration);
+                _runSpeed = Mathf.Lerp(_runSpeed, _baseRunSpeed, t);
+                _sprintSpeed = Mathf.Lerp(_sprintSpeed, _baseSprintSpeed, t);
+
+                if (t >= 1f || Mathf.Abs(_runSpeed - _baseRunSpeed) < 0.01f)
+                {
+                    _runSpeed = _baseRunSpeed;
+                    _sprintSpeed = _baseSprintSpeed;
+                    _isRestoringSpeed = false;
+                    _currentSlowMultiplier = 1f;
+                }
+            }
+            else
+            {
+                _runSpeed = _baseRunSpeed;
+                _sprintSpeed = _baseSprintSpeed;
+                _isRestoringSpeed = false;
+                _currentSlowMultiplier = 1f;
             }
         }
     }
@@ -1137,6 +1177,38 @@ public class PlayerMovementController : MonoBehaviour
         {
             _obstacleSlideForce = newSpeed;
             Debug.Log($"미끄럼틀 슬라이드 속도 업데이트: {_obstacleSlideForce}");
+        }
+    }
+    
+    /// <summary>
+    /// 슬로우존 진입 시 이동 속도 감소
+    /// </summary>
+    /// <param name="multiplier">속도 감소 배율 (0.1~1.0)</param>
+    /// <param name="restoreDuration">복구 시간(초)</param>
+    public void EnterSlowZone(float multiplier, float restoreDuration)
+    {
+        _slowZoneCount++;
+        // 첫 진입이거나 더 강한 슬로우일 때만 적용
+        if (_slowZoneCount == 1 || multiplier < _currentSlowMultiplier)
+        {
+            _currentSlowMultiplier = multiplier;
+            _runSpeed = _baseRunSpeed * _currentSlowMultiplier;
+            _sprintSpeed = _baseSprintSpeed * _currentSlowMultiplier;
+            _isRestoringSpeed = false;
+        }
+        _restoreDuration = restoreDuration;
+    }
+
+    /// <summary>
+    /// 슬로우존 이탈 시 속도 복구 시작
+    /// </summary>
+    public void ExitSlowZone()
+    {
+        _slowZoneCount = Mathf.Max(0, _slowZoneCount - 1);
+        if (_slowZoneCount == 0)
+        {
+            _isRestoringSpeed = true;
+            _restoreTimer = 0f;
         }
     }
 
