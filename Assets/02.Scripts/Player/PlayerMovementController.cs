@@ -70,13 +70,24 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("공중에 있을 때의 중력 배수")]
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
-    [SerializeField] private float _groundCheckDistance = 0.2f;
+    [SerializeField] private float _groundCheckDistance = 0.25f;
     [Tooltip("점프 쿨타임 (초)")]
     [SerializeField] private float _jumpCooldown = 1.0f;
+    [Tooltip("코요테 타임 길이 (초)")]
+    [SerializeField] private float _coyoteTimeThreshold = 0.25f;
+    [Tooltip("점프 버퍼 시간 (초)")]
+    [SerializeField] private float _jumpBufferTime = 0.25f;
 
     // 점프 쿨타임 관련 변수
     private float _jumpCooldownTimer = 0f;
     private bool _isJumpOnCooldown = false;
+
+    // 코요테 타임 관련 변수
+    private float _coyoteTimeCounter;
+    private bool _canCoyoteJump;
+
+    // 점프 버퍼 관련 변수
+    private float _jumpBufferCounter;
 
     #endregion
 
@@ -97,9 +108,9 @@ public class PlayerMovementController : MonoBehaviour
     // 박스캐스트 관련 설정 추가
     [Header("박스캐스트 지면 확인")]
     [Tooltip("박스캐스트 너비 (x축)")]
-    [SerializeField] private float _boxCastWidth = 0.4f;
+    [SerializeField] private float _boxCastWidth = 0.6f;
     [Tooltip("박스캐스트 깊이 (z축)")]
-    [SerializeField] private float _boxCastDepth = 0.4f;
+    [SerializeField] private float _boxCastDepth = 0.6f;
 
     // 경사면 제한 설정 추가
     [Header("경사면 제한")]
@@ -166,16 +177,6 @@ public class PlayerMovementController : MonoBehaviour
     private float _obstacleSlideForce;
     private float _obstacleSlideGravityMultiplier;
     private float _obstacleSlideInputReduction;
-
-    // 슬로우존 관리
-    private float _baseRunSpeed;
-    private float _baseSprintSpeed;
-    private int _slowZoneCount = 0;
-    private float _currentSlowMultiplier = 1f;
-    // 슬로우존 이동속도 복구 관련 
-    private bool _isRestoringSpeed = false;
-    private float _restoreTimer = 0f;
-    private float _restoreDuration = 0f;
 
     #endregion
 
@@ -260,9 +261,6 @@ public class PlayerMovementController : MonoBehaviour
     private void Awake()
     {
         InitializeComponents();
-        _baseRunSpeed = _runSpeed;
-        _baseSprintSpeed = _sprintSpeed;
-
     }
 
     private void Start()
@@ -275,6 +273,7 @@ public class PlayerMovementController : MonoBehaviour
         _inputReader.onSprintDeactivated += DeactivateSprint;
         _inputReader.onCrouchActivated += ActivateCrouch;
         _inputReader.onCrouchDeactivated += DeactivateCrouch;
+        _inputReader.onJumpPerformed += OnJumpInput;
     }
 
 
@@ -292,30 +291,27 @@ public class PlayerMovementController : MonoBehaviour
         
         // 점프 쿨타임 업데이트
         UpdateJumpCooldown();
-
-        if (_isRestoringSpeed)
+        
+        // 코요테 타임 업데이트
+        if (!_isGrounded && _canCoyoteJump)
         {
-            if (_restoreDuration > 0f)
+            _coyoteTimeCounter -= Time.deltaTime;
+            if (_coyoteTimeCounter <= 0)
             {
-                _restoreTimer += Time.deltaTime;
-                float t = Mathf.Clamp01(_restoreTimer / _restoreDuration);
-                _runSpeed = Mathf.Lerp(_runSpeed, _baseRunSpeed, t);
-                _sprintSpeed = Mathf.Lerp(_sprintSpeed, _baseSprintSpeed, t);
-
-                if (t >= 1f || Mathf.Abs(_runSpeed - _baseRunSpeed) < 0.01f)
-                {
-                    _runSpeed = _baseRunSpeed;
-                    _sprintSpeed = _baseSprintSpeed;
-                    _isRestoringSpeed = false;
-                    _currentSlowMultiplier = 1f;
-                }
+                _canCoyoteJump = false;
             }
-            else
+        }
+        
+        // 점프 버퍼 업데이트
+        if (_jumpBufferCounter > 0)
+        {
+            _jumpBufferCounter -= Time.deltaTime;
+            
+            // 지면에 있거나 코요테 타임 중이고 쿨다운이 아니면 점프 실행
+            if ((_isGrounded || _canCoyoteJump) && !_isJumpOnCooldown)
             {
-                _runSpeed = _baseRunSpeed;
-                _sprintSpeed = _baseSprintSpeed;
-                _isRestoringSpeed = false;
-                _currentSlowMultiplier = 1f;
+                Jump();
+                _jumpBufferCounter = 0;
             }
         }
     }
@@ -356,6 +352,7 @@ public class PlayerMovementController : MonoBehaviour
         _inputReader.onSprintDeactivated -= DeactivateSprint;
         _inputReader.onCrouchActivated -= ActivateCrouch;
         _inputReader.onCrouchDeactivated -= DeactivateCrouch;
+        _inputReader.onJumpPerformed -= OnJumpInput;
     }
 
     // 충돌 감지 이벤트
@@ -647,8 +644,8 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        // 쿨타임 중이거나 지면에 있지 않으면 점프할 수 없음
-        if (_isJumpOnCooldown || !_isGrounded)
+        // 쿨타임 중이면 점프할 수 없음
+        if (_isJumpOnCooldown)
         {
             if (_isJumpOnCooldown)
             {
@@ -657,14 +654,18 @@ public class PlayerMovementController : MonoBehaviour
             return;
         }
 
-        // 점프 실행
-        _isGrounded = false;
-        jumpRequest = true;
-        
-        // 쿨타임 시작
-        _isJumpOnCooldown = true;
-        _jumpCooldownTimer = _jumpCooldown;
-        Debug.Log($"점프 실행! 쿨타임 {_jumpCooldown}초 시작");
+        // 지면에 있거나 코요테 타임 중이면 점프 가능
+        if (_isGrounded || _canCoyoteJump)
+        {
+            _isGrounded = false;
+            _canCoyoteJump = false;
+            jumpRequest = true;
+            
+            // 쿨타임 시작
+            _isJumpOnCooldown = true;
+            _jumpCooldownTimer = _jumpCooldown;
+            Debug.Log($"점프 실행! 쿨타임 {_jumpCooldown}초 시작");
+        }
     }
 
     public void ExternalJump(Vector3 velocity)
@@ -784,6 +785,8 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void GroundedCheck()
     {
+        bool wasGrounded = _isGrounded;
+        
         // 박스캐스트로 지면 확인
         Vector3 boxCenter = _capsuleCollider.bounds.center;
         Vector3 boxHalfExtents = new Vector3(_boxCastWidth / 2f, 0.05f, _boxCastDepth / 2f);
@@ -806,6 +809,8 @@ public class PlayerMovementController : MonoBehaviour
         {
             _groundNormal = _groundHit.normal;
             _isGrounded = true;
+            _canCoyoteJump = true;
+            _coyoteTimeCounter = _coyoteTimeThreshold;
 
             // 지면에 있을 때 경사 확인
             GroundInclineCheck();
@@ -815,6 +820,13 @@ public class PlayerMovementController : MonoBehaviour
         }
         else
         {
+            // 지면에서 막 떨어졌을 때 코요테 타임 시작
+            if (wasGrounded)
+            {
+                _canCoyoteJump = true;
+                _coyoteTimeCounter = _coyoteTimeThreshold;
+            }
+            
             // 일정 시간 후에 지면 상태 해제 (약간의 지연으로 계단 등에서 자연스러운 이동)
             _isGrounded = false;
 
@@ -1163,29 +1175,11 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-    // 슬로우존 진입
-    public void EnterSlowZone(float multiplier, float restoreDuration)
+    /// <summary>
+    /// 점프 입력을 받았을 때 호출되는 함수
+    /// </summary>
+    private void OnJumpInput()
     {
-        _slowZoneCount++;
-        // 첫 진입이거나 더 강한 슬로우일 때만 적용
-        if (_slowZoneCount == 1 || multiplier < _currentSlowMultiplier)
-        {
-            _currentSlowMultiplier = multiplier;
-            _runSpeed = _baseRunSpeed * _currentSlowMultiplier;
-            _sprintSpeed = _baseSprintSpeed * _currentSlowMultiplier;
-            _isRestoringSpeed = false;
-        }
-        _restoreDuration = restoreDuration;
-    }
-
-    // 슬로우존 이탈
-    public void ExitSlowZone()
-    {
-        _slowZoneCount = Mathf.Max(0, _slowZoneCount - 1);
-        if (_slowZoneCount == 0)
-        {
-            _isRestoringSpeed = true;
-            _restoreTimer = 0f;
-        }
+        _jumpBufferCounter = _jumpBufferTime;
     }
 }
