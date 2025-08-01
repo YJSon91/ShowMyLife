@@ -36,6 +36,13 @@ public class RotatingObstacle : BaseObstacle
             if (player != null && rb != null)
             {
                 Vector3 dir = player.position - transform.position;
+
+                // 중심에 딱 올라간 경우를 방지(아주 약간의 오프셋)
+                if (dir.magnitude < 0.01f)
+                {
+                    dir = Vector3.forward * 0.01f; // ※ 축이 Y축일 때 자연스러운 오프셋, 필요시 더 정교화 가능
+                }
+
                 Vector3 newPos = transform.position + deltaRotation * dir;
                 rb.MovePosition(newPos);
             }
