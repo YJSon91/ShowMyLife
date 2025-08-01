@@ -437,8 +437,8 @@ public class GameManager : MonoBehaviour
         // 1. 화면을 어둡게 만듭니다 (Fade In).
         if (fadePanel != null)
         {
-            UIManager?.ShowParticle(ParticleType.Petals1, true);
-            UIManager?.ShowParticle(ParticleType.Petals2, true);            
+            UIManager?.ShowParticle(ParticleType.Petals1, false);
+            UIManager?.ShowParticle(ParticleType.Petals2, false);            
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
         }
         if (tutorialPanel != null)
