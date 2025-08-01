@@ -362,7 +362,7 @@ MonoBehaviour:
   _jumpForce: 15
   _gravityMultiplier: 1
   _groundCheckDistance: 1
-  _jumpCooldown: 0.25
+  _jumpCooldown: 0.01
   _coyoteTimeThreshold: 0.117
   _rearRayPos: {fileID: 4673321933065169652}
   _frontRayPos: {fileID: 6476181354946296046}
@@ -383,6 +383,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   _cannotStandUp: 1
+  _iceSlowdownRate: 0.01
+  _iceAccelerationRate: 0.4
+  _iceLayerMask:
+    serializedVersion: 2
+    m_Bits: 262144
   _velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &1997512669615988944
 MonoBehaviour:
@@ -1310,7 +1315,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4134058135954641880
 Transform:
   m_ObjectHideFlags: 0
