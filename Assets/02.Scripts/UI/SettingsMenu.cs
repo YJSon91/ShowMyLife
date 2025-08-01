@@ -68,7 +68,7 @@ public class SettingsMenu : UiBase
     /// </summary>
     private void LoadSettings()
     {
-        float savedSens = PlayerPrefs.GetFloat("CameraSensitivity", 10f);
+        float savedSens = PlayerPrefs.GetFloat("CameraSensitivity", 50f);
         // (현재값 - 최소값) / (최대값 - 최소값) = 0~1 사이의 비율
         _cameraSensitivitySlider.SetValueWithoutNotify(Mathf.InverseLerp(_minCameraSensitivity, _maxCameraSensitivity, savedSens));
         _masterVolumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("MasterVolume", 1f));
