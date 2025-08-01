@@ -19683,6 +19683,74 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.22225, y: 2.032, z: 0.21997046}
   m_Center: {x: 0, y: 1.016, z: 0}
+--- !u!1 &1935804015881125048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5459907986682162316}
+  - component: {fileID: 2443580366955457670}
+  - component: {fileID: 3828092689812862452}
+  m_Layer: 9
+  m_Name: PlayerCahnageTriger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5459907986682162316
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935804015881125048}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.41, y: -5.469, z: 53.59}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8989956357453800680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2443580366955457670
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935804015881125048}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8, y: 1, z: 8}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3828092689812862452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935804015881125048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25ab111ca2e447f4faa5ca80e5da3c5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  switchToSchoolBoy: 1
+  triggerOnce: 1
 --- !u!1 &1961103954439575782
 GameObject:
   m_ObjectHideFlags: 0
@@ -78696,6 +78764,10 @@ PrefabInstance:
     - {fileID: 4432939484685228505, guid: 54558ee34de7d0941bc187f715678bd2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1441272024559494894, guid: 54558ee34de7d0941bc187f715678bd2,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5459907986682162316}
     - targetCorrespondingSourceObject: {fileID: 1690376427268899782, guid: 54558ee34de7d0941bc187f715678bd2,
         type: 3}
       insertIndex: 3
