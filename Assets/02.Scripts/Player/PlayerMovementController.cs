@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// 플레이어의 이동 및 물리 동작을 처리하는 컨트롤러 (리지드바디 기반)
@@ -159,6 +161,20 @@ public class PlayerMovementController : MonoBehaviour
     private bool _isRestoringSpeed = false;
     private float _restoreTimer = 0f;
     private float _restoreDuration = 0f;
+    
+    // --- 빙판 관련 변수 ---
+    [Header("빙판 설정")]
+    [Tooltip("빙판에서의 감속 비율 (낮을수록 오래 미끄러짐, 0.01-0.2 권장)")]
+    [SerializeField] private float _iceSlowdownRate = 0.05f;
+    [Tooltip("빙판에서의 가속 비율 (낮을수록 천천히 가속)")]
+    [SerializeField] private float _iceAccelerationRate = 0.5f;
+    [Tooltip("빙판 레이어 마스크")]
+    [SerializeField] private LayerMask _iceLayerMask;
+
+    private bool _isOnIce;
+    private Vector3 _iceVelocity;
+    private Vector3 _lastInputDirection;
+    private float _currentIceSpeed;
 
     public Vector3 _velocity;
     private Vector3 _moveDirection;
@@ -249,6 +265,11 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어가 미끄럼틀 함정에서 슬라이딩 중인지 여부
     /// </summary>
     public bool IsObstacleSliding => _isObstacleSliding;
+    
+    /// <summary>
+    /// 플레이어가 빙판 위에 있는지 여부
+    /// </summary>
+    public bool IsOnIce => _isOnIce;
 
     public Rigidbody Rigidbody => _rigidbody;
 
@@ -271,6 +292,11 @@ public class PlayerMovementController : MonoBehaviour
         InitializeComponents();
         _baseRunSpeed = _runSpeed;
         _baseSprintSpeed = _sprintSpeed;
+        
+        // 빙판 속성 초기화
+        _currentIceSlowdownRate = _iceSlowdownRate;
+        _currentIceAccelerationRate = _iceAccelerationRate;
+        _currentIceSpeedMultiplier = 1.0f;
     }
 
     private void Start()
@@ -349,6 +375,9 @@ public class PlayerMovementController : MonoBehaviour
 
         // 물리 기반 처리는 FixedUpdate에서 유지
         GroundedCheck();
+        
+        // 빙판 확인 추가
+        CheckIceSurface();
 
         //경사면 제한 적용
         if (_isGrounded && _slopeLimiting)
@@ -356,12 +385,12 @@ public class PlayerMovementController : MonoBehaviour
             SlopeLimit();
         }
         if (jumpRequest) {
-        Vector3 velocity = _rigidbody.velocity;
-        velocity.y = _jumpForce;
-        _rigidbody.velocity = velocity;
-        _isGrounded = false;
-        jumpRequest = false;
-    }
+            Vector3 velocity = _rigidbody.velocity;
+            velocity.y = _jumpForce;
+            _rigidbody.velocity = velocity;
+            _isGrounded = false;
+            jumpRequest = false;
+        }
 
         Move();
         ApplyGravity();
@@ -448,10 +477,25 @@ public class PlayerMovementController : MonoBehaviour
     #region 이동 메서드
 
     /// <summary>
+    /// 벡터에 NaN이 포함되어 있는지 확인합니다
+    /// </summary>
+    private bool ContainsNaN(Vector3 vector)
+    {
+        return float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z);
+    }
+    
+    /// <summary>
     /// 플레이어의 이동을 처리합니다
     /// </summary>
     public void Move()
     {
+        // NaN 체크 및 처리
+        if (ContainsNaN(_targetVelocity))
+        {
+            Debug.LogWarning("목표 속도에 NaN 값 감지됨! 초기화합니다.");
+            _targetVelocity = Vector3.zero;
+        }
+        
         // 이동 방식에 따라 다른 물리 이동 적용
         if (_movementType == MovementType.Force)
         {
@@ -465,6 +509,14 @@ public class PlayerMovementController : MonoBehaviour
 
             // y축 속도는 그대로 유지
             newVelocity.y = _rigidbody.velocity.y;
+            
+            // NaN 체크
+            if (ContainsNaN(newVelocity))
+            {
+                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
+                return;
+            }
+            
             _rigidbody.velocity = newVelocity;
         }
         else
@@ -476,6 +528,14 @@ public class PlayerMovementController : MonoBehaviour
 
             // y축 속도는 그대로 유지
             Vector3 newVelocity = new Vector3(newHorizontalVel.x, _rigidbody.velocity.y, newHorizontalVel.z);
+            
+            // NaN 체크
+            if (ContainsNaN(newVelocity))
+            {
+                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
+                return;
+            }
+            
             _rigidbody.velocity = newVelocity;
         }
 
@@ -523,6 +583,19 @@ public class PlayerMovementController : MonoBehaviour
         // 이동 방향 계산
         Vector3 playerInputDirection = (cameraForward * _inputReader._moveComposite.y)
                    + (cameraRight * _inputReader._moveComposite.x);
+                   
+        // 입력이 있으면 마지막 입력 방향 저장
+        if (playerInputDirection.magnitude > 0.1f)
+        {
+            _lastInputDirection = playerInputDirection.normalized;
+        }
+        
+        // 빙판 처리 (최우선 순위)
+        if (_isOnIce)
+        {
+            HandleIceMovement(playerInputDirection);
+            return;
+        }
 
         // 미끄럼틀 함정 슬라이드가 우선순위가 가장 높음
         if (_isObstacleSliding)
@@ -538,7 +611,6 @@ public class PlayerMovementController : MonoBehaviour
             _moveDirection = Vector3.Lerp(_slipDirection, playerInputDirection, 1f - _slipInputReduction);
             _targetMaxSpeed = _slipForce;
         }
-
         else
         {
             _moveDirection = playerInputDirection;
@@ -582,6 +654,118 @@ public class PlayerMovementController : MonoBehaviour
         _newDirectionDifferenceAngle = playerForwardVector != _moveDirection
             ? Vector3.SignedAngle(playerForwardVector, _moveDirection, Vector3.up)
             : 0f;
+    }
+    
+    /// <summary>
+    /// 벡터를 안전하게 정규화합니다. 길이가 너무 작으면 기본 방향을 반환합니다.
+    /// </summary>
+    private Vector3 SafeNormalize(Vector3 vector, Vector3 defaultDirection)
+    {
+        // 벡터가 유효한지 확인 (NaN 체크)
+        if (float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z))
+        {
+            Debug.LogWarning("NaN 벡터 감지됨! 기본 방향으로 대체합니다.");
+            return defaultDirection;
+        }
+        
+        // 벡터 길이 확인
+        float magnitude = vector.magnitude;
+        if (magnitude > 0.001f)
+        {
+            return vector / magnitude; // 직접 나누기로 정규화
+        }
+        else
+        {
+            return defaultDirection;
+        }
+    }
+    
+    /// <summary>
+    /// 빙판 위에서의 이동을 처리합니다
+    /// </summary>
+    private void HandleIceMovement(Vector3 inputDirection)
+    {
+        // NaN 값 확인 및 수정
+        if (float.IsNaN(_iceVelocity.x) || float.IsNaN(_iceVelocity.y) || float.IsNaN(_iceVelocity.z))
+        {
+            Debug.LogWarning("빙판 속도에 NaN 값 감지됨! 초기화합니다.");
+            _iceVelocity = Vector3.zero;
+            _currentIceSpeed = 0f;
+        }
+        
+        // 입력이 있을 때 (방향 전환 시도)
+        if (inputDirection.magnitude > 0.1f)
+        {
+            // 현재 빙판 속도 방향과 입력 방향을 혼합 (서서히 방향 전환)
+            Vector3 currentDir;
+            Vector3 targetDir;
+            
+            if (_iceVelocity.magnitude > 0.1f)
+            {
+                currentDir = SafeNormalize(_iceVelocity, inputDirection.normalized);
+            }
+            else
+            {
+                currentDir = inputDirection.normalized;
+            }
+            
+            targetDir = inputDirection.normalized;
+            
+            // 입력 방향으로 서서히 전환 (낮은 가속률)
+            Vector3 newDir = Vector3.Lerp(currentDir, targetDir, _currentIceAccelerationRate * Time.deltaTime);
+            
+            // 추가 안전 검사
+            if (newDir.magnitude < 0.001f)
+            {
+                newDir = targetDir;
+            }
+            
+            // 현재 속도에 약간의 가속/감속 적용
+            float targetSpeed = _isSprinting ? _sprintSpeed : (_isWalking ? _walkSpeed : _runSpeed);
+            targetSpeed *= _currentIceSpeedMultiplier; // 속도 배율 적용
+            
+            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, targetSpeed, _currentIceAccelerationRate * 0.5f * Time.deltaTime);
+            
+            // 새 속도 계산
+            _iceVelocity = newDir * _currentIceSpeed;
+        }
+        // 입력이 없을 때 (관성으로 미끄러짐)
+        else
+        {
+            // 현재 방향 유지하면서 서서히 감속
+            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, 0, _currentIceSlowdownRate * Time.deltaTime);
+            
+            // 속도가 매우 작아지면 완전히 정지
+            if (_currentIceSpeed < 0.1f)
+            {
+                _currentIceSpeed = 0f;
+                _iceVelocity = Vector3.zero;
+            }
+            else if (_iceVelocity.magnitude > 0.001f)
+            {
+                Vector3 iceDir = SafeNormalize(_iceVelocity, transform.forward);
+                _iceVelocity = iceDir * _currentIceSpeed;
+            }
+            else
+            {
+                _iceVelocity = Vector3.zero;
+            }
+        }
+        
+        // 이동 방향과 목표 속도 설정
+        if (_iceVelocity.magnitude > 0.001f)
+        {
+            _moveDirection = SafeNormalize(_iceVelocity, transform.forward);
+        }
+        else
+        {
+            _moveDirection = transform.forward;
+        }
+        
+        _targetVelocity = _iceVelocity;
+        
+        // 현재 최대 속도 업데이트 (애니메이션 등에 사용)
+        _currentMaxSpeed = _currentIceSpeed;
     }
 
     /// <summary>
@@ -805,6 +989,195 @@ public class PlayerMovementController : MonoBehaviour
     #endregion
 
     #region 상태 확인 메서드
+    
+    /// <summary>
+    /// 플레이어가 빙판 위에 있는지 확인합니다
+    /// </summary>
+    private void CheckIceSurface()
+    {
+        // 박스캐스트로 빙판 확인 (지면 확인과 유사한 방식)
+        Vector3 boxCenter = _capsuleCollider.bounds.center;
+        Vector3 boxHalfExtents = new Vector3(_boxCastWidth / 2f, 0.05f, _boxCastDepth / 2f);
+        Quaternion orientation = transform.rotation;
+        float distance = _capsuleCollider.height / 2 + _groundCheckDistance;
+
+        // 빙판 확인
+        bool wasOnIce = _isOnIce;
+        bool isOnIceNow = Physics.BoxCast(
+            boxCenter,
+            boxHalfExtents,
+            Vector3.down,
+            out RaycastHit iceHit,
+            orientation,
+            distance,
+            _iceLayerMask,
+            QueryTriggerInteraction.Ignore
+        );
+        
+        // 빙판에 처음 진입했을 때
+        if (!wasOnIce && isOnIceNow)
+        {
+            // 빙판 오브젝트에서 속성 가져오기
+            GameObject iceObject = iceHit.collider?.gameObject;
+            
+            EnterIceSurface(iceObject);
+            _isOnIce = true;
+        }
+        // 빙판에서 나갔을 때
+        else if (wasOnIce && !isOnIceNow)
+        {
+            ExitIceSurface();
+            _isOnIce = false;
+        }
+        // 한 빙판에서 다른 빙판으로 이동했을 때
+        else if (isOnIceNow && iceHit.collider != null)
+        {
+            // 빙판 속성 업데이트
+            GameObject iceObject = iceHit.collider.gameObject;
+            if (iceObject != null)
+            {
+                UpdateIceProperties(iceObject);
+            }
+        }
+    }
+
+    // 현재 사용 중인 빙판 속성
+    private float _currentIceSlowdownRate;
+    private float _currentIceAccelerationRate;
+    private float _currentIceSpeedMultiplier;
+    
+    /// <summary>
+    /// 빙판에 진입했을 때 호출됩니다
+    /// </summary>
+    private void EnterIceSurface(GameObject iceObject = null)
+    {
+        // 현재 속도와 목표 속도 중 더 큰 값을 사용
+        Vector3 currentVelocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
+        Vector3 targetVelocity = new Vector3(_targetVelocity.x, 0, _targetVelocity.z);
+        
+        float currentSpeed = currentVelocity.magnitude;
+        float targetSpeed = targetVelocity.magnitude;
+        
+        // 현재 속도와 목표 속도 중 더 큰 값을 사용
+        float bestSpeed = Mathf.Max(currentSpeed, targetSpeed);
+        
+        // _speed2D를 사용하여 최근의 실제 이동 속도를 반영
+        bestSpeed = Mathf.Max(bestSpeed, _speed2D);
+        
+        // 상태에 따라 최소 속도 보장 (방법 2: 스프린트 상태 확인)
+        float minimumSpeed = 0f;
+        if (_isSprinting)
+        {
+            minimumSpeed = _sprintSpeed * 0.8f; // 스프린트 속도의 80%
+        }
+        else if (_isWalking)
+        {
+            minimumSpeed = _walkSpeed * 0.7f; // 걷기 속도의 70%
+        }
+        else
+        {
+            minimumSpeed = _runSpeed * 0.7f; // 달리기 속도의 70%
+        }
+        
+        // 최종 속도 결정 (실제 속도와 최소 보장 속도 중 큰 값)
+        _currentIceSpeed = Mathf.Max(bestSpeed, minimumSpeed);
+        
+        // 방향 설정 (속도가 충분히 있을 때만 현재 방향 사용)
+        if (currentSpeed > 0.5f)
+        {
+            _iceVelocity = currentVelocity.normalized * _currentIceSpeed;
+        }
+        else if (targetSpeed > 0.5f)
+        {
+            _iceVelocity = targetVelocity.normalized * _currentIceSpeed;
+        }
+        else if (_lastInputDirection.magnitude > 0.1f)
+        {
+            // 입력 방향이 있으면 그 방향 사용
+            _iceVelocity = _lastInputDirection * _currentIceSpeed;
+        }
+        else
+        {
+            // 모든 속도가 낮으면 플레이어가 바라보는 방향 사용
+            _iceVelocity = transform.forward * _currentIceSpeed;
+        }
+        
+        // 빙판 속성 설정
+        SetIceProperties(iceObject);
+        
+        Debug.Log($"빙판 진입: 초기 속도 = {_currentIceSpeed}, 감속 비율 = {_currentIceSlowdownRate}, 방향 = {_iceVelocity.normalized}");
+    }
+
+    /// <summary>
+    /// 빙판 속성을 설정합니다
+    /// </summary>
+    private void SetIceProperties(GameObject iceObject)
+    {
+        // 기본값 설정
+        _currentIceSlowdownRate = _iceSlowdownRate;
+        _currentIceAccelerationRate = _iceAccelerationRate;
+        _currentIceSpeedMultiplier = 1.0f;
+        
+        if (iceObject != null)
+        {
+            // IceZoneController 컴포넌트가 있는지 확인
+            MonoBehaviour[] components = iceObject.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour component in components)
+            {
+                string typeName = component.GetType().Name;
+                if (typeName == "IceZoneController")
+                {
+                    // 리플렉션을 통해 속성 가져오기
+                    try
+                    {
+                        var slowdownField = component.GetType().GetField("slowdownRate");
+                        var accelerationField = component.GetType().GetField("accelerationRate");
+                        var speedMultiplierField = component.GetType().GetField("speedMultiplier");
+                        
+                        if (slowdownField != null)
+                            _currentIceSlowdownRate = (float)slowdownField.GetValue(component);
+                        
+                        if (accelerationField != null)
+                            _currentIceAccelerationRate = (float)accelerationField.GetValue(component);
+                            
+                        if (speedMultiplierField != null)
+                            _currentIceSpeedMultiplier = (float)speedMultiplierField.GetValue(component);
+                            
+                        break;
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning($"빙판 속성을 가져오는 중 오류 발생: {e.Message}");
+                    }
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 빙판 속성을 업데이트합니다
+    /// </summary>
+    private void UpdateIceProperties(GameObject iceObject)
+    {
+        if (iceObject != null)
+        {
+            SetIceProperties(iceObject);
+        }
+    }
+
+    /// <summary>
+    /// 빙판에서 나갔을 때 호출됩니다
+    /// </summary>
+    private void ExitIceSurface()
+    {
+        _iceVelocity = Vector3.zero;
+        _currentIceSpeed = 0f;
+        _currentIceSlowdownRate = _iceSlowdownRate;
+        _currentIceAccelerationRate = _iceAccelerationRate;
+        _currentIceSpeedMultiplier = 1.0f;
+        
+        Debug.Log("빙판 이탈");
+    }
 
     /// <summary>
     /// 박스캐스트를 사용하여 지면 확인을 수행합니다
