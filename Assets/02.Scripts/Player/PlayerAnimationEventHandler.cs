@@ -66,13 +66,13 @@ public class PlayerAnimationEventHandler : MonoBehaviour
     /// </summary>
     public void OnLandAnimationEvent()
     {
-        // if (_soundManager != null)
-        // {
-        //     _soundManager.PlaySFX(SfxType.Land);
-        // }
-        
-        // // 착지 이벤트 발행
-        // OnLandingAnimationEvent?.Invoke(this);
+        if (_soundManager != null)
+        {
+            _soundManager.PlaySFX(SfxType.Land);
+        }
+
+        // 착지 이벤트 발행
+        OnLandingAnimationEvent?.Invoke(this);
     }
     
     /// <summary>
