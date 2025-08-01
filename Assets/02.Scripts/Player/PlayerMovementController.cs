@@ -74,7 +74,7 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
     [SerializeField] private float _groundCheckDistance = 0.25f;
     [Tooltip("점프 쿨타임 (초)")]
-    [SerializeField] private float _jumpCooldown = 1.0f;
+    [SerializeField] private float _jumpCooldown = 0.5f;
     [Tooltip("코요테 타임 길이 (초)")]
     [SerializeField] private float _coyoteTimeThreshold = 0.25f;
 
