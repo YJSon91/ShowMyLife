@@ -73,15 +73,12 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
     [SerializeField] private float _groundCheckDistance = 0.25f;
-    [Tooltip("점프 쿨타임 (초)")]
-    [SerializeField] private float _jumpCooldown = 1.0f;
+    // 점프 쿨타임 제거됨
     [Tooltip("코요테 타임 길이 (초)")]
     [SerializeField] private float _coyoteTimeThreshold = 0.25f;
 
 
-    // 점프 쿨타임 관련 변수
-    private float _jumpCooldownTimer = 0f;
-    private bool _isJumpOnCooldown = false;
+    // 점프 쿨타임 제거됨
 
     // 코요테 타임 관련 변수
     private float _coyoteTimeCounter;
@@ -274,14 +271,14 @@ public class PlayerMovementController : MonoBehaviour
     public Rigidbody Rigidbody => _rigidbody;
 
     /// <summary>
-    /// 점프 쿨타임이 활성화되어 있는지 확인합니다
+    /// 점프 쿨타임 제거됨
     /// </summary>
-    public bool IsJumpOnCooldown => _isJumpOnCooldown;
+    public bool IsJumpOnCooldown => false;
     
     /// <summary>
-    /// 현재 점프 쿨타임 타이머 값을 반환합니다 (0~1 사이의 값, 1이 쿨타임 시작, 0이 쿨타임 종료)
+    /// 점프 쿨타임 제거됨
     /// </summary>
-    public float JumpCooldownNormalized => _isJumpOnCooldown ? _jumpCooldownTimer / _jumpCooldown : 0f;
+    public float JumpCooldownNormalized => 0f;
 
     #endregion
 
@@ -325,8 +322,7 @@ public class PlayerMovementController : MonoBehaviour
             FaceMoveDirection();
         }
         
-        // 점프 쿨타임 업데이트
-        UpdateJumpCooldown();
+        // 점프 쿨타임 제거됨
         
         // 코요테 타임 업데이트
         if (!_isGrounded && _canCoyoteJump)
@@ -854,16 +850,6 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        // 쿨타임 중이면 점프할 수 없음
-        if (_isJumpOnCooldown)
-        {
-            if (_isJumpOnCooldown)
-            {
-                Debug.Log($"점프 쿨타임 중: {_jumpCooldownTimer:F1}초 남음");
-            }
-            return;
-        }
-
         // 지면에 있거나 코요테 타임 중이면 점프 가능
         if (_isGrounded || _canCoyoteJump)
         {
@@ -871,10 +857,7 @@ public class PlayerMovementController : MonoBehaviour
             _canCoyoteJump = false;
             jumpRequest = true;
             
-            // 쿨타임 시작
-            _isJumpOnCooldown = true;
-            _jumpCooldownTimer = _jumpCooldown;
-            Debug.Log($"점프 실행! 쿨타임 {_jumpCooldown}초 시작");
+            Debug.Log("점프 실행!");
         }
     }
 
@@ -1068,15 +1051,15 @@ public class PlayerMovementController : MonoBehaviour
         float minimumSpeed = 0f;
         if (_isSprinting)
         {
-            minimumSpeed = _sprintSpeed * 0.8f; // 스프린트 속도의 80%
+            minimumSpeed = _sprintSpeed * 0.95f; // 스프린트 속도의 95%
         }
         else if (_isWalking)
         {
-            minimumSpeed = _walkSpeed * 0.7f; // 걷기 속도의 70%
+            minimumSpeed = _walkSpeed * 0.95f; // 걷기 속도의 95%
         }
         else
         {
-            minimumSpeed = _runSpeed * 0.7f; // 달리기 속도의 70%
+            minimumSpeed = _runSpeed * 0.95f; // 달리기 속도의 95%
         }
         
         // 최종 속도 결정 (실제 속도와 최소 보장 속도 중 큰 값)
@@ -1589,30 +1572,15 @@ public class PlayerMovementController : MonoBehaviour
         Gizmos.DrawLine(boxCenter, endPosition);
     }
 
-    /// <summary>
-    /// 점프 쿨타임을 업데이트합니다
-    /// </summary>
-    private void UpdateJumpCooldown()
-    {
-        if (_isJumpOnCooldown)
-        {
-            _jumpCooldownTimer -= Time.deltaTime;
-            
-            if (_jumpCooldownTimer <= 0f)
-            {
-                _isJumpOnCooldown = false;
-                _jumpCooldownTimer = 0f;
-            }
-        }
-    }
+    // 점프 쿨타임 업데이트 메서드 제거됨
 
     /// <summary>
     /// 점프 입력을 받았을 때 호출되는 함수
     /// </summary>
     private void OnJumpInput()
     {
-        // 지면에 있거나 코요테 타임 중이고 쿨다운이 아니면 점프 실행
-        if ((_isGrounded || _canCoyoteJump) && !_isJumpOnCooldown)
+        // 지면에 있거나 코요테 타임 중이면 점프 실행
+        if (_isGrounded || _canCoyoteJump)
         {
             Jump();
         }
