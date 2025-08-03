@@ -677,7 +677,7 @@ public class PlayerMovementController : MonoBehaviour
     }
     
     /// <summary>
-    /// 빙판 위에서의 이동을 처리합니다
+    /// 빙판 위에서의 이동을 처리합니다 (방향 전환 시 새 이동 속도 적용)
     /// </summary>
     private void HandleIceMovement(Vector3 inputDirection)
     {
@@ -692,37 +692,33 @@ public class PlayerMovementController : MonoBehaviour
         // 입력이 있을 때 (방향 전환 시도)
         if (inputDirection.magnitude > 0.1f)
         {
-            // 현재 빙판 속도 방향과 입력 방향을 혼합 (서서히 방향 전환)
-            Vector3 currentDir;
-            Vector3 targetDir;
+            // 방향 즉시 변경
+            Vector3 newDir = inputDirection.normalized;
             
-            if (_iceVelocity.magnitude > 0.1f)
+            // 새로운 속도 계산 (입력 강도에 따라)
+            float inputMagnitude = inputDirection.magnitude;
+            float targetSpeed;
+            
+            if (_isSprinting)
             {
-                currentDir = SafeNormalize(_iceVelocity, inputDirection.normalized);
+                targetSpeed = _sprintSpeed * inputMagnitude;
+            }
+            else if (_isWalking)
+            {
+                targetSpeed = _walkSpeed * inputMagnitude;
             }
             else
             {
-                currentDir = inputDirection.normalized;
+                targetSpeed = _runSpeed * inputMagnitude;
             }
             
-            targetDir = inputDirection.normalized;
+            // 빙판 속도 배율 적용
+            targetSpeed *= _currentIceSpeedMultiplier;
             
-            // 입력 방향으로 서서히 전환 (낮은 가속률)
-            Vector3 newDir = Vector3.Lerp(currentDir, targetDir, _currentIceAccelerationRate * Time.deltaTime);
+            // 새 속도로 즉시 변경 (약간의 보간만 적용)
+            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, targetSpeed, 0.8f);
             
-            // 추가 안전 검사
-            if (newDir.magnitude < 0.001f)
-            {
-                newDir = targetDir;
-            }
-            
-            // 현재 속도에 약간의 가속/감속 적용
-            float targetSpeed = _isSprinting ? _sprintSpeed : (_isWalking ? _walkSpeed : _runSpeed);
-            targetSpeed *= _currentIceSpeedMultiplier; // 속도 배율 적용
-            
-            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, targetSpeed, _currentIceAccelerationRate * 0.5f * Time.deltaTime);
-            
-            // 새 속도 계산
+            // 새 방향과 새 속도로 벡터 계산
             _iceVelocity = newDir * _currentIceSpeed;
         }
         // 입력이 없을 때 (관성으로 미끄러짐)
