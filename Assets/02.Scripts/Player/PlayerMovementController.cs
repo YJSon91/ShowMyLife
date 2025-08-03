@@ -586,19 +586,25 @@ public class PlayerMovementController : MonoBehaviour
             _lastInputDirection = playerInputDirection.normalized;
         }
         
-        // 빙판 처리 (최우선 순위)
-        if (_isOnIce)
-        {
-            HandleIceMovement(playerInputDirection);
-            return;
-        }
-
-        // 미끄럼틀 함정 슬라이드가 우선순위가 가장 높음
+        // 미끄럼틀 함정 슬라이드가 가장 높은 우선순위를 가짐 (빙판보다 우선)
         if (_isObstacleSliding)
         {
             // 미끄럼틀에서는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
             _moveDirection = Vector3.Lerp(_obstacleSlideDirection, playerInputDirection, 1f - _obstacleSlideInputReduction);
             _targetMaxSpeed = _obstacleSlideForce;
+            
+            // 미끄럼틀 상태에서는 빙판 속도 업데이트를 위해 빙판 속도도 함께 설정
+            if (_isOnIce)
+            {
+                _iceVelocity = _moveDirection * _targetMaxSpeed;
+                _currentIceSpeed = _targetMaxSpeed;
+            }
+        }
+        // 빙판 처리 (미끄럼틀 다음 우선순위)
+        else if (_isOnIce)
+        {
+            HandleIceMovement(playerInputDirection);
+            return;
         }
         // 다음으로 자연 경사면 슬립 확인
         else if (_isSlipping)
@@ -1496,6 +1502,24 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void DeactivateObstacleSlide()
     {
+        // 빙판 위에 있을 경우, 현재 미끄럼틀 속도와 방향을 빙판 속도로 전환
+        if (_isOnIce)
+        {
+            // 현재 미끄럼틀 방향과 속도를 빙판 속도로 전환
+            float remainingSpeed = _obstacleSlideForce;
+            Vector3 remainingDirection = _obstacleSlideDirection;
+            
+            // 최소 속도 보장 (너무 느리면 의미 없음)
+            remainingSpeed = Mathf.Max(remainingSpeed, 3.0f);
+            
+            // 빙판 속도 설정
+            _iceVelocity = remainingDirection * remainingSpeed;
+            _currentIceSpeed = remainingSpeed;
+            
+            Debug.Log($"빙판 위 미끄럼틀 종료: 남은 속도({remainingSpeed})로 빙판 미끄러짐 계속");
+        }
+        
+        // 미끄럼틀 상태 변수 초기화
         _isObstacleSliding = false;
         _obstacleSlideDirection = Vector3.zero;
         _obstacleSlideForce = 0f;
