@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class EntranceTriggerDirector : MonoBehaviour
+public class EnterStage1_2 : MonoBehaviour
 {
     [Tooltip("연출매니저")]
     [SerializeField] private EmotionDirector emotionDirector;
