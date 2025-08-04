@@ -14584,6 +14584,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.22225, y: 2.032, z: 0.21997046}
   m_Center: {x: 0, y: 1.016, z: 0}
+--- !u!1 &1396398541490136753
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 304950921502682458}
+  m_Layer: 9
+  m_Name: Lightrooms
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &304950921502682458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1396398541490136753}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7259953187346175262}
+  m_Father: {fileID: 8177151949261969739}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1403392420890042464
 GameObject:
   m_ObjectHideFlags: 0
@@ -14611,11 +14643,11 @@ Transform:
   m_GameObject: {fileID: 1403392420890042464}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: -0.16300736, y: 11.8758335, z: -7.998001}
+  m_LocalPosition: {x: -0.16301881, y: 11.8758335, z: -7.997998}
   m_LocalScale: {x: 0.11000001, y: 0.14375, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8177151949261969739}
+  m_Father: {fileID: 304950921502682458}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &6651934058871239234
 MeshFilter:
@@ -28704,7 +28736,7 @@ Transform:
   - {fileID: 7008095226258635998}
   - {fileID: 8517646903487474526}
   - {fileID: 2680455242224176797}
-  - {fileID: 7259953187346175262}
+  - {fileID: 304950921502682458}
   m_Father: {fileID: 4593382991502494863}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3137173789321783679
@@ -79104,7 +79136,7 @@ PrefabInstance:
     - target: {fileID: 182213979069195326, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 732735365918875295, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79134,7 +79166,7 @@ PrefabInstance:
     - target: {fileID: 1069352446809888721, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 1069352446809888721, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79244,7 +79276,7 @@ PrefabInstance:
     - target: {fileID: 1607656910462390146, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 1646889002876307799, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79369,7 +79401,7 @@ PrefabInstance:
     - target: {fileID: 3092004912696142832, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 3509964745585614161, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79384,7 +79416,7 @@ PrefabInstance:
     - target: {fileID: 3634848025124828067, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 3634848025124828067, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79484,7 +79516,7 @@ PrefabInstance:
     - target: {fileID: 4016054682531159949, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 4297646017045124697, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79504,7 +79536,7 @@ PrefabInstance:
     - target: {fileID: 4649928243741346269, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 4649928243741346269, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79619,7 +79651,7 @@ PrefabInstance:
     - target: {fileID: 4993834925603579379, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 5195184384900271410, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79659,7 +79691,7 @@ PrefabInstance:
     - target: {fileID: 6349877608273809806, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 6627257971164739866, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79699,7 +79731,7 @@ PrefabInstance:
     - target: {fileID: 7864396383863302717, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 7953980271887801113, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79709,7 +79741,7 @@ PrefabInstance:
     - target: {fileID: 8483484047787799150, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 8483484047787799150, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79809,7 +79841,7 @@ PrefabInstance:
     - target: {fileID: 8785154046427021697, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1777
+      value: 1813
       objectReference: {fileID: 0}
     - target: {fileID: 8824362040163281665, guid: 4727fef33326508429057101f0b64887,
         type: 3}
