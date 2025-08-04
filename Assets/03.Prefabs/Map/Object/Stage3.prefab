@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 796133417970944179}
   - component: {fileID: 4032909133479134826}
   - component: {fileID: 3525992139534052821}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -948,7 +948,7 @@ GameObject:
   - component: {fileID: 6126658512759745411}
   - component: {fileID: 7328673054233719592}
   - component: {fileID: 4605219436498093088}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1447,7 +1447,7 @@ GameObject:
   - component: {fileID: 5293669576162213201}
   - component: {fileID: 348259785976788588}
   - component: {fileID: 6816465768921700215}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1576,7 +1576,7 @@ GameObject:
   - component: {fileID: 6531529889907720028}
   - component: {fileID: 5503165397405280078}
   - component: {fileID: 7202849062848482162}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1703,7 +1703,7 @@ GameObject:
   - component: {fileID: 1429514016206641313}
   - component: {fileID: 7909766234241789375}
   - component: {fileID: 6779967065729119788}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1956,7 +1956,7 @@ GameObject:
   - component: {fileID: 3697527665439029643}
   - component: {fileID: 825478981094189}
   m_Layer: 9
-  m_Name: TemporaryTrigger (3)
+  m_Name: EntranceTrigger (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2034,7 +2034,7 @@ GameObject:
   - component: {fileID: 6640854314925452604}
   - component: {fileID: 1760281659386506800}
   - component: {fileID: 5804573563233587782}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2413,7 +2413,7 @@ GameObject:
   - component: {fileID: 1626556279275102681}
   - component: {fileID: 5635980675709021211}
   - component: {fileID: 6595820042159668384}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2532,6 +2532,7 @@ GameObject:
   - component: {fileID: 6871206900831539272}
   - component: {fileID: 5708039669898617097}
   - component: {fileID: 6667655177104525895}
+  - component: {fileID: 7372351189283074579}
   m_Layer: 9
   m_Name: road straight (1)
   m_TagString: Untagged
@@ -2625,6 +2626,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &7372351189283074579
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228769767655156087}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 5.92193e-14, z: 16.66875}
+  m_Center: {x: 0, y: 0.1905, z: 0}
 --- !u!1 &245031878184281444
 GameObject:
   m_ObjectHideFlags: 0
@@ -2637,6 +2659,7 @@ GameObject:
   - component: {fileID: 4281482231553919595}
   - component: {fileID: 597524002358372818}
   - component: {fileID: 9068722730248529604}
+  - component: {fileID: 8235990379465677571}
   m_Layer: 9
   m_Name: road straight (10)
   m_TagString: Untagged
@@ -2730,6 +2753,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &8235990379465677571
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245031878184281444}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.1714007e-13, z: 16.668755}
+  m_Center: {x: 0.000061035156, y: 0.1905, z: 0.000015258789}
 --- !u!1 &251121668396504801
 GameObject:
   m_ObjectHideFlags: 0
@@ -2988,7 +3032,7 @@ GameObject:
   - component: {fileID: 2284106997049322816}
   - component: {fileID: 4231400787952681225}
   - component: {fileID: 952720018462355653}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3114,6 +3158,7 @@ GameObject:
   - component: {fileID: 7817855751989175417}
   - component: {fileID: 7800048677968245633}
   - component: {fileID: 2393754772300040186}
+  - component: {fileID: 2441774397730076453}
   m_Layer: 9
   m_Name: road straight (6)
   m_TagString: Untagged
@@ -3207,6 +3252,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &2441774397730076453
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272965336172041216}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 5.92193e-14, z: 16.66875}
+  m_Center: {x: 0.0000019073486, y: 0.19048475, z: -0.000030517578}
 --- !u!1 &296279794520435326
 GameObject:
   m_ObjectHideFlags: 0
@@ -3220,7 +3286,7 @@ GameObject:
   - component: {fileID: 8669361683786572206}
   - component: {fileID: 4866557654779922971}
   - component: {fileID: 2468034160330544201}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3349,7 +3415,7 @@ GameObject:
   - component: {fileID: 6577451671574886970}
   - component: {fileID: 2839645265226391456}
   - component: {fileID: 4375587551026584822}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (27)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4357,7 +4423,7 @@ GameObject:
   - component: {fileID: 7319792547498644913}
   - component: {fileID: 4885685125883375979}
   - component: {fileID: 4642579028130176102}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (57)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4891,7 +4957,7 @@ GameObject:
   - component: {fileID: 1382307140271280392}
   - component: {fileID: 8508210937614356145}
   - component: {fileID: 1646821298822918076}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5482,7 +5548,7 @@ GameObject:
   - component: {fileID: 3129219754953776935}
   - component: {fileID: 4193741140449238780}
   - component: {fileID: 5657300448907801752}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5609,7 +5675,7 @@ GameObject:
   - component: {fileID: 5180042015434726173}
   - component: {fileID: 2495743778056101164}
   - component: {fileID: 7203379312610765057}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5736,7 +5802,7 @@ GameObject:
   - component: {fileID: 5844240204306642879}
   - component: {fileID: 7343757063231895661}
   - component: {fileID: 6405065155032790398}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (26)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6583,7 +6649,7 @@ GameObject:
   - component: {fileID: 6688071689746081947}
   - component: {fileID: 687097890097025893}
   - component: {fileID: 6612129125714253371}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (36)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6712,7 +6778,7 @@ GameObject:
   - component: {fileID: 6220099989336335882}
   - component: {fileID: 7962625716978246737}
   - component: {fileID: 2029620446435062131}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7094,7 +7160,7 @@ GameObject:
   - component: {fileID: 7956629891700590472}
   - component: {fileID: 7136282222816257102}
   - component: {fileID: 592493766512283321}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7473,7 +7539,7 @@ GameObject:
   - component: {fileID: 3473882761801390056}
   - component: {fileID: 6106566675099986025}
   - component: {fileID: 7427896766935470812}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7593,7 +7659,7 @@ GameObject:
   - component: {fileID: 7177993833805960088}
   - component: {fileID: 8161256880344300981}
   - component: {fileID: 8101006398770638304}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8101,7 +8167,7 @@ GameObject:
   - component: {fileID: 6441682056042505348}
   - component: {fileID: 1147009010665375663}
   - component: {fileID: 5218497325792055782}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8377,7 +8443,7 @@ GameObject:
   - component: {fileID: 3784618419752046452}
   - component: {fileID: 3530552336828885271}
   - component: {fileID: 1176324439750724233}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (30)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8633,7 +8699,7 @@ GameObject:
   - component: {fileID: 2016442322239251696}
   - component: {fileID: 2281112932163215483}
   - component: {fileID: 8872424605578477915}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9478,7 +9544,7 @@ GameObject:
   - component: {fileID: 2658474688585600603}
   - component: {fileID: 6002587065143339269}
   - component: {fileID: 8447163739629843328}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9841,7 +9907,7 @@ GameObject:
   - component: {fileID: 7701009389020816772}
   - component: {fileID: 2243727828479404407}
   - component: {fileID: 7799103663897499635}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10169,7 +10235,7 @@ GameObject:
   - component: {fileID: 670120035572857896}
   - component: {fileID: 4202844618186048942}
   - component: {fileID: 5616181508254210745}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11205,7 +11271,7 @@ GameObject:
   - component: {fileID: 7855496354661850395}
   - component: {fileID: 6196859134409923115}
   - component: {fileID: 3083334188230976092}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11333,7 +11399,7 @@ GameObject:
   - component: {fileID: 3380985528048325535}
   - component: {fileID: 1934586003232367004}
   - component: {fileID: 2693416457796584103}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11453,7 +11519,7 @@ GameObject:
   - component: {fileID: 6594517762415962939}
   - component: {fileID: 8961077461683117972}
   - component: {fileID: 4929960796848210428}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11833,7 +11899,7 @@ GameObject:
   - component: {fileID: 3816749842448656239}
   - component: {fileID: 4790569519994699455}
   - component: {fileID: 5002196676240510402}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11951,7 +12017,7 @@ GameObject:
   - component: {fileID: 1693521005387772925}
   - component: {fileID: 226458689304212604}
   - component: {fileID: 8617614819393715473}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12454,7 +12520,7 @@ GameObject:
   - component: {fileID: 3653813227799838473}
   - component: {fileID: 3918990455264375975}
   - component: {fileID: 4148378465136736688}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (07)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12763,7 +12829,7 @@ GameObject:
   - component: {fileID: 5145145470727980877}
   - component: {fileID: 7511122913640832531}
   - component: {fileID: 8472993289650812561}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (28)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13019,7 +13085,7 @@ GameObject:
   - component: {fileID: 3654623069355995715}
   - component: {fileID: 3070864917853229181}
   - component: {fileID: 7620255271549176282}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (43)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13403,7 +13469,7 @@ GameObject:
   - component: {fileID: 1872099630849978199}
   - component: {fileID: 6491656350896820506}
   - component: {fileID: 5684148368884687119}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13763,7 +13829,7 @@ GameObject:
   - component: {fileID: 3472596712145914316}
   - component: {fileID: 1042921188023942347}
   - component: {fileID: 4994347144521148104}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (44)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14020,7 +14086,7 @@ GameObject:
   - component: {fileID: 3721243346146321383}
   - component: {fileID: 6478309760171196476}
   - component: {fileID: 2907250043471476533}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (28)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14614,7 +14680,7 @@ GameObject:
   - component: {fileID: 7560277587773288066}
   - component: {fileID: 7401816712186477764}
   - component: {fileID: 8840739383800203915}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14740,6 +14806,7 @@ GameObject:
   - component: {fileID: 2652717027385691848}
   - component: {fileID: 1593413417818459475}
   - component: {fileID: 819637620586147263}
+  - component: {fileID: 5042865114932865634}
   m_Layer: 9
   m_Name: road junction
   m_TagString: Untagged
@@ -14833,6 +14900,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &5042865114932865634
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408169384163874862}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 9.4750874e-14, z: 26.67}
+  m_Center: {x: 0, y: 0.1905, z: 0}
 --- !u!1 &1408584858650008481
 GameObject:
   m_ObjectHideFlags: 0
@@ -15191,7 +15279,7 @@ GameObject:
   - component: {fileID: 9088640904266897080}
   - component: {fileID: 7111385527175623269}
   - component: {fileID: 7226054677030722646}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15446,7 +15534,7 @@ GameObject:
   - component: {fileID: 8211103863114834440}
   - component: {fileID: 5568068104588162881}
   - component: {fileID: 6858017179911010245}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15952,7 +16040,7 @@ GameObject:
   - component: {fileID: 4356647721678822226}
   - component: {fileID: 4884846063187208742}
   - component: {fileID: 1818322512112244238}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16199,7 +16287,7 @@ GameObject:
   - component: {fileID: 2604883853090513986}
   - component: {fileID: 7135634980272292144}
   - component: {fileID: 4794861870496286480}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17303,7 +17391,7 @@ GameObject:
   - component: {fileID: 4297881323129680506}
   - component: {fileID: 7263350851737456207}
   - component: {fileID: 8521481108100079803}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (05)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17431,7 +17519,7 @@ GameObject:
   - component: {fileID: 2517371161499104649}
   - component: {fileID: 3674225953905449578}
   m_Layer: 9
-  m_Name: TemporaryTrigger (5)
+  m_Name: EntranceTrigger (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17505,7 +17593,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2680455242224176797}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17602,7 +17690,7 @@ GameObject:
   - component: {fileID: 834006729805608514}
   - component: {fileID: 4310986669548894103}
   - component: {fileID: 1228609672862775993}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (34)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18112,7 +18200,7 @@ GameObject:
   - component: {fileID: 2714109483708250761}
   - component: {fileID: 7290385424948706119}
   - component: {fileID: 1098117075811294837}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (41)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18607,7 +18695,7 @@ GameObject:
   - component: {fileID: 4098434045715453005}
   - component: {fileID: 3572467513264474265}
   - component: {fileID: 3971058991688084815}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18853,6 +18941,7 @@ GameObject:
   - component: {fileID: 8302275960787380144}
   - component: {fileID: 4598096728548554559}
   - component: {fileID: 3108082029408043088}
+  - component: {fileID: 5082350736515523995}
   m_Layer: 9
   m_Name: road straight (20)
   m_TagString: Untagged
@@ -18946,6 +19035,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &5082350736515523995
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840052680091917469}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.669998, y: 0, z: 16.66875}
+  m_Center: {x: 0.000015258789, y: 0.1905, z: 0}
 --- !u!1 &1843577817452052039
 GameObject:
   m_ObjectHideFlags: 0
@@ -19213,7 +19323,7 @@ GameObject:
   - component: {fileID: 5234288103387163445}
   - component: {fileID: 4200705646418639226}
   - component: {fileID: 2548178823029300286}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (48)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20173,7 +20283,7 @@ GameObject:
   - component: {fileID: 8338187199690613819}
   - component: {fileID: 3465933978318013425}
   - component: {fileID: 4823263288533171581}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (49)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20429,7 +20539,7 @@ GameObject:
   - component: {fileID: 4308488151041656682}
   - component: {fileID: 6519859361924771194}
   - component: {fileID: 2934478907253499246}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20556,7 +20666,7 @@ GameObject:
   - component: {fileID: 5227082775518859895}
   - component: {fileID: 2768173962786508414}
   - component: {fileID: 1896253528167083870}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20926,6 +21036,89 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 13.335, y: 8.1653325e-16, z: 13.335}
   m_Center: {x: -0.0000023841858, y: 4.0826662e-16, z: 0}
+--- !u!1 &2056187218624672780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6089240863380267611}
+  - component: {fileID: 4689409996228681649}
+  - component: {fileID: 1809699573885563246}
+  m_Layer: 9
+  m_Name: Quad (10)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6089240863380267611
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056187218624672780}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -6.11, y: 0.3044, z: 9.556}
+  m_LocalScale: {x: 25, y: 7.1219997, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8989956357453800680}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!33 &4689409996228681649
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056187218624672780}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &1809699573885563246
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056187218624672780}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f87a467303797504ebc7b99319063f66, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &2056586546157784414
 GameObject:
   m_ObjectHideFlags: 0
@@ -21171,6 +21364,7 @@ GameObject:
   - component: {fileID: 7459979666217974708}
   - component: {fileID: 3613017732941445222}
   - component: {fileID: 1526537805085311361}
+  - component: {fileID: 6973381514906603432}
   m_Layer: 9
   m_Name: road straight (2)
   m_TagString: Untagged
@@ -21264,6 +21458,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &6973381514906603432
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2067934792070199048}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 5.92193e-14, z: 16.66875}
+  m_Center: {x: 0, y: 0.1905, z: 0}
 --- !u!1 &2075215068756396309
 GameObject:
   m_ObjectHideFlags: 0
@@ -22041,7 +22256,7 @@ GameObject:
   - component: {fileID: 4809067517714619030}
   - component: {fileID: 1594113503007424891}
   - component: {fileID: 6743116307656857280}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22402,7 +22617,7 @@ GameObject:
   - component: {fileID: 6311421463805134035}
   - component: {fileID: 767871379828020546}
   - component: {fileID: 8773531033888031498}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22636,7 +22851,7 @@ GameObject:
   - component: {fileID: 5449869393953474095}
   - component: {fileID: 329034781134093608}
   - component: {fileID: 2720377696269626419}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (35)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22892,7 +23107,7 @@ GameObject:
   - component: {fileID: 3052353128035165998}
   - component: {fileID: 8298437045587873045}
   - component: {fileID: 7941403696541920681}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23017,7 +23232,7 @@ GameObject:
   - component: {fileID: 554260783321534014}
   - component: {fileID: 4164045540082415214}
   - component: {fileID: 4836608870156930759}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23771,6 +23986,7 @@ GameObject:
   - component: {fileID: 1171705914963514479}
   - component: {fileID: 2428310753755932481}
   - component: {fileID: 5496557597943085896}
+  - component: {fileID: 5980587534348888148}
   m_Layer: 9
   m_Name: road straight (5)
   m_TagString: Untagged
@@ -23864,6 +24080,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &5980587534348888148
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2381124807408860616}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 5.92193e-14, z: 16.66875}
+  m_Center: {x: 0, y: 0.19048475, z: -0.000030517578}
 --- !u!1 &2387368893691902359
 GameObject:
   m_ObjectHideFlags: 0
@@ -23877,7 +24114,7 @@ GameObject:
   - component: {fileID: 9051487549118902033}
   - component: {fileID: 7678824009844497913}
   - component: {fileID: 2355451214618406790}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24005,7 +24242,7 @@ GameObject:
   - component: {fileID: 7793359582842946122}
   - component: {fileID: 1752670829885946875}
   - component: {fileID: 4603984346251086138}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24866,7 +25103,7 @@ GameObject:
   - component: {fileID: 4816312432179340583}
   - component: {fileID: 4941199762115446799}
   - component: {fileID: 8994858794265451274}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24994,7 +25231,7 @@ GameObject:
   - component: {fileID: 3054604521180763334}
   - component: {fileID: 6150129395797260598}
   - component: {fileID: 5500217107133784377}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25367,7 +25604,7 @@ GameObject:
   - component: {fileID: 1757482163237487449}
   - component: {fileID: 923801608401133414}
   - component: {fileID: 1292453138207387623}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25949,7 +26186,7 @@ GameObject:
   - component: {fileID: 4891041030107055141}
   - component: {fileID: 156793976451640340}
   - component: {fileID: 3876809927435947494}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26195,6 +26432,7 @@ GameObject:
   - component: {fileID: 6742980632335913822}
   - component: {fileID: 5904453203762864165}
   - component: {fileID: 1867798446854410954}
+  - component: {fileID: 280339439403706944}
   m_Layer: 9
   m_Name: road straight (15)
   m_TagString: Untagged
@@ -26288,6 +26526,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &280339439403706944
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2787458132491086494}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.0055866e-13, z: 16.668755}
+  m_Center: {x: 5.639934e-16, y: 0.1905, z: 9.926582e-16}
 --- !u!1 &2787623369453575761
 GameObject:
   m_ObjectHideFlags: 0
@@ -28038,6 +28297,7 @@ GameObject:
   - component: {fileID: 8661398809141256650}
   - component: {fileID: 1191545263268601434}
   - component: {fileID: 8466377198329014048}
+  - component: {fileID: 8904332994943864266}
   m_Layer: 9
   m_Name: road straight (8)
   m_TagString: Untagged
@@ -28131,6 +28391,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &8904332994943864266
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3081998245177578085}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.1714007e-13, z: 16.668755}
+  m_Center: {x: 0.000030517578, y: 0.1905, z: 0.000015258789}
 --- !u!1 &3099721511273953460
 GameObject:
   m_ObjectHideFlags: 0
@@ -28144,7 +28425,7 @@ GameObject:
   - component: {fileID: 3234102162557416964}
   - component: {fileID: 6201545420299093846}
   - component: {fileID: 8724912171294173908}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (42)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28273,7 +28554,7 @@ GameObject:
   - component: {fileID: 7494819712650045921}
   - component: {fileID: 7072703467171385783}
   - component: {fileID: 6739473366624421857}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (22)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28757,7 +29038,7 @@ GameObject:
   - component: {fileID: 8028646125035919874}
   - component: {fileID: 3434091079147704398}
   - component: {fileID: 7415443507029156161}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29259,7 +29540,7 @@ GameObject:
   - component: {fileID: 4482547304594827100}
   - component: {fileID: 7359495810334731985}
   - component: {fileID: 7777920300518759400}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29386,6 +29667,7 @@ GameObject:
   - component: {fileID: 51870891970526697}
   - component: {fileID: 7912500665124921290}
   - component: {fileID: 533919672502289068}
+  - component: {fileID: 7527457621452514945}
   m_Layer: 9
   m_Name: road straight (19)
   m_TagString: Untagged
@@ -29479,6 +29761,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &7527457621452514945
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3249861071553899025}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.669998, y: 0, z: 16.66875}
+  m_Center: {x: 0, y: 0.1905, z: 0}
 --- !u!1 &3273305903513270461
 GameObject:
   m_ObjectHideFlags: 0
@@ -29491,6 +29794,7 @@ GameObject:
   - component: {fileID: 6246774666922284813}
   - component: {fileID: 2658925151228834197}
   - component: {fileID: 4446388980279701564}
+  - component: {fileID: 2192359151377080746}
   m_Layer: 9
   m_Name: road straight (16)
   m_TagString: Untagged
@@ -29584,6 +29888,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &2192359151377080746
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3273305903513270461}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.0055866e-13, z: 16.668755}
+  m_Center: {x: -0.000030517578, y: 0.1905, z: 9.926582e-16}
 --- !u!1 &3274001996292348251
 GameObject:
   m_ObjectHideFlags: 0
@@ -29724,7 +30049,7 @@ GameObject:
   - component: {fileID: 3285479430398814990}
   - component: {fileID: 7537422598612502475}
   - component: {fileID: 5713630513308641298}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30106,7 +30431,7 @@ GameObject:
   - component: {fileID: 2487691699922369344}
   - component: {fileID: 7783744651784068532}
   - component: {fileID: 6739697814018851582}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30489,7 +30814,7 @@ GameObject:
   - component: {fileID: 3655374330480882534}
   - component: {fileID: 2677561886807092566}
   - component: {fileID: 7414460898767815838}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30616,7 +30941,7 @@ GameObject:
   - component: {fileID: 8883032405101853556}
   - component: {fileID: 5728654668151200351}
   - component: {fileID: 7346813725816135033}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (22)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30745,7 +31070,7 @@ GameObject:
   - component: {fileID: 2987141178751723168}
   - component: {fileID: 5148945404643188087}
   - component: {fileID: 4176309091739917893}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31255,7 +31580,7 @@ GameObject:
   - component: {fileID: 4569703414255942549}
   - component: {fileID: 7308393252845925859}
   - component: {fileID: 5473300980162402566}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (37)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32060,7 +32385,7 @@ GameObject:
   - component: {fileID: 7232330652080551111}
   - component: {fileID: 3768246903146625893}
   - component: {fileID: 9223210596979287583}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (23)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32316,7 +32641,7 @@ GameObject:
   - component: {fileID: 3945427822460595409}
   - component: {fileID: 1759148272841916414}
   - component: {fileID: 1461285673147708334}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33176,7 +33501,7 @@ GameObject:
   - component: {fileID: 3678186240615743351}
   - component: {fileID: 2450191115344677898}
   - component: {fileID: 1928663190086050331}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (59)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33433,7 +33758,7 @@ GameObject:
   - component: {fileID: 1426784834999051797}
   - component: {fileID: 9188934660691926668}
   - component: {fileID: 9097385477316976375}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33686,7 +34011,7 @@ GameObject:
   - component: {fileID: 1937377984657940832}
   - component: {fileID: 6755634350373287422}
   - component: {fileID: 1953056850758827321}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33805,6 +34130,7 @@ GameObject:
   - component: {fileID: 8804184328723366134}
   - component: {fileID: 6016828497990763033}
   - component: {fileID: 9148699267639378715}
+  - component: {fileID: 3355333001973660686}
   m_Layer: 9
   m_Name: road junction (1)
   m_TagString: Untagged
@@ -33898,6 +34224,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &3355333001973660686
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3670548371247397075}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 9.4750874e-14, z: 26.67}
+  m_Center: {x: 0, y: 0.1905, z: 0}
 --- !u!1 &3700500898913924559
 GameObject:
   m_ObjectHideFlags: 0
@@ -34038,7 +34385,7 @@ GameObject:
   - component: {fileID: 5894491925030041432}
   - component: {fileID: 2934059694692829603}
   - component: {fileID: 75254840642376878}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (31)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34167,7 +34514,7 @@ GameObject:
   - component: {fileID: 1351927864658020110}
   - component: {fileID: 8286312346754612446}
   - component: {fileID: 4390433428117495764}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (33)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34296,7 +34643,7 @@ GameObject:
   - component: {fileID: 232178818433969371}
   - component: {fileID: 2772735750406258388}
   - component: {fileID: 4029461664978133659}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (25)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34508,7 +34855,7 @@ GameObject:
   - component: {fileID: 9127088592451972896}
   - component: {fileID: 7197260891585483763}
   - component: {fileID: 6858424550319085472}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (39)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34637,7 +34984,7 @@ GameObject:
   - component: {fileID: 9122048870589142500}
   - component: {fileID: 4297626184181425562}
   - component: {fileID: 1951042536751484778}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (50)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34766,7 +35113,7 @@ GameObject:
   - component: {fileID: 5920566597437724657}
   - component: {fileID: 996497030592974054}
   - component: {fileID: 760813226253419302}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35654,6 +36001,7 @@ GameObject:
   - component: {fileID: 8991774331497347983}
   - component: {fileID: 1894323795233175363}
   - component: {fileID: 4401684294504348453}
+  - component: {fileID: 7859362076883525742}
   m_Layer: 9
   m_Name: road straight (13)
   m_TagString: Untagged
@@ -35747,6 +36095,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &7859362076883525742
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4056058217879020567}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.1714007e-13, z: 16.668755}
+  m_Center: {x: 4.922124e-16, y: 0.1905, z: 9.926582e-16}
 --- !u!1 &4069282928772849172
 GameObject:
   m_ObjectHideFlags: 0
@@ -35760,7 +36129,7 @@ GameObject:
   - component: {fileID: 7028021896758250603}
   - component: {fileID: 8461694976153692841}
   - component: {fileID: 1626139814952476966}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36139,7 +36508,7 @@ GameObject:
   - component: {fileID: 7427797219921541759}
   - component: {fileID: 2493460861323630569}
   - component: {fileID: 426738198100679585}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36386,7 +36755,7 @@ GameObject:
   - component: {fileID: 4036150474725526131}
   - component: {fileID: 3347424419148882097}
   - component: {fileID: 3836121002138369788}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36626,7 +36995,7 @@ GameObject:
   - component: {fileID: 529980084052108136}
   - component: {fileID: 7396732801757984535}
   - component: {fileID: 8842930112025912393}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36751,7 +37120,7 @@ GameObject:
   - component: {fileID: 1451970036715239760}
   - component: {fileID: 15750769810532763}
   - component: {fileID: 8685107653585019804}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37252,7 +37621,7 @@ GameObject:
   - component: {fileID: 4187472790135177697}
   - component: {fileID: 6978153323902974545}
   - component: {fileID: 3896164542874090024}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37379,7 +37748,7 @@ GameObject:
   - component: {fileID: 7607619870295748626}
   - component: {fileID: 5025152414716467790}
   - component: {fileID: 6464646904305770463}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38398,7 +38767,7 @@ GameObject:
   - component: {fileID: 5438928855625583956}
   - component: {fileID: 1535604145651345241}
   - component: {fileID: 4461812288422819238}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38886,7 +39255,7 @@ GameObject:
   - component: {fileID: 4087003651718872962}
   - component: {fileID: 8868498269078060128}
   - component: {fileID: 4323958789358428401}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39269,7 +39638,7 @@ GameObject:
   - component: {fileID: 8075834077169703049}
   - component: {fileID: 75442648573683040}
   - component: {fileID: 350834206812642392}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39906,7 +40275,7 @@ GameObject:
   - component: {fileID: 333234880554760829}
   - component: {fileID: 3801956297517428550}
   - component: {fileID: 2191930874182579110}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (40)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40161,7 +40530,7 @@ GameObject:
   - component: {fileID: 4267422345913570806}
   - component: {fileID: 4243641424227889015}
   m_Layer: 9
-  m_Name: TemporaryTrigger (1)
+  m_Name: Cinematic4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40952,7 +41321,7 @@ GameObject:
   - component: {fileID: 7090653655841068870}
   - component: {fileID: 7969516901286664406}
   - component: {fileID: 7416206834004775470}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41199,7 +41568,7 @@ GameObject:
   - component: {fileID: 8946692516361824582}
   - component: {fileID: 3868188880645958085}
   - component: {fileID: 8057592110527228848}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41326,7 +41695,7 @@ GameObject:
   - component: {fileID: 4086994704488171796}
   - component: {fileID: 3561219728949970989}
   - component: {fileID: 2917521238461354281}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (60)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41455,7 +41824,7 @@ GameObject:
   - component: {fileID: 7198798085827743454}
   - component: {fileID: 1474622529373599188}
   - component: {fileID: 8071258383805292252}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (32)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41582,7 +41951,7 @@ GameObject:
   - component: {fileID: 6016612358898330320}
   - component: {fileID: 5978754388488724152}
   - component: {fileID: 3212004146854752552}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42486,7 +42855,7 @@ GameObject:
   - component: {fileID: 5368834009945065354}
   - component: {fileID: 3763235223058939507}
   - component: {fileID: 8151189518912306576}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42740,7 +43109,7 @@ GameObject:
   - component: {fileID: 6339211420905277951}
   - component: {fileID: 7376112642613150251}
   - component: {fileID: 2478591818772887778}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43176,7 +43545,7 @@ GameObject:
   - component: {fileID: 1334741401840612683}
   - component: {fileID: 7152886833168493661}
   - component: {fileID: 7208767087452324767}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (55)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43305,7 +43674,7 @@ GameObject:
   - component: {fileID: 4850806094267977979}
   - component: {fileID: 7076959236466814115}
   - component: {fileID: 7794399089437160090}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43550,7 +43919,7 @@ GameObject:
   - component: {fileID: 8626410191402227019}
   - component: {fileID: 3452797707062148994}
   - component: {fileID: 4941514538967150622}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44373,6 +44742,7 @@ GameObject:
   - component: {fileID: 2357326622028116285}
   - component: {fileID: 7210945115690107279}
   - component: {fileID: 3813875523506586477}
+  - component: {fileID: 2193469239199344240}
   m_Layer: 9
   m_Name: road junction (2)
   m_TagString: Untagged
@@ -44466,6 +44836,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &2193469239199344240
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5177878576735434953}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 9.4750874e-14, z: 26.67}
+  m_Center: {x: 0.000015258789, y: 0.19048475, z: -0.000030517578}
 --- !u!1 &5180751478507963360
 GameObject:
   m_ObjectHideFlags: 0
@@ -44606,7 +44997,7 @@ GameObject:
   - component: {fileID: 72203043427579160}
   - component: {fileID: 5469647049220415498}
   - component: {fileID: 192544820793417734}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44733,7 +45124,7 @@ GameObject:
   - component: {fileID: 8123589015901405414}
   - component: {fileID: 3385591013846879812}
   - component: {fileID: 8213006738047815284}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44860,7 +45251,7 @@ GameObject:
   - component: {fileID: 4054736724406574470}
   - component: {fileID: 1564095452170726803}
   - component: {fileID: 5740865172733985323}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45114,7 +45505,7 @@ GameObject:
   - component: {fileID: 3911355793254403241}
   - component: {fileID: 1947967790181022178}
   - component: {fileID: 7926411578958160184}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46201,7 +46592,7 @@ GameObject:
   - component: {fileID: 6364396712524727352}
   - component: {fileID: 2700256318856228425}
   - component: {fileID: 8104503484884968009}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46584,7 +46975,7 @@ GameObject:
   - component: {fileID: 5596925072829315597}
   - component: {fileID: 961551465267792615}
   - component: {fileID: 4586147218134497011}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47552,6 +47943,7 @@ GameObject:
   - component: {fileID: 2199681156017495294}
   - component: {fileID: 745793049164868123}
   - component: {fileID: 248055474197812575}
+  - component: {fileID: 7196315586745367584}
   m_Layer: 9
   m_Name: road straight (17)
   m_TagString: Untagged
@@ -47645,6 +48037,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &7196315586745367584
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5748909626070325708}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.3845902e-13, z: 16.668755}
+  m_Center: {x: 0.000030517578, y: 0.1905, z: 0.0000076293945}
 --- !u!1 &5760142165979983025
 GameObject:
   m_ObjectHideFlags: 0
@@ -47903,7 +48316,7 @@ GameObject:
   - component: {fileID: 952119519735400610}
   - component: {fileID: 4202056411464345980}
   - component: {fileID: 5381246713881659599}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48031,7 +48444,7 @@ GameObject:
   - component: {fileID: 3081147389942131255}
   - component: {fileID: 8679937789481368447}
   - component: {fileID: 6882814361141718052}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48158,7 +48571,7 @@ GameObject:
   - component: {fileID: 4112592624882051577}
   - component: {fileID: 5272407671828230102}
   - component: {fileID: 8757543508702004738}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48286,7 +48699,7 @@ GameObject:
   - component: {fileID: 5120650068168991426}
   - component: {fileID: 5312183956334524648}
   - component: {fileID: 301596334231175921}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48542,7 +48955,7 @@ GameObject:
   - component: {fileID: 9001494181625353416}
   - component: {fileID: 2569420895905912763}
   - component: {fileID: 2549245448956517770}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (46)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48985,7 +49398,7 @@ GameObject:
   - component: {fileID: 9123873707407150636}
   - component: {fileID: 8908929484906359028}
   - component: {fileID: 3916651178631996279}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49113,7 +49526,7 @@ GameObject:
   - component: {fileID: 1165201540392531943}
   - component: {fileID: 6763697386632278931}
   - component: {fileID: 5735331779346301255}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49621,7 +50034,7 @@ GameObject:
   - component: {fileID: 6085055224225159023}
   - component: {fileID: 1339952995708488035}
   - component: {fileID: 3743207174147840553}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (27)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49748,7 +50161,7 @@ GameObject:
   - component: {fileID: 807599088696145633}
   - component: {fileID: 1992051851105850210}
   - component: {fileID: 981001921826167264}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50123,7 +50536,7 @@ GameObject:
   - component: {fileID: 5179319249799270374}
   - component: {fileID: 9051049106075894679}
   - component: {fileID: 6808396478218466128}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (58)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50379,7 +50792,7 @@ GameObject:
   - component: {fileID: 3754585064378320610}
   - component: {fileID: 5793131881748838086}
   - component: {fileID: 3414207168300713612}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50635,7 +51048,7 @@ GameObject:
   - component: {fileID: 6348862855706778832}
   - component: {fileID: 8669132120509930095}
   - component: {fileID: 935447771509164057}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50889,7 +51302,7 @@ GameObject:
   - component: {fileID: 1645187956959961294}
   - component: {fileID: 935392578046788095}
   - component: {fileID: 3849709018042577031}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51017,7 +51430,7 @@ GameObject:
   - component: {fileID: 4745049898615994919}
   - component: {fileID: 2652016601378764972}
   - component: {fileID: 5198624963190661565}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (24)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51264,7 +51677,7 @@ GameObject:
   - component: {fileID: 6400418473004045681}
   - component: {fileID: 2491098174436060490}
   - component: {fileID: 1561618620892614277}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51518,7 +51931,7 @@ GameObject:
   - component: {fileID: 4203915855732444202}
   - component: {fileID: 3485629933107798171}
   - component: {fileID: 6734300765722918021}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (54)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51773,7 +52186,7 @@ GameObject:
   - component: {fileID: 2874078634577821336}
   - component: {fileID: 6734416598404580549}
   m_Layer: 9
-  m_Name: TemporaryTrigger
+  m_Name: EntranceTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51847,7 +52260,7 @@ GameObject:
   - component: {fileID: 4536799719073429519}
   - component: {fileID: 3601453720667169234}
   - component: {fileID: 5629172926707513855}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52230,7 +52643,7 @@ GameObject:
   - component: {fileID: 7852248429622676806}
   - component: {fileID: 5759167418430088697}
   - component: {fileID: 6559391616806643895}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52985,7 +53398,7 @@ GameObject:
   - component: {fileID: 2589978759353200560}
   - component: {fileID: 7387836798666511100}
   - component: {fileID: 2545983705392692485}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53554,7 +53967,7 @@ GameObject:
   - component: {fileID: 2028336331263738314}
   - component: {fileID: 3347981082473904731}
   - component: {fileID: 8310953020080734412}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54053,7 +54466,7 @@ GameObject:
   - component: {fileID: 3355001877058047664}
   - component: {fileID: 2906319819104856821}
   - component: {fileID: 8202301879524072286}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54300,7 +54713,7 @@ GameObject:
   - component: {fileID: 4194457659959370735}
   - component: {fileID: 6545874918497354847}
   - component: {fileID: 1920395376122577355}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54934,6 +55347,7 @@ GameObject:
   - component: {fileID: 8536461679192909052}
   - component: {fileID: 4804979267307619413}
   - component: {fileID: 5049860796897970521}
+  - component: {fileID: 6202242634194106997}
   m_Layer: 9
   m_Name: road straight (12)
   m_TagString: Untagged
@@ -55027,6 +55441,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &6202242634194106997
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6435246710471183860}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.1714007e-13, z: 16.668755}
+  m_Center: {x: 4.922124e-16, y: 0.1905, z: 9.926582e-16}
 --- !u!1 &6440762663686411477
 GameObject:
   m_ObjectHideFlags: 0
@@ -55760,7 +56195,7 @@ GameObject:
   - component: {fileID: 1857788474431768903}
   - component: {fileID: 6779316954720904802}
   - component: {fileID: 4718201864895879872}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56342,7 +56777,7 @@ GameObject:
   - component: {fileID: 4344034974111725846}
   - component: {fileID: 4080571924753524691}
   - component: {fileID: 4829647393424907784}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56471,7 +56906,7 @@ GameObject:
   - component: {fileID: 9157939563001181089}
   - component: {fileID: 8084741979490174128}
   - component: {fileID: 2246061656093509138}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56970,7 +57405,7 @@ GameObject:
   - component: {fileID: 7019206451739076750}
   - component: {fileID: 8969347747021125028}
   - component: {fileID: 3476176585649053566}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59050,7 +59485,7 @@ GameObject:
   - component: {fileID: 1535422303299834208}
   - component: {fileID: 1297320257905707677}
   - component: {fileID: 5628426483189536162}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59319,7 +59754,7 @@ GameObject:
   - component: {fileID: 8221054488146263960}
   - component: {fileID: 1225621325076671135}
   - component: {fileID: 3810112215315558308}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59448,7 +59883,7 @@ GameObject:
   - component: {fileID: 5129921103032567466}
   - component: {fileID: 5929863307855253505}
   - component: {fileID: 8181477427225843410}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59829,7 +60264,7 @@ GameObject:
   - component: {fileID: 6755519926676490126}
   - component: {fileID: 3369902509915281591}
   - component: {fileID: 3549104821822949849}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (47)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59958,7 +60393,7 @@ GameObject:
   - component: {fileID: 7202714130355542896}
   - component: {fileID: 7710620136902377081}
   - component: {fileID: 4055247345018188122}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60490,7 +60925,7 @@ GameObject:
   - component: {fileID: 6731652414763116196}
   - component: {fileID: 4348068363550568214}
   - component: {fileID: 4355474182970257309}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61427,7 +61862,7 @@ GameObject:
   - component: {fileID: 3586033090245924882}
   - component: {fileID: 7301686559719453361}
   - component: {fileID: 7329167376794864969}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (29)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62401,7 +62836,7 @@ GameObject:
   - component: {fileID: 6876139657360725787}
   - component: {fileID: 1300582238925492379}
   - component: {fileID: 7504833454007929555}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62780,7 +63215,7 @@ GameObject:
   - component: {fileID: 7792279603705327763}
   - component: {fileID: 1126549311585393769}
   - component: {fileID: 2465853489242218579}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63027,7 +63462,7 @@ GameObject:
   - component: {fileID: 7638971314881479085}
   - component: {fileID: 1651667036137535059}
   - component: {fileID: 5970995983308716905}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (06)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63239,7 +63674,7 @@ GameObject:
   - component: {fileID: 9200891399338160799}
   - component: {fileID: 6983997197985622276}
   - component: {fileID: 2017888916859951570}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63579,7 +64014,7 @@ GameObject:
   - component: {fileID: 2174384158423075976}
   - component: {fileID: 4828641576154722807}
   - component: {fileID: 6846001306622794126}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63857,7 +64292,7 @@ GameObject:
   - component: {fileID: 4329097545453657647}
   - component: {fileID: 8207248795323347943}
   - component: {fileID: 4094433982113439120}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64320,6 +64755,7 @@ GameObject:
   - component: {fileID: 3837542738025415788}
   - component: {fileID: 4396241221065225259}
   - component: {fileID: 1187417628496439693}
+  - component: {fileID: 3571863422791175113}
   m_Layer: 9
   m_Name: road junction (3)
   m_TagString: Untagged
@@ -64413,6 +64849,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &3571863422791175113
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7653542667115831959}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 9.4750874e-14, z: 26.67}
+  m_Center: {x: 0, y: 0.19048475, z: -0.000030517578}
 --- !u!1 &7656795246095356495
 GameObject:
   m_ObjectHideFlags: 0
@@ -64426,7 +64883,7 @@ GameObject:
   - component: {fileID: 8138858442707856513}
   - component: {fileID: 8976874601766930031}
   - component: {fileID: 8022564874271471408}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64680,7 +65137,7 @@ GameObject:
   - component: {fileID: 6228715704992957210}
   - component: {fileID: 5430339037744712747}
   - component: {fileID: 4191348446265730360}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64890,7 +65347,7 @@ GameObject:
   - component: {fileID: 4878495563134002859}
   - component: {fileID: 2405310997657609677}
   - component: {fileID: 1871656524300818075}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65146,7 +65603,7 @@ GameObject:
   - component: {fileID: 5321623162827639034}
   - component: {fileID: 2976588613298728646}
   - component: {fileID: 2505803718980806990}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65356,7 +65813,7 @@ GameObject:
   - component: {fileID: 979969718439662751}
   - component: {fileID: 2517994806567460696}
   - component: {fileID: 5082612650747964836}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65470,6 +65927,89 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.74, y: 11.887096, z: 0.59}
   m_Center: {x: -0.090734236, y: 0.61, z: 0.032442328}
+--- !u!1 &7735713505691276945
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5852430562353767293}
+  - component: {fileID: 8712289268179737212}
+  - component: {fileID: 1436793492724628121}
+  m_Layer: 9
+  m_Name: Quad (10)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5852430562353767293
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7735713505691276945}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -6.11, y: 0.3044, z: 9.556}
+  m_LocalScale: {x: 25, y: 7.1219997, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8989956357453800680}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!33 &8712289268179737212
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7735713505691276945}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &1436793492724628121
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7735713505691276945}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f87a467303797504ebc7b99319063f66, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7868178413417881224
 GameObject:
   m_ObjectHideFlags: 0
@@ -65610,7 +66150,7 @@ GameObject:
   - component: {fileID: 5677586042077504806}
   - component: {fileID: 8645331201494681429}
   - component: {fileID: 2760934556002654560}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65737,7 +66277,7 @@ GameObject:
   - component: {fileID: 279811102013172337}
   - component: {fileID: 3812667390957851445}
   - component: {fileID: 4541589667010524430}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66499,7 +67039,7 @@ GameObject:
   - component: {fileID: 7812541902061508810}
   - component: {fileID: 6101034478546716006}
   - component: {fileID: 2999880135414716320}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66629,7 +67169,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4593382991502494863
 Transform:
   m_ObjectHideFlags: 0
@@ -66668,7 +67208,7 @@ GameObject:
   - component: {fileID: 1476084196148797226}
   - component: {fileID: 6290987268081085998}
   - component: {fileID: 3216922477208873539}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67775,7 +68315,7 @@ GameObject:
   - component: {fileID: 5038129682094252396}
   - component: {fileID: 4799487690226921556}
   m_Layer: 9
-  m_Name: TemporaryTrigger (2)
+  m_Name: EntranceTrigger (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67853,7 +68393,7 @@ GameObject:
   - component: {fileID: 7376014897512526971}
   - component: {fileID: 2946329754560654073}
   - component: {fileID: 3165994148168514829}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70434,7 +70974,7 @@ GameObject:
   - component: {fileID: 7464792946054670426}
   - component: {fileID: 2707155265695303884}
   - component: {fileID: 6775726425783334955}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (52)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70561,7 +71101,7 @@ GameObject:
   - component: {fileID: 4517568573530169329}
   - component: {fileID: 2431887653461428958}
   - component: {fileID: 1566542832265493366}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70680,6 +71220,7 @@ GameObject:
   - component: {fileID: 2423553321711483053}
   - component: {fileID: 5737927283324592768}
   - component: {fileID: 3242764206225119232}
+  - component: {fileID: 6085519047673585224}
   m_Layer: 9
   m_Name: road straight (7)
   m_TagString: Untagged
@@ -70773,6 +71314,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &6085519047673585224
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8415333812594713063}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 5.92193e-14, z: 16.66875}
+  m_Center: {x: 0, y: 0.1905, z: 0}
 --- !u!1 &8415985248425888537
 GameObject:
   m_ObjectHideFlags: 0
@@ -70994,7 +71556,7 @@ GameObject:
   - component: {fileID: 4022233943531855950}
   - component: {fileID: 4407113977579991387}
   - component: {fileID: 3997809521788189285}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71239,7 +71801,7 @@ GameObject:
   - component: {fileID: 8088044768093498654}
   - component: {fileID: 5742048999764774419}
   - component: {fileID: 426020746518645154}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71355,7 +71917,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8517646903487474526}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71545,7 +72107,7 @@ GameObject:
   - component: {fileID: 5557652513973982618}
   - component: {fileID: 7444774688792349799}
   - component: {fileID: 7952754090265413345}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (08)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71672,7 +72234,7 @@ GameObject:
   - component: {fileID: 3372255009993598352}
   - component: {fileID: 5498016447238539525}
   - component: {fileID: 8155784043651341936}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71919,7 +72481,7 @@ GameObject:
   - component: {fileID: 7904853323313957785}
   - component: {fileID: 1479771111453280423}
   - component: {fileID: 2827159299466128410}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72512,7 +73074,7 @@ GameObject:
   - component: {fileID: 7919517604648934373}
   - component: {fileID: 4607103841974396550}
   - component: {fileID: 4266819124025356179}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72850,7 +73412,7 @@ GameObject:
   - component: {fileID: 2970370354919320676}
   - component: {fileID: 783265595928048400}
   - component: {fileID: 3802577827482452115}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73485,7 +74047,7 @@ GameObject:
   - component: {fileID: 4556202629188287480}
   - component: {fileID: 5161574214539926022}
   - component: {fileID: 5419017397772664121}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74374,7 +74936,7 @@ GameObject:
   - component: {fileID: 4747395616680335133}
   - component: {fileID: 2753849124715754362}
   - component: {fileID: 7717028250439128207}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74628,7 +75190,7 @@ GameObject:
   - component: {fileID: 8132234212762163171}
   - component: {fileID: 8562360400907948861}
   - component: {fileID: 9075441559941397201}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (45)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74757,7 +75319,7 @@ GameObject:
   - component: {fileID: 2516840565575034500}
   - component: {fileID: 3891098425352228400}
   - component: {fileID: 3132617905826924558}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75488,6 +76050,7 @@ GameObject:
   - component: {fileID: 1586191811451663955}
   - component: {fileID: 9003891039339001608}
   - component: {fileID: 1790417995791166920}
+  - component: {fileID: 4352948758458625166}
   m_Layer: 9
   m_Name: road straight (4)
   m_TagString: Untagged
@@ -75581,6 +76144,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &4352948758458625166
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8926879539670216377}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.67, y: 5.92193e-14, z: 16.66875}
+  m_Center: {x: 0, y: 0.19048475, z: -0.000030517578}
 --- !u!1 &8946930113335060791
 GameObject:
   m_ObjectHideFlags: 0
@@ -75594,7 +76178,7 @@ GameObject:
   - component: {fileID: 9142999364871018772}
   - component: {fileID: 8755943197157498739}
   - component: {fileID: 663989742347617772}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: street light1 (24)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76102,7 +76686,7 @@ GameObject:
   - component: {fileID: 193530640202698976}
   - component: {fileID: 598641921555526550}
   m_Layer: 9
-  m_Name: TemporaryTrigger (4)
+  m_Name: EntranceTrigger (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76433,7 +77017,7 @@ GameObject:
   - component: {fileID: 2375517355881420913}
   - component: {fileID: 4463725943766574847}
   - component: {fileID: 634541394279685297}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76553,7 +77137,7 @@ GameObject:
   - component: {fileID: 182743107915863142}
   - component: {fileID: 4141515262685521836}
   - component: {fileID: 1956770519961560461}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77060,6 +77644,7 @@ GameObject:
   - component: {fileID: 4482631294596098066}
   - component: {fileID: 4607272798045734083}
   - component: {fileID: 2052219459024022172}
+  - component: {fileID: 7157960308905994873}
   m_Layer: 9
   m_Name: road straight (18)
   m_TagString: Untagged
@@ -77153,6 +77738,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &7157960308905994873
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9119546829928838142}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 26.670006, y: 2.3845902e-13, z: 16.668755}
+  m_Center: {x: 0.000030517578, y: 0.1905, z: 9.926582e-16}
 --- !u!1 &9131579171762262038
 GameObject:
   m_ObjectHideFlags: 0
@@ -77166,7 +77772,7 @@ GameObject:
   - component: {fileID: 285637421169109375}
   - component: {fileID: 5251117017471677522}
   - component: {fileID: 2406827029771771180}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77293,7 +77899,7 @@ GameObject:
   - component: {fileID: 1236389989578236549}
   - component: {fileID: 1236082673912845239}
   - component: {fileID: 5060878583649838282}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77823,7 +78429,7 @@ GameObject:
   - component: {fileID: 6344116689639512983}
   - component: {fileID: 5212744483671783246}
   - component: {fileID: 6377774348487525598}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (51)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78079,7 +78685,7 @@ GameObject:
   - component: {fileID: 2873674357066206673}
   - component: {fileID: 5903706463364168458}
   - component: {fileID: 7138056738869349245}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78206,7 +78812,7 @@ GameObject:
   - component: {fileID: 4465587307015419768}
   - component: {fileID: 6739611839433656001}
   - component: {fileID: 8604324528378037360}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: tree bed4 (53)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78423,7 +79029,7 @@ PrefabInstance:
     - target: {fileID: 182213979069195326, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 732735365918875295, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78453,7 +79059,7 @@ PrefabInstance:
     - target: {fileID: 1069352446809888721, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 1069352446809888721, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78563,7 +79169,7 @@ PrefabInstance:
     - target: {fileID: 1607656910462390146, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 1646889002876307799, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78688,7 +79294,7 @@ PrefabInstance:
     - target: {fileID: 3092004912696142832, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 3509964745585614161, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78703,7 +79309,7 @@ PrefabInstance:
     - target: {fileID: 3634848025124828067, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 3634848025124828067, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78803,7 +79409,7 @@ PrefabInstance:
     - target: {fileID: 4016054682531159949, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 4297646017045124697, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78823,7 +79429,7 @@ PrefabInstance:
     - target: {fileID: 4649928243741346269, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 4649928243741346269, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78938,7 +79544,7 @@ PrefabInstance:
     - target: {fileID: 4993834925603579379, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 5195184384900271410, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -78978,7 +79584,7 @@ PrefabInstance:
     - target: {fileID: 6349877608273809806, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 6627257971164739866, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79018,7 +79624,7 @@ PrefabInstance:
     - target: {fileID: 7864396383863302717, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 7953980271887801113, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79028,7 +79634,7 @@ PrefabInstance:
     - target: {fileID: 8483484047787799150, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 8483484047787799150, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79128,7 +79734,7 @@ PrefabInstance:
     - target: {fileID: 8785154046427021697, guid: 4727fef33326508429057101f0b64887,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 1783
+      value: 1810
       objectReference: {fileID: 0}
     - target: {fileID: 8824362040163281665, guid: 4727fef33326508429057101f0b64887,
         type: 3}
@@ -79208,6 +79814,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.609001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1008934513227733130, guid: 54558ee34de7d0941bc187f715678bd2,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 19.6325
+      objectReference: {fileID: 0}
+    - target: {fileID: 1008934513227733130, guid: 54558ee34de7d0941bc187f715678bd2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 12.2392
       objectReference: {fileID: 0}
     - target: {fileID: 1441272024559494894, guid: 54558ee34de7d0941bc187f715678bd2,
         type: 3}
@@ -79356,6 +79972,14 @@ PrefabInstance:
     - {fileID: 4432939484685228505, guid: 54558ee34de7d0941bc187f715678bd2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1441272024559494894, guid: 54558ee34de7d0941bc187f715678bd2,
+        type: 3}
+      insertIndex: 5
+      addedObject: {fileID: 6089240863380267611}
+    - targetCorrespondingSourceObject: {fileID: 1441272024559494894, guid: 54558ee34de7d0941bc187f715678bd2,
+        type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 5852430562353767293}
     - targetCorrespondingSourceObject: {fileID: 1441272024559494894, guid: 54558ee34de7d0941bc187f715678bd2,
         type: 3}
       insertIndex: -1

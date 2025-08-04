@@ -1,18 +1,15 @@
 using UnityEngine;
 
 /// <summary>
-/// 플레이어가 착지했을 때 대화 UI를 표시하는 장애물
+/// 플레이어가 하드 착지했을 때 대화 UI를 표시하는 장애물
 /// </summary>
-public class SaveObstacle : BaseObstacle
+public class DialogueObstacle : BaseObstacle
 {
-    [Header("착지 대화 설정")]
+    [Header("하드 착지 대화 설정")]
     [Tooltip("플레이어 태그")]
     [SerializeField] private string _playerTag = "Player";
     
-    [Tooltip("일반 착지에도 대화 UI를 표시할지 여부")]
-    [SerializeField] private bool _activateOnNormalLanding = false;
-    
-    [Tooltip("하드 착지에만 대화 UI를 표시할지 여부")]
+    [Tooltip("하드 착지 시 대화 UI를 표시할지 여부")]
     [SerializeField] private bool _activateOnHardLanding = true;
     
     private PlayerAnimationEventHandler _playerAnimEventHandler;
@@ -28,12 +25,7 @@ public class SaveObstacle : BaseObstacle
             {
                 _playerAnimEventHandler = player.AnimationEventHandler;
                 
-                // 이벤트 구독
-                if (_activateOnNormalLanding)
-                {
-                    _playerAnimEventHandler.OnLandingAnimationEvent += HandleLandingEvent;
-                }
-                
+                // 하드 착지 이벤트만 구독
                 if (_activateOnHardLanding)
                 {
                     _playerAnimEventHandler.OnLandingHardAnimationEvent += HandleHardLandingEvent;
@@ -49,12 +41,7 @@ public class SaveObstacle : BaseObstacle
         // 플레이어 태그 확인
         if (other.CompareTag(_playerTag) && _playerAnimEventHandler != null)
         {
-            // 이벤트 구독 해제
-            if (_activateOnNormalLanding)
-            {
-                _playerAnimEventHandler.OnLandingAnimationEvent -= HandleLandingEvent;
-            }
-            
+            // 하드 착지 이벤트 구독 해제
             if (_activateOnHardLanding)
             {
                 _playerAnimEventHandler.OnLandingHardAnimationEvent -= HandleHardLandingEvent;
@@ -65,22 +52,10 @@ public class SaveObstacle : BaseObstacle
         }
     }
     
-    private void HandleLandingEvent(PlayerAnimationEventHandler eventHandler)
-    {
-        // 일반 착지 시 대화 UI 표시
-        GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Low);
-    }
-    
     private void HandleHardLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
         // 하드 착지 시 대화 UI 표시
         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_High);
-    }
-
-    private void HandlemiddleLandingEvent(PlayerAnimationEventHandler eventHandler)
-    {
-        // 중간 높이 착지 시 대화 UI 표시
-        GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Middle);
     }
     
     
@@ -88,17 +63,9 @@ public class SaveObstacle : BaseObstacle
     private void OnDestroy()
     {
         // 이벤트 구독 해제 확인
-        if (_playerAnimEventHandler != null)
+        if (_playerAnimEventHandler != null && _activateOnHardLanding)
         {
-            if (_activateOnNormalLanding)
-            {
-                _playerAnimEventHandler.OnLandingAnimationEvent -= HandleLandingEvent;
-            }
-            
-            if (_activateOnHardLanding)
-            {
-                _playerAnimEventHandler.OnLandingHardAnimationEvent -= HandleHardLandingEvent;
-            }
+            _playerAnimEventHandler.OnLandingHardAnimationEvent -= HandleHardLandingEvent;
         }
     }
 } 
