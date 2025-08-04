@@ -13,7 +13,10 @@ public class StageTransitionTrigger : MonoBehaviour
     [SerializeField] private ToggleObject[] objectsToToggle;
 
     private bool hasTriggered = false;
-
+    private void OnEnable()
+    {
+        hasTriggered = false;
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered || !other.CompareTag("Player")) return;

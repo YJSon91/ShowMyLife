@@ -14,9 +14,25 @@ public class EnterStage2 : MonoBehaviour
 
     private bool hasTriggered = false;
 
+    private void OnEnable()
+    {
+        hasTriggered = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered || !other.CompareTag("Player")) return;
+        Trigger(other);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (hasTriggered || !other.CompareTag("Player")) return;
+        Trigger(other);
+    }
+
+    private void Trigger(Collider other)
+    {
         hasTriggered = true;
 
         if (objectToActivate2 != null)
@@ -32,7 +48,7 @@ public class EnterStage2 : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    //범위표시
+    // 범위 표시
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(0.5f, 0.8f, 1f, 0.4f);
