@@ -1,23 +1,23 @@
 using UnityEngine;
 
 /// <summary>
-/// 플레이어가 착지했을 때 세이브 기능을 제공하는 장애물
+/// 플레이어가 착지했을 때 대화 UI를 표시하는 장애물
 /// </summary>
-public class SaveObstacle : BaseObstacle
+public class DialogueObstacle : BaseObstacle
 {
-    [Header("세이브 설정")]
+    [Header("착지 대화 설정")]
     [Tooltip("플레이어 레이어 마스크")]
     [SerializeField] private LayerMask _playerLayerMask;
     
-    [Tooltip("일반 착지에도 세이브 UI를 표시할지 여부")]
+    [Tooltip("일반 착지에도 대화 UI를 표시할지 여부")]
     [SerializeField] private bool _activateOnNormalLanding = true;
     
-    [Tooltip("하드 착지에만 세이브 UI를 표시할지 여부")]
+    [Tooltip("하드 착지에만 대화 UI를 표시할지 여부")]
     [SerializeField] private bool _activateOnHardLanding = true;
     
     private PlayerAnimationEventHandler _playerAnimEventHandler;
     
-    private void OnTriggerEnter(Collider other)
+    protected override void OnTriggerEnter(Collider other)
     {
         // 플레이어 레이어 확인
         if (((1 << other.gameObject.layer) & _playerLayerMask.value) != 0)
@@ -39,12 +39,12 @@ public class SaveObstacle : BaseObstacle
                     _playerAnimEventHandler.OnLandingHardAnimationEvent += HandleHardLandingEvent;
                 }
                 
-                Debug.Log("플레이어가 세이브 발판에 들어왔습니다.");
+                Debug.Log("플레이어가 대화 발판에 들어왔습니다.");
             }
         }
     }
     
-    private void OnTriggerExit(Collider other)
+    protected override void OnTriggerExit(Collider other)
     {
         // 플레이어 레이어 확인
         if (((1 << other.gameObject.layer) & _playerLayerMask.value) != 0 && _playerAnimEventHandler != null)
@@ -61,25 +61,25 @@ public class SaveObstacle : BaseObstacle
             }
             
             _playerAnimEventHandler = null;
-            Debug.Log("플레이어가 세이브 발판에서 나갔습니다.");
+            Debug.Log("플레이어가 대화 발판에서 나갔습니다.");
         }
     }
     
     private void HandleLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
-        // 일반 착지 시 세이브 UI 표시
+        // 일반 착지 시 대화 UI 표시
         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Low);
     }
     
     private void HandleHardLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
-        // 하드 착지 시 세이브 UI 표시
+        // 하드 착지 시 대화 UI 표시
         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_High);
     }
 
     private void HandlemiddleLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
-        // 일반 착지 시 세이브 UI 표시
+        // 중간 높이 착지 시 대화 UI 표시
         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Middle);
     }
     
