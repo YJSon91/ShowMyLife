@@ -3,74 +3,74 @@ using UnityEngine;
 /// <summary>
 /// 플레이어가 착지했을 때 대화 UI를 표시하는 장애물
 /// </summary>
-public class DSaveObstacle : BaseObstacle
+public class SaveObstacle : BaseObstacle
 {
     [Header("착지 대화 설정")]
-    [Tooltip("플레이어 레이어 마스크")]
-    [SerializeField] private LayerMask _playerLayerMask;
-
+    [Tooltip("플레이어 태그")]
+    [SerializeField] private string _playerTag = "Player";
+    
     [Tooltip("일반 착지에도 대화 UI를 표시할지 여부")]
-    [SerializeField] private bool _activateOnNormalLanding = true;
-
+    [SerializeField] private bool _activateOnNormalLanding = false;
+    
     [Tooltip("하드 착지에만 대화 UI를 표시할지 여부")]
     [SerializeField] private bool _activateOnHardLanding = true;
-
+    
     private PlayerAnimationEventHandler _playerAnimEventHandler;
-
+    
     protected override void OnTriggerEnter(Collider other)
     {
-        // 플레이어 레이어 확인
-        if (((1 << other.gameObject.layer) & _playerLayerMask.value) != 0)
+        // 플레이어 태그 확인
+        if (other.CompareTag(_playerTag))
         {
             // 플레이어의 애니메이션 이벤트 핸들러 컴포넌트 가져오기
             Player player = other.GetComponentInParent<Player>();
             if (player != null && player.AnimationEventHandler != null)
             {
                 _playerAnimEventHandler = player.AnimationEventHandler;
-
+                
                 // 이벤트 구독
                 if (_activateOnNormalLanding)
                 {
                     _playerAnimEventHandler.OnLandingAnimationEvent += HandleLandingEvent;
                 }
-
+                
                 if (_activateOnHardLanding)
                 {
                     _playerAnimEventHandler.OnLandingHardAnimationEvent += HandleHardLandingEvent;
                 }
-
+                
                 Debug.Log("플레이어가 대화 발판에 들어왔습니다.");
             }
         }
     }
-
+    
     protected override void OnTriggerExit(Collider other)
     {
-        // 플레이어 레이어 확인
-        if (((1 << other.gameObject.layer) & _playerLayerMask.value) != 0 && _playerAnimEventHandler != null)
+        // 플레이어 태그 확인
+        if (other.CompareTag(_playerTag) && _playerAnimEventHandler != null)
         {
             // 이벤트 구독 해제
             if (_activateOnNormalLanding)
             {
                 _playerAnimEventHandler.OnLandingAnimationEvent -= HandleLandingEvent;
             }
-
+            
             if (_activateOnHardLanding)
             {
                 _playerAnimEventHandler.OnLandingHardAnimationEvent -= HandleHardLandingEvent;
             }
-
+            
             _playerAnimEventHandler = null;
             Debug.Log("플레이어가 대화 발판에서 나갔습니다.");
         }
     }
-
+    
     private void HandleLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
         // 일반 착지 시 대화 UI 표시
         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Low);
     }
-
+    
     private void HandleHardLandingEvent(PlayerAnimationEventHandler eventHandler)
     {
         // 하드 착지 시 대화 UI 표시
@@ -82,9 +82,9 @@ public class DSaveObstacle : BaseObstacle
         // 중간 높이 착지 시 대화 UI 표시
         GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_Middle);
     }
-
-
-
+    
+    
+    
     private void OnDestroy()
     {
         // 이벤트 구독 해제 확인
@@ -94,11 +94,11 @@ public class DSaveObstacle : BaseObstacle
             {
                 _playerAnimEventHandler.OnLandingAnimationEvent -= HandleLandingEvent;
             }
-
+            
             if (_activateOnHardLanding)
             {
                 _playerAnimEventHandler.OnLandingHardAnimationEvent -= HandleHardLandingEvent;
             }
         }
     }
-}
+} 
