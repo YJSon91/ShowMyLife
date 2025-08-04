@@ -3,14 +3,14 @@ using UnityEngine;
 /// <summary>
 /// 플레이어가 착지했을 때 대화 UI를 표시하는 장애물
 /// </summary>
-public class DialogueObstacle : BaseObstacle
+public class SaveObstacle : BaseObstacle
 {
     [Header("착지 대화 설정")]
-    [Tooltip("플레이어 레이어 마스크")]
-    [SerializeField] private LayerMask _playerLayerMask;
+    [Tooltip("플레이어 태그")]
+    [SerializeField] private string _playerTag = "Player";
     
     [Tooltip("일반 착지에도 대화 UI를 표시할지 여부")]
-    [SerializeField] private bool _activateOnNormalLanding = true;
+    [SerializeField] private bool _activateOnNormalLanding = false;
     
     [Tooltip("하드 착지에만 대화 UI를 표시할지 여부")]
     [SerializeField] private bool _activateOnHardLanding = true;
@@ -19,8 +19,8 @@ public class DialogueObstacle : BaseObstacle
     
     protected override void OnTriggerEnter(Collider other)
     {
-        // 플레이어 레이어 확인
-        if (((1 << other.gameObject.layer) & _playerLayerMask.value) != 0)
+        // 플레이어 태그 확인
+        if (other.CompareTag(_playerTag))
         {
             // 플레이어의 애니메이션 이벤트 핸들러 컴포넌트 가져오기
             Player player = other.GetComponentInParent<Player>();
@@ -46,8 +46,8 @@ public class DialogueObstacle : BaseObstacle
     
     protected override void OnTriggerExit(Collider other)
     {
-        // 플레이어 레이어 확인
-        if (((1 << other.gameObject.layer) & _playerLayerMask.value) != 0 && _playerAnimEventHandler != null)
+        // 플레이어 태그 확인
+        if (other.CompareTag(_playerTag) && _playerAnimEventHandler != null)
         {
             // 이벤트 구독 해제
             if (_activateOnNormalLanding)
