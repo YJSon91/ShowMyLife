@@ -466,6 +466,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 662609922129234921}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &278676548 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8989956357453800680, guid: 390d87f6cad1129409e08f27c1bccc2c,
+    type: 3}
+  m_PrefabInstance: {fileID: 3595449247787097475}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &409373448
 Mesh:
   m_ObjectHideFlags: 0
@@ -2638,6 +2644,89 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1646446640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1646446641}
+  - component: {fileID: 1646446643}
+  - component: {fileID: 1646446642}
+  m_Layer: 9
+  m_Name: Quad (10)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1646446641
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646446640}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -6.11, y: 0.3044, z: 9.556}
+  m_LocalScale: {x: 25, y: 7.1219997, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 278676548}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!23 &1646446642
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646446640}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f87a467303797504ebc7b99319063f66, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1646446643
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646446640}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &1689875666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5348,6 +5437,16 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 737396974}
+    - target: {fileID: 7404661538668010124, guid: 390d87f6cad1129409e08f27c1bccc2c,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 19.6325
+      objectReference: {fileID: 0}
+    - target: {fileID: 7404661538668010124, guid: 390d87f6cad1129409e08f27c1bccc2c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 12.2392
+      objectReference: {fileID: 0}
     - target: {fileID: 7946060319214146284, guid: 390d87f6cad1129409e08f27c1bccc2c,
         type: 3}
       propertyPath: m_Name
@@ -5365,7 +5464,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8989956357453800680, guid: 390d87f6cad1129409e08f27c1bccc2c,
+        type: 3}
+      insertIndex: 5
+      addedObject: {fileID: 1646446641}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 390d87f6cad1129409e08f27c1bccc2c, type: 3}
 --- !u!114 &3628584651656891992 stripped
