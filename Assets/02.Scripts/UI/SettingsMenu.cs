@@ -17,8 +17,8 @@ public class SettingsMenu : UiBase
 
     [Header("게임플레이 설정 슬라이더")]
     [SerializeField] private Slider _cameraSensitivitySlider;
-    [SerializeField] private float _minCameraSensitivity = 1f;
-    [SerializeField] private float _maxCameraSensitivity = 10f;
+    //[SerializeField] private float _minCameraSensitivity = 1f;
+    //[SerializeField] private float _maxCameraSensitivity = 10f;
 
     [Header("볼륨 설정 슬라이더")]
     [SerializeField] private Slider _masterVolumeSlider;
@@ -28,6 +28,12 @@ public class SettingsMenu : UiBase
     [Header("비디오 설정")]
     [SerializeField] private GameObject _videoSettingsPanel;
     [SerializeField] private TextMeshProUGUI _displayModeText;
+
+    private float _initialCameraSensitivity;
+    private float _initialMasterVolume;
+    private float _initialBgmVolume;
+    private float _initialSfxVolume;
+    private DisplayMode _initialDisplayMode;
 
     public enum DisplayMode { FullScreen, Borderless, Windowed }
     private DisplayMode _currentDisplayMode;
@@ -57,15 +63,12 @@ public class SettingsMenu : UiBase
     /// 설정창이 활성화될 때마다 호출됩니다.
     /// </summary>
     private void OnEnable()
-    {        
+    {
+        // 1. PlayerPrefs에서 값을 불러와 UI에 적용합니다.
         LoadSettings();
-
-        OnCameraSensitivityChanged();
-        OnMasterVolumeChanged();
-        OnBGMVolumeChanged();
-        OnSFXVolumeChanged();
-        UpdateDisplayModeText(); // 디스플레이 모드 텍스트도 업데이트     
-
+        // 2. 불러온 값을 '초기 값'으로 임시 저장합니다. (사진 찍기)
+        StoreInitialValues();
+        // 3. 기본적으로 게임플레이 탭을 보여줍니다.
         ShowGameplayTab();
     }
     /// <summary>
@@ -73,18 +76,27 @@ public class SettingsMenu : UiBase
     /// </summary>
     private void LoadSettings()
     {
+        // 이 함수는 이제 UI 슬라이더의 위치만 설정합니다.
         float savedSens = PlayerPrefs.GetFloat("CameraSensitivity", 3f);
-        // (현재값 - 최소값) / (최대값 - 최소값) = 0~1 사이의 비율
-        _cameraSensitivitySlider.SetValueWithoutNotify(Mathf.InverseLerp(_minCameraSensitivity, _maxCameraSensitivity, savedSens));
+        _cameraSensitivitySlider.SetValueWithoutNotify(Mathf.InverseLerp(0.1f, 10f, savedSens));
+
         _masterVolumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("MasterVolume", 1f));
         _bgmVolumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("BGMVolume", 0.8f));
         _sfxVolumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("SFXVolume", 0.8f));
 
-
         _currentDisplayMode = (DisplayMode)PlayerPrefs.GetInt("DisplayMode", (int)DisplayMode.Borderless);
         UpdateDisplayModeText();
-
-        Debug.Log("저장된 설정을 불러왔습니다.");
+    }
+    /// <summary>
+    /// 현재 UI에 표시된 값들을 '초기 값' 임시 변수에 저장합니다.
+    /// </summary>
+    private void StoreInitialValues()
+    {
+        _initialCameraSensitivity = _cameraSensitivitySlider.value;
+        _initialMasterVolume = _masterVolumeSlider.value;
+        _initialBgmVolume = _bgmVolumeSlider.value;
+        _initialSfxVolume = _sfxVolumeSlider.value;
+        _initialDisplayMode = _currentDisplayMode;
     }
     // --- 탭 전환 함수들 ---
 
@@ -127,9 +139,8 @@ public class SettingsMenu : UiBase
     {
         if (GameManager.Instance?.CameraManager != null)
         {
-            // --- 3. 슬라이더의 0~1 값을 실제 감도 범위로 '역정규화'합니다 ---
-            // 슬라이더의 현재 비율(value)을 실제 감도 값으로 변환
-            float actualSensitivity = Mathf.Lerp(_minCameraSensitivity, _maxCameraSensitivity, _cameraSensitivitySlider.value);
+            // --- 3. 슬라이더의 0~1 값을 CameraManager의 실제 감도 범위로 역정규화합니다 ---
+            float actualSensitivity = Mathf.Lerp(0.1f, 10f, _cameraSensitivitySlider.value);
             GameManager.Instance.CameraManager.Sensitivity = actualSensitivity;
         }
     }
@@ -189,8 +200,11 @@ public class SettingsMenu : UiBase
         Debug.Log($"디스플레이 모드를 '{mode}' (으)로 변경 및 저장했습니다.");
 
         //  현재 슬라이더의 값들을 PlayerPrefs에 저장합니다.
-        float actualSensitivity = Mathf.Lerp(_minCameraSensitivity, _maxCameraSensitivity, _cameraSensitivitySlider.value);
-        PlayerPrefs.SetFloat("CameraSensitivity", actualSensitivity);
+        if (GameManager.Instance?.CameraManager != null)
+        {
+            PlayerPrefs.SetFloat("CameraSensitivity", GameManager.Instance.CameraManager.Sensitivity);
+        }
+
         PlayerPrefs.SetFloat("MasterVolume", _masterVolumeSlider.value);
         PlayerPrefs.SetFloat("BGMVolume", _bgmVolumeSlider.value);
         PlayerPrefs.SetFloat("SFXVolume", _sfxVolumeSlider.value);
@@ -219,7 +233,24 @@ public class SettingsMenu : UiBase
     /// </summary>
     public void OnCancelButton()
     {
-        CloseSettingsMenu(); // 창을 닫는 로직을 공통 함수로 분리
+        Debug.Log("설정 변경을 취소합니다. 초기 값으로 되돌립니다.");
+
+        // 1. UI 슬라이더들을 '사진 찍어둔' 초기 값으로 되돌립니다.
+        _cameraSensitivitySlider.SetValueWithoutNotify(_initialCameraSensitivity);
+        _masterVolumeSlider.SetValueWithoutNotify(_initialMasterVolume);
+        _bgmVolumeSlider.SetValueWithoutNotify(_initialBgmVolume);
+        _sfxVolumeSlider.SetValueWithoutNotify(_initialSfxVolume);
+        _currentDisplayMode = _initialDisplayMode;
+        UpdateDisplayModeText();
+
+        // 2. 되돌려진 UI 값을 실제 게임 시스템에도 다시 적용합니다.
+        OnCameraSensitivityChanged();
+        OnMasterVolumeChanged();
+        OnBGMVolumeChanged();
+        OnSFXVolumeChanged();
+
+        // 3. 창을 닫습니다.
+        CloseSettingsMenu();
     }
     public void OnDisplayModeNext()
     {
@@ -270,6 +301,23 @@ public class SettingsMenu : UiBase
     /// </summary>
     private void CloseSettingsMenu()
     {
+        GameManager.Instance.UIManager.Hide<SettingsMenu>();
+
+        if (GameManager.Instance.CurrentState == GameManager.GameState.MainMenu)
+        {
+            GameManager.Instance.UIManager.Show<MainMenu>(true);
+        }
+        else
+        {
+            GameManager.Instance.UIManager.Show<PauseMenu>(true);
+        }
+    }
+    /// <summary>
+    /// 모든 설정을 PlayerPrefs에 저장된 값으로 되돌립니다.
+    /// </summary>
+    private void RevertSettings()
+    {
+        // 1. 저장된 값을 불러와 UI 슬라이더를 원상 복구합니다.
         LoadSettings();
 
         // 2. UI뿐만 아니라 실제 게임 시스템에도 저장된 값을 다시 적용하여
@@ -278,19 +326,6 @@ public class SettingsMenu : UiBase
         OnMasterVolumeChanged();
         OnBGMVolumeChanged();
         OnSFXVolumeChanged();
-        // 1. 먼저 설정창을 숨깁니다.
-        GameManager.Instance.UIManager.Hide<SettingsMenu>();
-
-        // 2. GameManager의 현재 게임 상태를 확인합니다.
-        if (GameManager.Instance.CurrentState == GameManager.GameState.MainMenu)
-        {
-            // 3a. 게임 상태가 '메인 메뉴'였다면, 메인 메뉴 UI를 다시 보여줍니다.
-            GameManager.Instance.UIManager.Show<MainMenu>(true);
-        }
-        else
-        {
-            // 3b. 그 외의 상태(Paused 등)였다면, 일시정지 메뉴 UI를 다시 보여줍니다.
-            GameManager.Instance.UIManager.Show<PauseMenu>(true);
-        }
+        UpdateDisplayModeText(); // 디스플레이 모드 텍스트도 업데이트
     }
 }
