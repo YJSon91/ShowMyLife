@@ -47967,6 +47967,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1902148194157380278}
   m_Mesh: {fileID: 4300006, guid: abc00000000001320367211830320898, type: 3}
+--- !u!1 &1915900916490186643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 813286776439482257}
+  - component: {fileID: 3701461309143099441}
+  m_Layer: 9
+  m_Name: TP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &813286776439482257
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915900916490186643}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.74, z: 9.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3633483981956017633}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3701461309143099441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915900916490186643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79f350eb2e1cf98429b3e703da790888, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _senseMode: 0
+  enablePlayerCarry: 1
+  _pivot: {fileID: 813286776439482257}
+  _targetCabinet: {fileID: 0}
+  _door: {fileID: 0}
+  _doorOpenAngle: -90
+  _doorCloseAngle: 0
+  _doorSpeed: 3
+  _holdDelay: 0.8
+  _cooldown: 1
 --- !u!1 &1920307590554320647
 GameObject:
   m_ObjectHideFlags: 0
@@ -57894,6 +57948,7 @@ Transform:
   - {fileID: 9158012330255844656}
   - {fileID: 8180653803547523636}
   - {fileID: 9200355759311470476}
+  - {fileID: 3041962420782700280}
   m_Father: {fileID: 5552691502595699629}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2360118542627159794
@@ -165417,6 +165472,60 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6348766809901332376
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3041962420782700280}
+  - component: {fileID: 8923110214294689993}
+  m_Layer: 9
+  m_Name: TP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3041962420782700280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6348766809901332376}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.7, y: 31.93, z: 2.61}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3763732017202173833}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8923110214294689993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6348766809901332376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79f350eb2e1cf98429b3e703da790888, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _senseMode: 0
+  enablePlayerCarry: 1
+  _pivot: {fileID: 3041962420782700280}
+  _targetCabinet: {fileID: 0}
+  _door: {fileID: 0}
+  _doorOpenAngle: -90
+  _doorCloseAngle: 0
+  _doorSpeed: 3
+  _holdDelay: 0.8
+  _cooldown: 1
 --- !u!1 &6349432504464018483
 GameObject:
   m_ObjectHideFlags: 0
@@ -171230,6 +171339,7 @@ Transform:
   - {fileID: 3735204525552804019}
   - {fileID: 1087356538646818557}
   - {fileID: 3935949874103384728}
+  - {fileID: 813286776439482257}
   m_Father: {fileID: 5552691502595699629}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6589805031892878140
@@ -236899,7 +237009,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5552691502595699629
 Transform:
   m_ObjectHideFlags: 0
