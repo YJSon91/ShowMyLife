@@ -66,6 +66,7 @@ public class DebugWindow : EditorWindow
             {
                 string content = File.ReadAllText(path);
                 Debug.Log($"저장 파일 내용:\n{content}");
+                Debug.Log(Application.persistentDataPath);
             }
             else
             {

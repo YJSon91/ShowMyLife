@@ -73,15 +73,12 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
     [SerializeField] private float _groundCheckDistance = 0.25f;
-    [Tooltip("점프 쿨타임 (초)")]
-    [SerializeField] private float _jumpCooldown = 1.0f;
+    // 점프 쿨타임 제거됨
     [Tooltip("코요테 타임 길이 (초)")]
     [SerializeField] private float _coyoteTimeThreshold = 0.25f;
 
 
-    // 점프 쿨타임 관련 변수
-    private float _jumpCooldownTimer = 0f;
-    private bool _isJumpOnCooldown = false;
+    // 점프 쿨타임 제거됨
 
     // 코요테 타임 관련 변수
     private float _coyoteTimeCounter;
@@ -274,14 +271,14 @@ public class PlayerMovementController : MonoBehaviour
     public Rigidbody Rigidbody => _rigidbody;
 
     /// <summary>
-    /// 점프 쿨타임이 활성화되어 있는지 확인합니다
+    /// 점프 쿨타임 제거됨
     /// </summary>
-    public bool IsJumpOnCooldown => _isJumpOnCooldown;
+    public bool IsJumpOnCooldown => false;
     
     /// <summary>
-    /// 현재 점프 쿨타임 타이머 값을 반환합니다 (0~1 사이의 값, 1이 쿨타임 시작, 0이 쿨타임 종료)
+    /// 점프 쿨타임 제거됨
     /// </summary>
-    public float JumpCooldownNormalized => _isJumpOnCooldown ? _jumpCooldownTimer / _jumpCooldown : 0f;
+    public float JumpCooldownNormalized => 0f;
 
     #endregion
 
@@ -325,8 +322,7 @@ public class PlayerMovementController : MonoBehaviour
             FaceMoveDirection();
         }
         
-        // 점프 쿨타임 업데이트
-        UpdateJumpCooldown();
+        // 점프 쿨타임 제거됨
         
         // 코요테 타임 업데이트
         if (!_isGrounded && _canCoyoteJump)
@@ -590,19 +586,25 @@ public class PlayerMovementController : MonoBehaviour
             _lastInputDirection = playerInputDirection.normalized;
         }
         
-        // 빙판 처리 (최우선 순위)
-        if (_isOnIce)
-        {
-            HandleIceMovement(playerInputDirection);
-            return;
-        }
-
-        // 미끄럼틀 함정 슬라이드가 우선순위가 가장 높음
+        // 미끄럼틀 함정 슬라이드가 가장 높은 우선순위를 가짐 (빙판보다 우선)
         if (_isObstacleSliding)
         {
             // 미끄럼틀에서는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
             _moveDirection = Vector3.Lerp(_obstacleSlideDirection, playerInputDirection, 1f - _obstacleSlideInputReduction);
             _targetMaxSpeed = _obstacleSlideForce;
+            
+            // 미끄럼틀 상태에서는 빙판 속도 업데이트를 위해 빙판 속도도 함께 설정
+            if (_isOnIce)
+            {
+                _iceVelocity = _moveDirection * _targetMaxSpeed;
+                _currentIceSpeed = _targetMaxSpeed;
+            }
+        }
+        // 빙판 처리 (미끄럼틀 다음 우선순위)
+        else if (_isOnIce)
+        {
+            HandleIceMovement(playerInputDirection);
+            return;
         }
         // 다음으로 자연 경사면 슬립 확인
         else if (_isSlipping)
@@ -681,7 +683,7 @@ public class PlayerMovementController : MonoBehaviour
     }
     
     /// <summary>
-    /// 빙판 위에서의 이동을 처리합니다
+    /// 빙판 위에서의 이동을 처리합니다 (방향 전환 시 새 이동 속도 적용)
     /// </summary>
     private void HandleIceMovement(Vector3 inputDirection)
     {
@@ -696,37 +698,33 @@ public class PlayerMovementController : MonoBehaviour
         // 입력이 있을 때 (방향 전환 시도)
         if (inputDirection.magnitude > 0.1f)
         {
-            // 현재 빙판 속도 방향과 입력 방향을 혼합 (서서히 방향 전환)
-            Vector3 currentDir;
-            Vector3 targetDir;
+            // 방향 즉시 변경
+            Vector3 newDir = inputDirection.normalized;
             
-            if (_iceVelocity.magnitude > 0.1f)
+            // 새로운 속도 계산 (입력 강도에 따라)
+            float inputMagnitude = inputDirection.magnitude;
+            float targetSpeed;
+            
+            if (_isSprinting)
             {
-                currentDir = SafeNormalize(_iceVelocity, inputDirection.normalized);
+                targetSpeed = _sprintSpeed * inputMagnitude;
+            }
+            else if (_isWalking)
+            {
+                targetSpeed = _walkSpeed * inputMagnitude;
             }
             else
             {
-                currentDir = inputDirection.normalized;
+                targetSpeed = _runSpeed * inputMagnitude;
             }
             
-            targetDir = inputDirection.normalized;
+            // 빙판 속도 배율 적용
+            targetSpeed *= _currentIceSpeedMultiplier;
             
-            // 입력 방향으로 서서히 전환 (낮은 가속률)
-            Vector3 newDir = Vector3.Lerp(currentDir, targetDir, _currentIceAccelerationRate * Time.deltaTime);
+            // 새 속도로 즉시 변경 (약간의 보간만 적용)
+            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, targetSpeed, 0.8f);
             
-            // 추가 안전 검사
-            if (newDir.magnitude < 0.001f)
-            {
-                newDir = targetDir;
-            }
-            
-            // 현재 속도에 약간의 가속/감속 적용
-            float targetSpeed = _isSprinting ? _sprintSpeed : (_isWalking ? _walkSpeed : _runSpeed);
-            targetSpeed *= _currentIceSpeedMultiplier; // 속도 배율 적용
-            
-            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, targetSpeed, _currentIceAccelerationRate * 0.5f * Time.deltaTime);
-            
-            // 새 속도 계산
+            // 새 방향과 새 속도로 벡터 계산
             _iceVelocity = newDir * _currentIceSpeed;
         }
         // 입력이 없을 때 (관성으로 미끄러짐)
@@ -854,16 +852,6 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        // 쿨타임 중이면 점프할 수 없음
-        if (_isJumpOnCooldown)
-        {
-            if (_isJumpOnCooldown)
-            {
-                Debug.Log($"점프 쿨타임 중: {_jumpCooldownTimer:F1}초 남음");
-            }
-            return;
-        }
-
         // 지면에 있거나 코요테 타임 중이면 점프 가능
         if (_isGrounded || _canCoyoteJump)
         {
@@ -871,10 +859,7 @@ public class PlayerMovementController : MonoBehaviour
             _canCoyoteJump = false;
             jumpRequest = true;
             
-            // 쿨타임 시작
-            _isJumpOnCooldown = true;
-            _jumpCooldownTimer = _jumpCooldown;
-            Debug.Log($"점프 실행! 쿨타임 {_jumpCooldown}초 시작");
+            Debug.Log("점프 실행!");
         }
     }
 
@@ -1068,15 +1053,15 @@ public class PlayerMovementController : MonoBehaviour
         float minimumSpeed = 0f;
         if (_isSprinting)
         {
-            minimumSpeed = _sprintSpeed * 0.8f; // 스프린트 속도의 80%
+            minimumSpeed = _sprintSpeed * 0.95f; // 스프린트 속도의 95%
         }
         else if (_isWalking)
         {
-            minimumSpeed = _walkSpeed * 0.7f; // 걷기 속도의 70%
+            minimumSpeed = _walkSpeed * 0.95f; // 걷기 속도의 95%
         }
         else
         {
-            minimumSpeed = _runSpeed * 0.7f; // 달리기 속도의 70%
+            minimumSpeed = _runSpeed * 0.95f; // 달리기 속도의 95%
         }
         
         // 최종 속도 결정 (실제 속도와 최소 보장 속도 중 큰 값)
@@ -1517,6 +1502,24 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void DeactivateObstacleSlide()
     {
+        // 빙판 위에 있을 경우, 현재 미끄럼틀 속도와 방향을 빙판 속도로 전환
+        if (_isOnIce)
+        {
+            // 현재 미끄럼틀 방향과 속도를 빙판 속도로 전환
+            float remainingSpeed = _obstacleSlideForce;
+            Vector3 remainingDirection = _obstacleSlideDirection;
+            
+            // 최소 속도 보장 (너무 느리면 의미 없음)
+            remainingSpeed = Mathf.Max(remainingSpeed, 3.0f);
+            
+            // 빙판 속도 설정
+            _iceVelocity = remainingDirection * remainingSpeed;
+            _currentIceSpeed = remainingSpeed;
+            
+            Debug.Log($"빙판 위 미끄럼틀 종료: 남은 속도({remainingSpeed})로 빙판 미끄러짐 계속");
+        }
+        
+        // 미끄럼틀 상태 변수 초기화
         _isObstacleSliding = false;
         _obstacleSlideDirection = Vector3.zero;
         _obstacleSlideForce = 0f;
@@ -1589,30 +1592,15 @@ public class PlayerMovementController : MonoBehaviour
         Gizmos.DrawLine(boxCenter, endPosition);
     }
 
-    /// <summary>
-    /// 점프 쿨타임을 업데이트합니다
-    /// </summary>
-    private void UpdateJumpCooldown()
-    {
-        if (_isJumpOnCooldown)
-        {
-            _jumpCooldownTimer -= Time.deltaTime;
-            
-            if (_jumpCooldownTimer <= 0f)
-            {
-                _isJumpOnCooldown = false;
-                _jumpCooldownTimer = 0f;
-            }
-        }
-    }
+    // 점프 쿨타임 업데이트 메서드 제거됨
 
     /// <summary>
     /// 점프 입력을 받았을 때 호출되는 함수
     /// </summary>
     private void OnJumpInput()
     {
-        // 지면에 있거나 코요테 타임 중이고 쿨다운이 아니면 점프 실행
-        if ((_isGrounded || _canCoyoteJump) && !_isJumpOnCooldown)
+        // 지면에 있거나 코요테 타임 중이면 점프 실행
+        if (_isGrounded || _canCoyoteJump)
         {
             Jump();
         }

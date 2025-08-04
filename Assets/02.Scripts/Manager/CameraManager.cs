@@ -33,6 +33,7 @@ public class CameraManager : MonoBehaviour
 
     private void Awake()
     {
+        sensitivity = PlayerPrefs.GetFloat("CameraSensitivity", 10f);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
