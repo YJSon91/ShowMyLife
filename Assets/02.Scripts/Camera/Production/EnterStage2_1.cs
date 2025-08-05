@@ -1,7 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class EnterStage2 : MonoBehaviour
+public class EnterStage2_1 : MonoBehaviour
 {
     [Tooltip("책")]
     [SerializeField] private Transform bookObject;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnterStage1 : MonoBehaviour
+public class EnterStage1_1 : MonoBehaviour
 {
     [Tooltip("연출 매니저")]
     [SerializeField] private EmotionDirector emotionDirector;

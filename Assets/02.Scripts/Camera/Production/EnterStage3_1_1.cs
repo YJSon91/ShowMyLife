@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class FallSlowTrigger : MonoBehaviour
+public class EnterStage3_1_1 : MonoBehaviour
 {
     [Tooltip("연출 매니저")]
     [SerializeField] private EmotionDirector emotionDirector;
