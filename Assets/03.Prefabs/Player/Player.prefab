@@ -134,6 +134,7 @@ MonoBehaviour:
   _capsuleCollider: {fileID: 7893618935209967629}
   _inputReader: {fileID: 5576311074807246589}
   _animationEventHandler: {fileID: 0}
+  _characterSwitcher: {fileID: 0}
   _movementController: {fileID: 2859424433754225604}
   _stateController: {fileID: 1997512669615988944}
   _godModeController: {fileID: 4651067884908956247}
@@ -298,7 +299,7 @@ MonoBehaviour:
   _capsuleCrouchingCentre: 0.6
   _jumpForce: 15
   _gravityMultiplier: 1
-  _groundCheckDistance: 1
+  _groundCheckDistance: 0.3
   _coyoteTimeThreshold: 0.117
   _rearRayPos: {fileID: 4673321933065169652}
   _frontRayPos: {fileID: 6476181354946296046}
@@ -307,8 +308,8 @@ MonoBehaviour:
     m_Bits: 263745
   _inclineAngle: 0
   _groundedOffset: -0.2
-  _boxCastWidth: 0.8
-  _boxCastDepth: 0.7
+  _boxCastWidth: 0.6
+  _boxCastDepth: 0.6
   _slopeLimit: 80
   _slopeLimiting: 1
   _slipAngle: 80
