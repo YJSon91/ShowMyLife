@@ -32,6 +32,9 @@ public class Player : MonoBehaviour
     
     [Tooltip("애니메이션 이벤트를 처리하는 컴포넌트")]
     [SerializeField] private PlayerAnimationEventHandler _animationEventHandler;
+    
+    [Tooltip("캐릭터 전환을 관리하는 컴포넌트")]
+    [SerializeField] private CharacterSwitcher _characterSwitcher;
 
     #endregion
 
@@ -56,6 +59,7 @@ public class Player : MonoBehaviour
     public PlayerStateController StateController => _stateController;
     public PlayerGodModeController GodModeController => _godModeController;
     public PlayerAnimationEventHandler AnimationEventHandler => _animationEventHandler;
+    public CharacterSwitcher CharacterSwitcher => _characterSwitcher;
 
     #endregion
 
@@ -142,6 +146,9 @@ public class Player : MonoBehaviour
             
         if (_godModeController == null)
             _godModeController = GetComponent<PlayerGodModeController>();
+            
+        if (_characterSwitcher == null)
+            _characterSwitcher = GetComponent<CharacterSwitcher>();
 
         // 카메라 컨트롤러는 다른 게임 오브젝트에 있을 수 있으므로 자동으로 찾지 않음
 
@@ -200,6 +207,9 @@ public class Player : MonoBehaviour
             
         if (_godModeController == null)
             Debug.LogError("Player: PlayerGodModeController가 할당되지 않았습니다!");
+            
+        if (_characterSwitcher == null)
+            Debug.LogWarning("Player: CharacterSwitcher가 할당되지 않았습니다!");
     }
 
     #endregion

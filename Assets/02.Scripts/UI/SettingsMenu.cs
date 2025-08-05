@@ -76,16 +76,20 @@ public class SettingsMenu : UiBase
     /// </summary>
     private void LoadSettings()
     {
-        // 이 함수는 이제 UI 슬라이더의 위치만 설정합니다.
-        float savedSens = PlayerPrefs.GetFloat("CameraSensitivity", 3f);
-        _cameraSensitivitySlider.SetValueWithoutNotify(Mathf.InverseLerp(0.1f, 10f, savedSens));
-
+        if (GameManager.Instance?.CameraManager != null)
+        {
+            float currentSensitivity = GameManager.Instance.CameraManager.Sensitivity;          
+            _cameraSensitivitySlider.SetValueWithoutNotify(Mathf.InverseLerp(0.1f, 10f, currentSensitivity));
+        }
+        // 볼륨 관련 로직은 PlayerPrefs를 사용하는 것이 맞으므로 그대로 둡니다.
         _masterVolumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("MasterVolume", 1f));
         _bgmVolumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("BGMVolume", 0.8f));
         _sfxVolumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("SFXVolume", 0.8f));
 
         _currentDisplayMode = (DisplayMode)PlayerPrefs.GetInt("DisplayMode", (int)DisplayMode.Borderless);
         UpdateDisplayModeText();
+
+        Debug.Log("저장된 설정을 불러왔습니다.");
     }
     /// <summary>
     /// 현재 UI에 표시된 값들을 '초기 값' 임시 변수에 저장합니다.

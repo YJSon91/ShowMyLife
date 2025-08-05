@@ -12,6 +12,12 @@ public class CharacterSwitcher : MonoBehaviour
     
     private Animator animator;
     
+    // 현재 캐릭터 상태를 저장하는 불값
+    private bool _isSchoolBoy = false;
+    
+    // 외부에서 현재 캐릭터 상태를 확인할 수 있는 프로퍼티
+    public bool IsSchoolBoy => _isSchoolBoy;
+    
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -28,6 +34,7 @@ public class CharacterSwitcher : MonoBehaviour
         kidModel.SetActive(true);
         schoolBoyModel.SetActive(false);
         animator.avatar = kidAvatar;
+        _isSchoolBoy = false;
         
         // 디버그 로그
         Debug.Log("캐릭터가 Kid로 전환되었습니다.");
@@ -41,6 +48,7 @@ public class CharacterSwitcher : MonoBehaviour
         kidModel.SetActive(false);
         schoolBoyModel.SetActive(true);
         animator.avatar = schoolBoyAvatar;
+        _isSchoolBoy = true;
         
         // 디버그 로그
         Debug.Log("캐릭터가 School Boy로 전환되었습니다.");
