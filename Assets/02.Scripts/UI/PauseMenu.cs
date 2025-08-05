@@ -37,8 +37,8 @@ public class PauseMenu : UiBase
         // 재시작 전에는 반드시 시간을 다시 흐르게 해야 합니다.
         //Time.timeScale = 1f;
         GameManager.Instance.UIManager.Hide<PauseMenu>();
-        SceneManager.LoadScene("IntroScene"); // 실제 게임 씬 이름으로 변경해야 합니다.
-        GameManager.Instance.UpdateGameState(GameManager.GameState.MainMenu);
+        SceneManager.LoadScene("IntroScene"); 
+        GameManager.Instance.UpdateGameState(GameManager.GameState.Start);
     }
 
     // '설정(Settings)' 버튼에 연결될 함수
