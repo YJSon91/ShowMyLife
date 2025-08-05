@@ -72,7 +72,7 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("공중에 있을 때의 중력 배수")]
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
-    [SerializeField] private float _groundCheckDistance = 0.25f;
+    [SerializeField] private float _groundCheckDistance = 0.05f; // 0.25f에서 0.15f로 감소
     // 점프 쿨타임 제거됨
     [Tooltip("코요테 타임 길이 (초)")]
     [SerializeField] private float _coyoteTimeThreshold = 0.25f;
@@ -142,6 +142,7 @@ public class PlayerMovementController : MonoBehaviour
     private bool _isLockedOn;
     public bool _cannotStandUp;
     private bool _isSliding;
+    private bool _isJumping; // 점프 중인지 여부를 추적하는 변수 추가
 
     // 슬립 관련 변수
     private bool _isSlipping;
@@ -237,6 +238,11 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어가 스트레이핑 중인지 여부
     /// </summary>
     public bool IsStrafing => _isStrafing;
+    
+    /// <summary>
+    /// 플레이어가 점프 중인지 여부
+    /// </summary>
+    public bool IsJumping => _isJumping;
 
     /// <summary>
     /// 플레이어의 이동 방향 벡터
@@ -385,6 +391,7 @@ public class PlayerMovementController : MonoBehaviour
             velocity.y = _jumpForce;
             _rigidbody.velocity = velocity;
             _isGrounded = false;
+            _isJumping = true; // 점프 상태 설정 확실하게
             jumpRequest = false;
         }
 
@@ -853,10 +860,16 @@ public class PlayerMovementController : MonoBehaviour
     public void Jump()
     {
         // 지면에 있거나 코요테 타임 중이면 점프 가능
-        if (_isGrounded || _canCoyoteJump)
+        if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
+            // 즉시 지면 상태와 코요테 타임 상태를 false로 변경
             _isGrounded = false;
             _canCoyoteJump = false;
+            _coyoteTimeCounter = 0f; // 코요테 타임 즉시 종료
+            
+            // 점프 중 상태 설정
+            _isJumping = true;
+            
             jumpRequest = true;
             
             Debug.Log("점프 실행!");
@@ -874,6 +887,8 @@ public class PlayerMovementController : MonoBehaviour
         _rigidbody.velocity = v;
 
         _isGrounded = false;
+        _isJumping = true; // 외부 점프도 점프 상태로 설정
+        _canCoyoteJump = false; // 코요테 타임 비활성화
         jumpRequest = false;
         // 필요하면 점프 애니메이션 등도 여기서 처리
     }
@@ -1192,6 +1207,13 @@ public class PlayerMovementController : MonoBehaviour
         if (groundHit)
         {
             _groundNormal = _groundHit.normal;
+            
+            // 이전에 점프 중이었다면 착지 상태로 변경
+            if (_isJumping)
+            {
+                _isJumping = false;
+            }
+            
             _isGrounded = true;
             _canCoyoteJump = true;
             _coyoteTimeCounter = _coyoteTimeThreshold;
@@ -1599,8 +1621,8 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     private void OnJumpInput()
     {
-        // 지면에 있거나 코요테 타임 중이면 점프 실행
-        if (_isGrounded || _canCoyoteJump)
+        // 지면에 있거나 코요테 타임 중이고 점프 중이 아닐 때만 점프 실행
+        if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
             Jump();
         }
