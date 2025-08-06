@@ -52,7 +52,7 @@ public class SlideZone : MonoBehaviour
 
     private void Start()
     {
-        ValidateSettings();
+        //ValidateSettings();
         
         // 가속 곡선이 비어있으면 기본 곡선 생성
         if (_accelerationCurve.keys.Length == 0)
@@ -77,11 +77,11 @@ public class SlideZone : MonoBehaviour
                 
                 // 달리기 입력 비활성화
                 DisableSprintInput(player);
-                Debug.Log("슬라이드존: 달리기 입력 비활성화됨");
+                //Debug.Log("슬라이드존: 달리기 입력 비활성화됨");
                 
                 // 먼저 초기 슬라이딩 상태 활성화
                 player.MovementController.ActivateObstacleSlide(slideDir, _initialSlideSpeed, _slipGravityMultiplier, _inputReduction);
-                Debug.Log($"플레이어 슬립 시작 - 방향: {slideDir}, 초기 속도: {_initialSlideSpeed}");
+                //Debug.Log($"플레이어 슬립 시작 - 방향: {slideDir}, 초기 속도: {_initialSlideSpeed}");
                 
                 // 기존 트윈이 있으면 중단
                 if (_currentAccelerationTween != null && _currentAccelerationTween.IsActive())
@@ -95,11 +95,11 @@ public class SlideZone : MonoBehaviour
                     player.MovementController.UpdateObstacleSlideSpeed(speed);
                 }).SetEase(_accelerationCurve);
                 
-                Debug.Log($"가속 시작: {_initialSlideSpeed} → {_slideForce}, 시간: {_accelerationDuration}초");
+                //Debug.Log($"가속 시작: {_initialSlideSpeed} → {_slideForce}, 시간: {_accelerationDuration}초");
             }
             else
             {
-                Debug.LogWarning("SlideZone: Player 컴포넌트를 찾을 수 없습니다.");
+                //Debug.LogWarning("SlideZone: Player 컴포넌트를 찾을 수 없습니다.");
             }
         }
     }
@@ -119,7 +119,7 @@ public class SlideZone : MonoBehaviour
                 }
                 
                 player.MovementController.DeactivateObstacleSlide();
-                Debug.Log("플레이어 슬립 종료");
+                //Debug.Log("플레이어 슬립 종료");
                 
                 // 달리기 입력 다시 활성화
                 EnableSprintInput(player);
@@ -180,45 +180,45 @@ public class SlideZone : MonoBehaviour
     /// <summary>
     /// 설정값들을 검증합니다
     /// </summary>
-    private void ValidateSettings()
-    {
-        if (_slideForce <= 0f)
-        {
-            Debug.LogWarning($"SlideZone ({gameObject.name}): _slideForce가 0 이하입니다. 기본값 8f로 설정합니다.");
-            _slideForce = 8f;
-        }
+    //private void ValidateSettings()
+    //{
+    //    if (_slideForce <= 0f)
+    //    {
+    //        Debug.LogWarning($"SlideZone ({gameObject.name}): _slideForce가 0 이하입니다. 기본값 8f로 설정합니다.");
+    //        _slideForce = 8f;
+    //    }
 
-        if (_initialSlideSpeed < 0f)
-        {
-            Debug.LogWarning($"SlideZone ({gameObject.name}): _initialSlideSpeed가 0 미만입니다. 0으로 설정합니다.");
-            _initialSlideSpeed = 0f;
-        }
+    //    if (_initialSlideSpeed < 0f)
+    //    {
+    //        Debug.LogWarning($"SlideZone ({gameObject.name}): _initialSlideSpeed가 0 미만입니다. 0으로 설정합니다.");
+    //        _initialSlideSpeed = 0f;
+    //    }
         
-        if (_initialSlideSpeed > _slideForce)
-        {
-            Debug.LogWarning($"SlideZone ({gameObject.name}): _initialSlideSpeed가 _slideForce보다 큽니다. _slideForce와 동일하게 설정합니다.");
-            _initialSlideSpeed = _slideForce;
-        }
+    //    if (_initialSlideSpeed > _slideForce)
+    //    {
+    //        Debug.LogWarning($"SlideZone ({gameObject.name}): _initialSlideSpeed가 _slideForce보다 큽니다. _slideForce와 동일하게 설정합니다.");
+    //        _initialSlideSpeed = _slideForce;
+    //    }
         
-        if (_accelerationDuration <= 0f)
-        {
-            Debug.LogWarning($"SlideZone ({gameObject.name}): _accelerationDuration이 0 이하입니다. 기본값 1.5f로 설정합니다.");
-            _accelerationDuration = 1.5f;
-        }
+    //    if (_accelerationDuration <= 0f)
+    //    {
+    //        Debug.LogWarning($"SlideZone ({gameObject.name}): _accelerationDuration이 0 이하입니다. 기본값 1.5f로 설정합니다.");
+    //        _accelerationDuration = 1.5f;
+    //    }
 
-        if (_slipGravityMultiplier <= 0f)
-        {
-            Debug.LogWarning($"SlideZone ({gameObject.name}): _slipGravityMultiplier가 0 이하입니다. 기본값 2f로 설정합니다.");
-            _slipGravityMultiplier = 2f;
-        }
+    //    if (_slipGravityMultiplier <= 0f)
+    //    {
+    //        Debug.LogWarning($"SlideZone ({gameObject.name}): _slipGravityMultiplier가 0 이하입니다. 기본값 2f로 설정합니다.");
+    //        _slipGravityMultiplier = 2f;
+    //    }
 
-        _inputReduction = Mathf.Clamp01(_inputReduction);
+    //    _inputReduction = Mathf.Clamp01(_inputReduction);
 
-        if (_slideDirection == null)
-        {
-            Debug.Log($"SlideZone ({gameObject.name}): _slideDirection이 설정되지 않았습니다. 현재 오브젝트의 forward 방향을 사용합니다.");
-        }
-    }
+    //    if (_slideDirection == null)
+    //    {
+    //        Debug.Log($"SlideZone ({gameObject.name}): _slideDirection이 설정되지 않았습니다. 현재 오브젝트의 forward 방향을 사용합니다.");
+    //    }
+    //}
 
     /// <summary>
     /// Scene 뷰에서 슬립 방향을 시각적으로 표시합니다
@@ -263,11 +263,11 @@ public class SlideZone : MonoBehaviour
             // 달리기 활성화 이벤트를 빈 델리게이트로 대체
             player.InputReader.onSprintActivated = () => { 
                 // 아무 작업도 수행하지 않음 (쉬프트키 입력 무시)
-                Debug.Log("슬라이드존: 달리기 입력 무시됨");
+                //Debug.Log("슬라이드존: 달리기 입력 무시됨");
             };
             
             _isSprintDisabled = true;
-            Debug.Log("슬라이드존: 달리기 입력 비활성화됨");
+            //Debug.Log("슬라이드존: 달리기 입력 비활성화됨");
         }
     }
     
@@ -282,7 +282,7 @@ public class SlideZone : MonoBehaviour
             player.InputReader.onSprintActivated = _originalSprintActivated;
             
             _isSprintDisabled = false;
-            Debug.Log("슬라이드존: 달리기 입력 복원됨");
+            //Debug.Log("슬라이드존: 달리기 입력 복원됨");
         }
     }
 

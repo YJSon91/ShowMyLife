@@ -71,7 +71,7 @@ public class Teleporter : BaseObstacle
     /// </summary>
     public void ReceiveTeleport(Player player)
     {
-        Debug.Log("ReceiveTeleport 실행, 위치 이동 시도");
+        //Debug.Log("ReceiveTeleport 실행, 위치 이동 시도");
 
         if (player.InputReader != null) player.InputReader.DisableInput();
         if (player.MovementController != null) player.MovementController.ResetMovement();
@@ -103,7 +103,7 @@ public class Teleporter : BaseObstacle
 
         if (player.InputReader != null) player.InputReader.EnableInput();
 
-        Debug.Log($"텔레포트 완료. 현재좌표: {player.transform.position}");
+        //Debug.Log($"텔레포트 완료. 현재좌표: {player.transform.position}");
     }
 
     /// <summary>
