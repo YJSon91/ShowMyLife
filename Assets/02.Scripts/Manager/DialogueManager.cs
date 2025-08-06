@@ -61,28 +61,38 @@ public class DialogueManager : MonoBehaviour
                 return;
             }
 
-
             try
             {
-                // JSON 변환을 시도합니다.
-                _dialogueDatabase = JsonConvert.DeserializeObject<Dictionary<DialogueTriggerType, List<Dialogue>>>(jsonString);
+                // 1. JSON 배열을 List로 먼저 읽어옵니다.
+                List<Dialogue> allDialogues = JsonConvert.DeserializeObject<List<Dialogue>>(jsonString);
 
-                // 변환 후 데이터베이스가 null이 아닌지 최종 확인합니다.
-                if (_dialogueDatabase != null)
+                // 2. 읽어온 List를 순회하며 Dictionary로 재구성합니다.
+                _dialogueDatabase = new Dictionary<DialogueTriggerType, List<Dialogue>>();
+
+                foreach (var dialogue in allDialogues)
                 {
-                    Debug.Log("<color=lime>[DialogueManager] JSON 대사 파일 로드 및 변환 성공!</color>");
-                }
-                else
-                {
-                    Debug.LogError("[DialogueManager] JSON 변환에 실패했습니다. 파일 형식을 확인해주세요.");
+                    if (string.IsNullOrEmpty(dialogue.type)) continue;
+
+                    // 문자열 type을 enum type으로 변환
+                    if (Enum.TryParse<DialogueTriggerType>(dialogue.type, true, out DialogueTriggerType typeEnum))
+                    {
+                        // 딕셔너리에 해당 키가 없으면 새로 리스트를 만들어 추가
+                        if (!_dialogueDatabase.ContainsKey(typeEnum))
+                        {
+                            _dialogueDatabase.Add(typeEnum, new List<Dialogue>());
+                        }
+                        // 해당 키의 리스트에 대사 추가
+                        _dialogueDatabase[typeEnum].Add(dialogue);
+                    }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                // JSON 형식 오류 등 변환 중 발생하는 모든 오류를 잡아냅니다.
-                Debug.LogError($"[DialogueManager] JSON 파싱 중 오류 발생: {e.Message}");
+                // try-catch로 감싸주면 파싱 중 에러가 나도 게임이 멈추지 않고 원인을 파악하기 좋습니다.
+                Debug.LogError($"[DialogueManager] JSON 파싱 중 오류 발생: {ex.Message}");
             }
-        }
+        
+    }
         else
         {
             Debug.LogError("[DialogueManager] dialogue.json 파일을 찾을 수 없습니다! 경로를 확인해주세요.");
@@ -183,7 +193,7 @@ public class DialogueManager : MonoBehaviour
 
             // 3. 대사가 끝나기를 기다립니다. 
             //    (여기서는 간단히 3초 + 키 입력 대기로 처리)
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(3.5f);
            // yield return new WaitUntil(() => Input.anyKeyDown);
         }
 
