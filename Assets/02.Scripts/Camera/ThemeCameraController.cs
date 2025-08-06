@@ -15,6 +15,7 @@ public class ThemeCameraController : MonoBehaviour
     private Vector3 lastSweepPosition;
     private Quaternion lastSweepRotation;
     public CinemachineVirtualCamera DefaultCamera => defaultCamera;
+    public CinemachineVirtualCamera ThemeCamera => themeCamera;
     public Vector3 LastSweepPosition
     {
         get => lastSweepPosition;
