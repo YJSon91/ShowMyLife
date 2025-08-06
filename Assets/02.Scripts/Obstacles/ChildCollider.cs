@@ -10,8 +10,8 @@ public class ChildCollider : MonoBehaviour
     {
         // 부모에서 BaseObstacle 찾기 (최상위까지)
         _parentObstacle = GetComponentInParent<BaseObstacle>();
-        if (_parentObstacle == null)
-            Debug.LogWarning($"{gameObject.name}: 부모에 BaseObstacle이 없습니다.");
+        //if (_parentObstacle == null)
+        //    Debug.LogWarning($"{gameObject.name}: 부모에 BaseObstacle이 없습니다.");
     }
 
     // 콜리전 이벤트 전달

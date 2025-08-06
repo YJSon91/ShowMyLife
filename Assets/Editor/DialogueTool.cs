@@ -1,8 +1,9 @@
-using UnityEngine;
-using UnityEditor; // 에디터 스크립트를 위해 필수!
-using System.IO;
-using System.Collections.Generic;
 using Newtonsoft.Json; // Newtonsoft.Json 패키지가 설치되어 있어야 합니다.
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor; // 에디터 스크립트를 위해 필수!
+using UnityEngine;
+using System;
 
 public class DialogueTool : EditorWindow
 {
@@ -28,7 +29,7 @@ public class DialogueTool : EditorWindow
 
     private void SyncDialogueTriggers()
     {
-        // 1. JSON 파일 로드
+        // --- 1. JSON 파일 로드 및 파싱 (수정된 부분) ---
         string filePath = Path.Combine(Application.streamingAssetsPath, "dialogue.json");
         if (!File.Exists(filePath))
         {
@@ -37,31 +38,39 @@ public class DialogueTool : EditorWindow
         }
 
         string jsonString = File.ReadAllText(filePath);
-        var database = JsonConvert.DeserializeObject<Dictionary<DialogueTriggerType, List<Dialogue>>>(jsonString);
 
-        if (database == null)
+        // JSON 배열을 List<Dialogue>로 직접 읽어옵니다.
+        List<Dialogue> allDialogues = JsonConvert.DeserializeObject<List<Dialogue>>(jsonString);
+
+        if (allDialogues == null)
         {
             Debug.LogError("JSON 파싱에 실패했습니다. dialogue.json 파일의 형식을 확인해주세요.");
             return;
         }
 
-        // --- 2. ID와 타입을 함께 저장하는 새로운 데이터 구조를 사용합니다 ---
+        // --- 2. ID와 타입을 함께 저장하는 데이터 구조 생성 (수정된 부분) ---
         var dialoguesInJson = new Dictionary<string, DialogueTriggerType>();
-        foreach (var pair in database)
+        foreach (var dialogue in allDialogues)
         {
-            DialogueTriggerType type = pair.Key;
-            foreach (var dialogue in pair.Value)
+            // id나 type이 비어있는 잘못된 데이터는 건너뜁니다.
+            if (!string.IsNullOrEmpty(dialogue.id) && !string.IsNullOrEmpty(dialogue.type))
             {
-                if (!string.IsNullOrEmpty(dialogue.id))
+                // JSON에 있는 문자열 "type"을 DialogueTriggerType enum으로 변환합니다.
+                // Enum.TryParse를 사용하면 안전하게 변환할 수 있습니다.
+                if (Enum.TryParse<DialogueTriggerType>(dialogue.type, true, out DialogueTriggerType typeEnum))
                 {
-                    dialoguesInJson[dialogue.id] = type;
+                    dialoguesInJson[dialogue.id] = typeEnum;
+                }
+                else
+                {
+                    Debug.LogWarning($"JSON에 인식할 수 없는 type이 있습니다: '{dialogue.type}' (ID: {dialogue.id})");
                 }
             }
         }
         Debug.Log($"JSON에서 {dialoguesInJson.Count}개의 고유 ID와 타입을 찾았습니다.");
 
 
-        // 3. 지정된 폴더에서 모든 DialogueTrigger 프리팹을 찾습니다.
+        // --- 3. 프로젝트의 프리팹 찾기 (기존 코드와 동일) ---
         string searchPath = "Assets/03.Prefabs/Triggers";
         string[] guids = AssetDatabase.FindAssets("t:prefab", new[] { searchPath });
         Dictionary<string, GameObject> prefabsInProject = new Dictionary<string, GameObject>();
@@ -71,11 +80,9 @@ public class DialogueTool : EditorWindow
             string path = AssetDatabase.GUIDToAssetPath(guid);
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
 
-            // 프리팹에 DialogueTrigger 컴포넌트가 있는지 확인
             DialogueTrigger trigger = prefab.GetComponent<DialogueTrigger>();
             if (trigger != null && !string.IsNullOrEmpty(trigger.DialogueID))
             {
-                // 중복된 ID가 있을 경우 경고를 표시하고, 처음 찾은 것만 사용
                 if (!prefabsInProject.ContainsKey(trigger.DialogueID))
                 {
                     prefabsInProject.Add(trigger.DialogueID, prefab);
@@ -89,8 +96,8 @@ public class DialogueTool : EditorWindow
         Debug.Log($"'{searchPath}' 폴더에서 {prefabsInProject.Count}개의 DialogueTrigger 프리팹을 찾았습니다.");
 
 
-        // 4. 데이터 비교 및 프리팹 생성/경고
-        string prefabFolderPath = "Assets/03.Prefabs/Triggers"; // 프리팹을 생성할 경로
+        // --- 4. 데이터 비교 및 프리팹 생성/경고 (기존 코드와 동일) ---
+        string prefabFolderPath = "Assets/03.Prefabs/Triggers";
         if (!Directory.Exists(prefabFolderPath))
         {
             Directory.CreateDirectory(prefabFolderPath);
@@ -99,7 +106,7 @@ public class DialogueTool : EditorWindow
         int createdCount = 0;
         int warningCount = 0;
 
-        // --- JSON에는 있는데 프로젝트에는 없는 ID -> 새 프리팹 생성 ---
+        // JSON에는 있는데 프로젝트에는 없는 ID -> 새 프리팹 생성
         foreach (var pair in dialoguesInJson)
         {
             string id = pair.Key;
@@ -110,7 +117,6 @@ public class DialogueTool : EditorWindow
                 GameObject newTriggerObj = new GameObject(id);
                 DialogueTrigger newTrigger = newTriggerObj.AddComponent<DialogueTrigger>();
 
-                // ID와 함께 Type도 자동으로 설정합니다!
                 newTrigger.SetDialogueID(id);
                 newTrigger.SetTriggerType(type);
 

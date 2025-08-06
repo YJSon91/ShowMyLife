@@ -31,7 +31,7 @@ public class DialogueObstacle : BaseObstacle
                     _playerAnimEventHandler.OnLandingHardAnimationEvent += HandleHardLandingEvent;
                 }
                 
-                Debug.Log("플레이어가 대화 발판에 들어왔습니다.");
+                //Debug.Log("플레이어가 대화 발판에 들어왔습니다.");
             }
         }
     }
@@ -48,7 +48,7 @@ public class DialogueObstacle : BaseObstacle
             }
             
             _playerAnimEventHandler = null;
-            Debug.Log("플레이어가 대화 발판에서 나갔습니다.");
+            //Debug.Log("플레이어가 대화 발판에서 나갔습니다.");
         }
     }
     

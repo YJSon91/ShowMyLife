@@ -2,7 +2,7 @@ using UnityEngine;
 using Cinemachine;
 using System.Collections;
 
-public class EnterStage3_2 : MonoBehaviour
+public class EnterStageDolly : MonoBehaviour
 {
     [Tooltip("EmotionDirector 참조")]
     [SerializeField] private EmotionDirector emotionDirector;

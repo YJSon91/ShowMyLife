@@ -42,7 +42,7 @@ public class StartingAreaObstacle : BaseObstacle
                     _playerAnimEventHandler.OnLandingHardAnimationEvent += HandleHardLandingEvent;
                 }
                 
-                Debug.Log($"플레이어가 시작 지점({_areaName})에 들어왔습니다.");
+                //Debug.Log($"플레이어가 시작 지점({_areaName})에 들어왔습니다.");
             }
         }
     }
@@ -64,7 +64,7 @@ public class StartingAreaObstacle : BaseObstacle
             }
             
             _playerAnimEventHandler = null;
-            Debug.Log($"플레이어가 시작 지점({_areaName})에서 나갔습니다.");
+            //Debug.Log($"플레이어가 시작 지점({_areaName})에서 나갔습니다.");
         }
     }
     
@@ -85,12 +85,12 @@ public class StartingAreaObstacle : BaseObstacle
         // GameManager를 통해 UI 매니저에 접근하여 시작 지점 UI 표시
         if (GameManager.Instance != null && GameManager.Instance.UIManager != null)
         {
-            Debug.Log($"시작 지점 UI 표시: {_areaName}");
+            //Debug.Log($"시작 지점 UI 표시: {_areaName}");
             GameManager.Instance.DialogueManager.ShowRandomDialogueByType(DialogueTriggerType.Fall_High);
         }
         else
         {
-            Debug.LogWarning("GameManager 또는 UIManager를 찾을 수 없습니다.");
+            //Debug.LogWarning("GameManager 또는 UIManager를 찾을 수 없습니다.");
         }
     }
     
