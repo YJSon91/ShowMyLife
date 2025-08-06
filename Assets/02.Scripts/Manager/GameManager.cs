@@ -267,6 +267,10 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.MainMenu:
+                PlayerControls?.Player.Disable();
+                PlayerControls?.UI.Enable();
+                Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
+                Cursor.visible = true;
                 SoundManager?.PlayBGM(BgmType.Main);               
                 PreloadMainScene();
                 break;

@@ -3,7 +3,8 @@ using UnityEngine;
 public class CharacterSwitchTrigger : MonoBehaviour
 {
     [Header("전환 설정")]
-    [SerializeField] private bool switchToSchoolBoy = true; // true: Kid → SchoolBoy, false: SchoolBoy → Kid
+    [SerializeField] private bool switchToSchoolBoy = true; // 키드 → 스쿨보이 전환
+    [SerializeField] private bool switchToKid = false; // 스쿨보이 → 키드 전환
     
     [Header("한 번만 작동")]
     [SerializeField] private bool triggerOnce = true;
@@ -26,7 +27,7 @@ public class CharacterSwitchTrigger : MonoBehaviour
                 {
                     switcher.SwitchToSchoolBoy();
                 }
-                else
+                else if (switchToKid)
                 {
                     switcher.SwitchToKid();
                 }
