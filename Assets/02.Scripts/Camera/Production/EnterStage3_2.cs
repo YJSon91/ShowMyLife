@@ -38,9 +38,11 @@ public class EnterStage3_2 : MonoBehaviour
 
     private IEnumerator PlaySequence(Transform player)
     {
+        // 조작 비활성화
         emotionDirector.DisablePlayerControl(player);
         emotionDirector.ResetEmotion();
 
+        // 카메라 초기 위치를 돌리카트 위치로 설정
         Vector3 camStart = dollyCart.transform.position;
         emotionDirector.ThemeCamera.SetPosition(camStart);
         emotionDirector.ResetThemeCamera();
@@ -50,6 +52,16 @@ public class EnterStage3_2 : MonoBehaviour
         // Body = Transposer (dollyCart 따라감)
         emotionDirector.SetBody<CinemachineTransposer>();
         themeCam.SetFollow(dollyCart.transform);
+
+        // Follow Offset 초기화 + Damping 제거
+        var transposer = themeCam.ThemeCamera.GetCinemachineComponent<CinemachineTransposer>();
+        if (transposer != null)
+        {
+            transposer.m_FollowOffset = Vector3.zero;
+            transposer.m_XDamping = 0f;
+            transposer.m_YDamping = 0f;
+            transposer.m_ZDamping = 0f;
+        }
 
         // Aim = Composer (lookTarget 응시)
         emotionDirector.SetAim<CinemachineComposer>();
@@ -64,6 +76,7 @@ public class EnterStage3_2 : MonoBehaviour
 
         yield return new WaitForSeconds(rideDuration);
 
+        // 돌리카트 정지
         dollyCart.m_Speed = 0f;
         dollyCart2.m_Speed = 0f;
 
@@ -73,10 +86,12 @@ public class EnterStage3_2 : MonoBehaviour
         emotionDirector.ClearBody();
         emotionDirector.ClearAim();
 
+        // 조작 복원
         emotionDirector.ResetToDefault();
         emotionDirector.EnablePlayerControl(player);
         gameObject.SetActive(false);
     }
+
     // 범위 표시
     private void OnDrawGizmos()
     {
@@ -91,4 +106,3 @@ public class EnterStage3_2 : MonoBehaviour
         }
     }
 }
-
