@@ -14,6 +14,7 @@ public class DialogueData
 [System.Serializable]
 public class Dialogue
 {
+    public string type;
     public string id;
     public string text;
 }
