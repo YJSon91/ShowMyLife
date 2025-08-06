@@ -43,10 +43,10 @@ public class AppearingObstacle : BaseObstacle
                 activationCount++;
                 
                 // 최대 횟수에 도달했는지 로그 출력
-                if (maxActivationCount > 0 && activationCount >= maxActivationCount)
-                {
-                    Debug.Log($"발판 최대 활성화 횟수({maxActivationCount}회)에 도달했습니다.");
-                }
+                //if (maxActivationCount > 0 && activationCount >= maxActivationCount)
+                //{
+                //    Debug.Log($"발판 최대 활성화 횟수({maxActivationCount}회)에 도달했습니다.");
+                //}
             }
         }
     }
@@ -64,11 +64,11 @@ public class AppearingObstacle : BaseObstacle
                 ActivateChildren();
                 activationCount++;
                 
-                // 최대 횟수에 도달했는지 로그 출력
-                if (maxActivationCount > 0 && activationCount >= maxActivationCount)
-                {
-                    Debug.Log($"발판 최대 활성화 횟수({maxActivationCount}회)에 도달했습니다.");
-                }
+                //// 최대 횟수에 도달했는지 로그 출력
+                //if (maxActivationCount > 0 && activationCount >= maxActivationCount)
+                //{
+                //    Debug.Log($"발판 최대 활성화 횟수({maxActivationCount}회)에 도달했습니다.");
+                //}
             }
         }
     }
@@ -88,7 +88,7 @@ public class AppearingObstacle : BaseObstacle
         }
         
         isVisible = true;
-        Debug.Log("발판 활성화됨");
+        //Debug.Log("발판 활성화됨");
     }
     
     /// <summary>
@@ -106,7 +106,7 @@ public class AppearingObstacle : BaseObstacle
         }
         
         isVisible = false;
-        Debug.Log("발판 비활성화됨");
+        //Debug.Log("발판 비활성화됨");
     }
     
     /// <summary>
