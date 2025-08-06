@@ -198,7 +198,15 @@ public class PlayerMovementController : MonoBehaviour
     private float _obstacleSlideGravityMultiplier;
     private float _obstacleSlideInputReduction;
 
-    
+    // 점프존 관련 변수 추가
+    private float _baseJumpForce;
+    private float _currentJumpMultiplier = 1f;
+    private int _jumpZoneCount = 0;
+    private bool _isRestoringJump = false;
+    private float _jumpRestoreTimer = 0f;
+    private float _jumpRestoreDuration = 0f;
+
+
 
     #endregion
 
@@ -300,6 +308,9 @@ public class PlayerMovementController : MonoBehaviour
         _currentIceSlowdownRate = _iceSlowdownRate;
         _currentIceAccelerationRate = _iceAccelerationRate;
         _currentIceSpeedMultiplier = 1.0f;
+
+        //점프존 관련
+        _baseJumpForce = _jumpForce;
     }
 
     private void Start()
@@ -366,6 +377,30 @@ public class PlayerMovementController : MonoBehaviour
                 _sprintSpeed = _baseSprintSpeed;
                 _isRestoringSpeed = false;
                 _currentSlowMultiplier = 1f;
+            }
+        }
+
+        // 점프 복구 처리
+        if (_isRestoringJump)
+        {
+            if (_jumpRestoreDuration > 0f)
+            {
+                _jumpRestoreTimer += Time.deltaTime;
+                float t = Mathf.Clamp01(_jumpRestoreTimer / _jumpRestoreDuration);
+                _jumpForce = Mathf.Lerp(_jumpForce, _baseJumpForce, t);
+
+                if (t >= 1f || Mathf.Abs(_jumpForce - _baseJumpForce) < 0.01f)
+                {
+                    _jumpForce = _baseJumpForce;
+                    _isRestoringJump = false;
+                    _currentJumpMultiplier = 1f;
+                }
+            }
+            else
+            {
+                _jumpForce = _baseJumpForce;
+                _isRestoringJump = false;
+                _currentJumpMultiplier = 1f;
             }
         }
     }
@@ -1625,6 +1660,34 @@ public class PlayerMovementController : MonoBehaviour
         if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
             Jump();
+        }
+    }
+
+    /// <summary>
+    /// 점프력 증가/감소 존 진입 시 호출
+    /// </summary>
+    public void EnterJumpModifierZone(float multiplier, float restoreDuration)
+    {
+        _jumpZoneCount++;
+        if (_jumpZoneCount == 1 || multiplier != _currentJumpMultiplier)
+        {
+            _currentJumpMultiplier = multiplier;
+            _jumpForce = _baseJumpForce * _currentJumpMultiplier;
+            _isRestoringJump = false;
+        }
+        _jumpRestoreDuration = restoreDuration;
+    }
+
+    /// <summary>
+    /// 점프력 변화 존 이탈 시 복구 처리 시작
+    /// </summary>
+    public void ExitJumpModifierZone()
+    {
+        _jumpZoneCount = Mathf.Max(0, _jumpZoneCount - 1);
+        if (_jumpZoneCount == 0)
+        {
+            _isRestoringJump = true;
+            _jumpRestoreTimer = 0f;
         }
     }
 }
