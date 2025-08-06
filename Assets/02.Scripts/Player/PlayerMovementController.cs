@@ -495,7 +495,7 @@ public class PlayerMovementController : MonoBehaviour
         // NaN 체크 및 처리
         if (ContainsNaN(_targetVelocity))
         {
-            Debug.LogWarning("목표 속도에 NaN 값 감지됨! 초기화합니다.");
+            //Debug.LogWarning("목표 속도에 NaN 값 감지됨! 초기화합니다.");
             _targetVelocity = Vector3.zero;
         }
         
@@ -516,7 +516,7 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
+                //Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
@@ -535,7 +535,7 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
+               // Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
