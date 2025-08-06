@@ -72,7 +72,7 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("공중에 있을 때의 중력 배수")]
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
-    [SerializeField] private float _groundCheckDistance = 0.25f;
+    [SerializeField] private float _groundCheckDistance = 0.05f; // 0.25f에서 0.15f로 감소
     // 점프 쿨타임 제거됨
     [Tooltip("코요테 타임 길이 (초)")]
     [SerializeField] private float _coyoteTimeThreshold = 0.25f;
@@ -142,6 +142,7 @@ public class PlayerMovementController : MonoBehaviour
     private bool _isLockedOn;
     public bool _cannotStandUp;
     private bool _isSliding;
+    private bool _isJumping; // 점프 중인지 여부를 추적하는 변수 추가
 
     // 슬립 관련 변수
     private bool _isSlipping;
@@ -197,7 +198,15 @@ public class PlayerMovementController : MonoBehaviour
     private float _obstacleSlideGravityMultiplier;
     private float _obstacleSlideInputReduction;
 
-    
+    // 점프존 관련 변수 추가
+    private float _baseJumpForce;
+    private float _currentJumpMultiplier = 1f;
+    private int _jumpZoneCount = 0;
+    private bool _isRestoringJump = false;
+    private float _jumpRestoreTimer = 0f;
+    private float _jumpRestoreDuration = 0f;
+
+
 
     #endregion
 
@@ -237,6 +246,11 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어가 스트레이핑 중인지 여부
     /// </summary>
     public bool IsStrafing => _isStrafing;
+    
+    /// <summary>
+    /// 플레이어가 점프 중인지 여부
+    /// </summary>
+    public bool IsJumping => _isJumping;
 
     /// <summary>
     /// 플레이어의 이동 방향 벡터
@@ -294,6 +308,9 @@ public class PlayerMovementController : MonoBehaviour
         _currentIceSlowdownRate = _iceSlowdownRate;
         _currentIceAccelerationRate = _iceAccelerationRate;
         _currentIceSpeedMultiplier = 1.0f;
+
+        //점프존 관련
+        _baseJumpForce = _jumpForce;
     }
 
     private void Start()
@@ -362,6 +379,30 @@ public class PlayerMovementController : MonoBehaviour
                 _currentSlowMultiplier = 1f;
             }
         }
+
+        // 점프 복구 처리
+        if (_isRestoringJump)
+        {
+            if (_jumpRestoreDuration > 0f)
+            {
+                _jumpRestoreTimer += Time.deltaTime;
+                float t = Mathf.Clamp01(_jumpRestoreTimer / _jumpRestoreDuration);
+                _jumpForce = Mathf.Lerp(_jumpForce, _baseJumpForce, t);
+
+                if (t >= 1f || Mathf.Abs(_jumpForce - _baseJumpForce) < 0.01f)
+                {
+                    _jumpForce = _baseJumpForce;
+                    _isRestoringJump = false;
+                    _currentJumpMultiplier = 1f;
+                }
+            }
+            else
+            {
+                _jumpForce = _baseJumpForce;
+                _isRestoringJump = false;
+                _currentJumpMultiplier = 1f;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -385,6 +426,7 @@ public class PlayerMovementController : MonoBehaviour
             velocity.y = _jumpForce;
             _rigidbody.velocity = velocity;
             _isGrounded = false;
+            _isJumping = true; // 점프 상태 설정 확실하게
             jumpRequest = false;
         }
 
@@ -488,7 +530,7 @@ public class PlayerMovementController : MonoBehaviour
         // NaN 체크 및 처리
         if (ContainsNaN(_targetVelocity))
         {
-            Debug.LogWarning("목표 속도에 NaN 값 감지됨! 초기화합니다.");
+            //Debug.LogWarning("목표 속도에 NaN 값 감지됨! 초기화합니다.");
             _targetVelocity = Vector3.zero;
         }
         
@@ -509,7 +551,7 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
+                //Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
@@ -528,7 +570,7 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
+               // Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
@@ -853,10 +895,16 @@ public class PlayerMovementController : MonoBehaviour
     public void Jump()
     {
         // 지면에 있거나 코요테 타임 중이면 점프 가능
-        if (_isGrounded || _canCoyoteJump)
+        if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
+            // 즉시 지면 상태와 코요테 타임 상태를 false로 변경
             _isGrounded = false;
             _canCoyoteJump = false;
+            _coyoteTimeCounter = 0f; // 코요테 타임 즉시 종료
+            
+            // 점프 중 상태 설정
+            _isJumping = true;
+            
             jumpRequest = true;
             
             Debug.Log("점프 실행!");
@@ -874,6 +922,8 @@ public class PlayerMovementController : MonoBehaviour
         _rigidbody.velocity = v;
 
         _isGrounded = false;
+        _isJumping = true; // 외부 점프도 점프 상태로 설정
+        _canCoyoteJump = false; // 코요테 타임 비활성화
         jumpRequest = false;
         // 필요하면 점프 애니메이션 등도 여기서 처리
     }
@@ -1192,6 +1242,13 @@ public class PlayerMovementController : MonoBehaviour
         if (groundHit)
         {
             _groundNormal = _groundHit.normal;
+            
+            // 이전에 점프 중이었다면 착지 상태로 변경
+            if (_isJumping)
+            {
+                _isJumping = false;
+            }
+            
             _isGrounded = true;
             _canCoyoteJump = true;
             _coyoteTimeCounter = _coyoteTimeThreshold;
@@ -1599,10 +1656,38 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     private void OnJumpInput()
     {
-        // 지면에 있거나 코요테 타임 중이면 점프 실행
-        if (_isGrounded || _canCoyoteJump)
+        // 지면에 있거나 코요테 타임 중이고 점프 중이 아닐 때만 점프 실행
+        if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
             Jump();
+        }
+    }
+
+    /// <summary>
+    /// 점프력 증가/감소 존 진입 시 호출
+    /// </summary>
+    public void EnterJumpModifierZone(float multiplier, float restoreDuration)
+    {
+        _jumpZoneCount++;
+        if (_jumpZoneCount == 1 || multiplier != _currentJumpMultiplier)
+        {
+            _currentJumpMultiplier = multiplier;
+            _jumpForce = _baseJumpForce * _currentJumpMultiplier;
+            _isRestoringJump = false;
+        }
+        _jumpRestoreDuration = restoreDuration;
+    }
+
+    /// <summary>
+    /// 점프력 변화 존 이탈 시 복구 처리 시작
+    /// </summary>
+    public void ExitJumpModifierZone()
+    {
+        _jumpZoneCount = Mathf.Max(0, _jumpZoneCount - 1);
+        if (_jumpZoneCount == 0)
+        {
+            _isRestoringJump = true;
+            _jumpRestoreTimer = 0f;
         }
     }
 }
