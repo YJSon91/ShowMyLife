@@ -115,7 +115,7 @@ public class BouncyObstacle : BaseObstacle
         });
 
         // (디버그용) 실제 튕겨낸 방향과 힘 확인
-        Debug.Log($"튕김 방향: {finalBounceDir}, 힘: {bounceForce}, Upward: {upwardForce}");
+        //Debug.Log($"튕김 방향: {finalBounceDir}, 힘: {bounceForce}, Upward: {upwardForce}");
     }
 
     /// <summary>
@@ -124,12 +124,12 @@ public class BouncyObstacle : BaseObstacle
     private IEnumerator DisablePlayerInputTemporarily(InputReader inputReader)
     {
         inputReader.DisableInput();
-        Debug.Log($"플레이어 입력 비활성화: {inputDisableDuration}초 동안");
+        //Debug.Log($"플레이어 입력 비활성화: {inputDisableDuration}초 동안");
 
         yield return new WaitForSeconds(inputDisableDuration);
 
         inputReader.EnableInput();
-        Debug.Log("플레이어 입력 다시 활성화됨");
+        //Debug.Log("플레이어 입력 다시 활성화됨");
     }
 
     private void OnDestroy()

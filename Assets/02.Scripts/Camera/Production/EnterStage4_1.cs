@@ -48,7 +48,7 @@ public class EnterStage4_1 : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
 
         Transform target11 = emotionDirector.GetLookTargetTransform(11);
-        yield return StartCoroutine(emotionDirector.RotateLookFromSweep(toPos, rot10, target11, 1f));
+        yield return StartCoroutine(emotionDirector.RotateLookFromSweep(toPos, rot10, target11, 3f));
 
         yield return new WaitForSecondsRealtime(0.5f);
 
@@ -60,7 +60,7 @@ public class EnterStage4_1 : MonoBehaviour
         }
 
         Transform target12 = emotionDirector.GetLookTargetTransform(12);
-        yield return StartCoroutine(emotionDirector.RotateLookFromSweep(toPos, rot11, target12, 3f));
+        yield return StartCoroutine(emotionDirector.RotateLookFromSweep(toPos, rot11, target12, 2f));
 
         yield return new WaitForSecondsRealtime(0.5f);
 
