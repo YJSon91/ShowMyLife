@@ -51,19 +51,19 @@ MonoBehaviour:
     width: 0.2
   m_Looped: 0
   m_Waypoints:
-  - position: {x: 22.903374, y: 2.2453613, z: -5}
+  - position: {x: 22.90337, y: 2.2453613, z: -4.343689}
     roll: 0
-  - position: {x: 99.10699, y: 15.374725, z: -18.02063}
+  - position: {x: 100.1648, y: 38.03276, z: -16.39093}
     roll: 0
-  - position: {x: 88.42631, y: 12.978073, z: -71.791626}
+  - position: {x: 88.68562, y: 25.05841, z: -72.13184}
     roll: 0
-  - position: {x: 11.871773, y: 51.62471, z: -53.755127}
+  - position: {x: 16.70562, y: 51.62471, z: -48.64502}
     roll: 0
-  - position: {x: 0.87996674, y: 61.762405, z: -74.13403}
+  - position: {x: 0.87996674, y: 61.762405, z: -69.81262}
     roll: 0
-  - position: {x: 0.81100464, y: 75.72447, z: -119.637115}
+  - position: {x: 0.81100464, y: 75.72447, z: -117.2225}
     roll: 0
-  - position: {x: 0.74204254, y: 136.03636, z: -145.01883}
+  - position: {x: 0.7420425, y: 134.3176, z: -145.0188}
     roll: 0
 --- !u!1 &1735683108473569847
 GameObject:
@@ -75,7 +75,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3907685214061660369}
   m_Layer: 0
-  m_Name: ' Dolly Track'
+  m_Name: Stage3 Dolly Track
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,6 +100,55 @@ Transform:
   - {fileID: 8572797685271086512}
   m_Father: {fileID: 4150423125987357134}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2654784441435904204
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1478365411117072255}
+  - component: {fileID: 2348218764102497120}
+  m_Layer: 0
+  m_Name: Look Dolly Cart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1478365411117072255
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2654784441435904204}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.27329856, y: -0.6885742, z: -0.31809917, w: 0.5915965}
+  m_LocalPosition: {x: 671.4455, y: 311.61, z: -12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5928738146617508957}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2348218764102497120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2654784441435904204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99a9c787e5d1bbf48a389834c4a9641c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Path: {fileID: 2418110969850139335}
+  m_UpdateMethod: 0
+  m_PositionUnits: 1
+  m_Speed: 0
+  m_Position: 0
 --- !u!1 &2695406746684007142
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,8 +325,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2793076065145556191}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.07842356, y: 0.689116, z: 0.07543314, w: 0.7164347}
-  m_LocalPosition: {x: 138.76233, y: 229.07536, z: 501.06}
+  m_LocalRotation: {x: -0.17919828, y: 0.6634482, z: 0.16823125, w: 0.70669854}
+  m_LocalPosition: {x: 138.76231, y: 229.07536, z: 501.7163}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -332,6 +381,7 @@ Transform:
   - {fileID: 1924810894890060630}
   - {fileID: 5737522884624791432}
   - {fileID: 3907685214061660369}
+  - {fileID: 5928738146617508957}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4402482329081661684
@@ -385,17 +435,94 @@ MonoBehaviour:
     width: 0.2
   m_Looped: 0
   m_Waypoints:
-  - position: {x: 23.815372, y: 15.390533, z: -5}
+  - position: {x: 23.20645, y: 15.8065, z: -3.633423}
     roll: 0
-  - position: {x: 135.17331, y: 22.394135, z: -5.1137695}
+  - position: {x: 129.1837, y: 35.88373, z: 5.308777}
     roll: 0
-  - position: {x: 130.51917, y: 56.381012, z: -105.1944}
+  - position: {x: 142.1514, y: 62.45184, z: -104.748}
     roll: 0
-  - position: {x: 64.77582, y: 108.48053, z: -84.209045}
+  - position: {x: 64.77582, y: 105.1481, z: -81.50159}
     roll: 0
-  - position: {x: 29.480469, y: 134.5853, z: -88.02008}
+  - position: {x: 31.71172, y: 135.3849, z: -77.1089}
     roll: 0
-  - position: {x: 23.225864, y: 135.49234, z: -116.40704}
+  - position: {x: 23.22586, y: 143.7944, z: -116.1639}
+    roll: 0
+--- !u!1 &5242232881890205009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8683763112427687147}
+  - component: {fileID: 348195784348239206}
+  m_Layer: 0
+  m_Name: Follow Dolly Track
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8683763112427687147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5242232881890205009}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 692.51, y: 311.61, z: -7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5928738146617508957}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &348195784348239206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5242232881890205009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Resolution: 20
+  m_Appearance:
+    pathColor: {r: 0, g: 1, b: 0, a: 1}
+    inactivePathColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    width: 0.2
+  m_Looped: 0
+  m_Waypoints:
+  - position: {x: 0, y: 0, z: -5}
+    roll: 0
+  - position: {x: -38.288513, y: 23.480011, z: -4.5333023}
+    roll: 0
+  - position: {x: -50.064697, y: 18.120178, z: 8.6979065}
+    roll: 0
+  - position: {x: -44.676453, y: 15.513306, z: 51.956787}
+    roll: 0
+  - position: {x: -9.966858, y: 20.702759, z: 61.88559}
+    roll: 0
+  - position: {x: -6.6430664, y: 27.638763, z: 91.3586}
+    roll: 0
+  - position: {x: -25.802917, y: 17.16214, z: 111.67374}
+    roll: 0
+  - position: {x: -74.651184, y: 7.9615784, z: 136.22142}
+    roll: 0
+  - position: {x: -82.77435, y: 5.9840393, z: 167.07025}
+    roll: 0
+  - position: {x: -36.101807, y: 16.479156, z: 170.58624}
+    roll: 0
+  - position: {x: -29.203552, y: 20.3526, z: 197.32974}
+    roll: 0
+  - position: {x: -7.621887, y: 20.457886, z: 196.85632}
+    roll: 0
+  - position: {x: 12.340393, y: 13.661987, z: 206.46103}
     roll: 0
 --- !u!1 &6046604827524475995
 GameObject:
@@ -424,7 +551,7 @@ Transform:
   m_GameObject: {fileID: 6046604827524475995}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 74.935, y: 231.40001, z: 496.61798}
+  m_LocalPosition: {x: 61.326996, y: 1.8, z: -187.62201}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -525,8 +652,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6820119358668728093}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0040346906, y: 0.61186457, z: 0.0031211784, w: 0.7909462}
-  m_LocalPosition: {x: 117.11537, y: 242.55054, z: 501.12}
+  m_LocalRotation: {x: -0.060493145, y: 0.55605376, z: 0.040627584, w: 0.8279458}
+  m_LocalPosition: {x: 116.506454, y: 242.9665, z: 502.48657}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -550,6 +677,41 @@ MonoBehaviour:
   m_PositionUnits: 1
   m_Speed: 0
   m_Position: 0
+--- !u!1 &7003763784446019976
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5928738146617508957}
+  m_Layer: 0
+  m_Name: Stage4 Dolly Track
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5928738146617508957
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7003763784446019976}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8683763112427687147}
+  - {fileID: 4329869623057583402}
+  - {fileID: 1294658604560425469}
+  - {fileID: 1478365411117072255}
+  m_Father: {fileID: 4150423125987357134}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7933670554976301017
 GameObject:
   m_ObjectHideFlags: 0
@@ -653,6 +815,132 @@ MonoBehaviour:
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
+--- !u!1 &8636813339180744564
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1294658604560425469}
+  - component: {fileID: 2418110969850139335}
+  m_Layer: 0
+  m_Name: Look Dolly Track
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1294658604560425469
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8636813339180744564}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 692.51, y: 311.61, z: -7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5928738146617508957}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2418110969850139335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8636813339180744564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Resolution: 20
+  m_Appearance:
+    pathColor: {r: 0, g: 1, b: 0, a: 1}
+    inactivePathColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    width: 0.2
+  m_Looped: 0
+  m_Waypoints:
+  - position: {x: -21.064514, y: 0, z: -5}
+    roll: 0
+  - position: {x: -36.38971, y: 14.796722, z: -6.300911}
+    roll: 0
+  - position: {x: -49.74768, y: 14.731995, z: 6.561615}
+    roll: 0
+  - position: {x: -44.676453, y: 5.5784607, z: 51.956787}
+    roll: 0
+  - position: {x: -20.029541, y: 14.326813, z: 71.154724}
+    roll: 0
+  - position: {x: -13.965149, y: 21.432922, z: 88.618576}
+    roll: 0
+  - position: {x: -36.058777, y: 17.16214, z: 114.91753}
+    roll: 0
+  - position: {x: -74.651184, y: 7.9615784, z: 136.22142}
+    roll: 0
+  - position: {x: -82.77435, y: 5.9840393, z: 167.07025}
+    roll: 0
+  - position: {x: -36.101807, y: 16.479156, z: 170.58624}
+    roll: 0
+  - position: {x: -29.203552, y: 20.3526, z: 197.32974}
+    roll: 0
+  - position: {x: -7.621887, y: 20.457886, z: 196.85632}
+    roll: 0
+  - position: {x: 12.340393, y: 13.661987, z: 206.46103}
+    roll: 0
+--- !u!1 &8742838844656620942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4329869623057583402}
+  - component: {fileID: 1872697447148112947}
+  m_Layer: 0
+  m_Name: Follow Dolly Cart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4329869623057583402
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8742838844656620942}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.21187995, y: -0.6749078, z: -0.21208343, w: 0.6742603}
+  m_LocalPosition: {x: 692.51, y: 311.61, z: -12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5928738146617508957}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1872697447148112947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8742838844656620942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99a9c787e5d1bbf48a389834c4a9641c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Path: {fileID: 348195784348239206}
+  m_UpdateMethod: 0
+  m_PositionUnits: 1
+  m_Speed: 0
+  m_Position: 0
 --- !u!1 &8794928697834247201
 GameObject:
   m_ObjectHideFlags: 0
