@@ -36,10 +36,24 @@ public class BouncyObstacle : BaseObstacle
     [Tooltip("플레이어 입력을 비활성화하는 시간 (초)")]
     [SerializeField] private float inputDisableDuration = 0.5f;
 
+    [Header("사운드 설정")]
+    [Tooltip("튕김 사운드 재생 여부")]
+    [SerializeField] private bool playBounceSound = true;
+
+    [Tooltip("튕김 사운드 볼륨 (0~1)")]
+    [SerializeField] private float bounceSoundVolume = 1.0f;
+
+    [Tooltip("튕김 사운드 쿨타임 (초) - 너무 자주 재생되지 않도록")]
+    [SerializeField] private float soundCooldownTime = 0.2f;
+
     // 현재 활성화된 트윈 저장용
     private Tween _currentBounceTween;
     // 마지막 튕겨내기 시간
     private float _lastBounceTime = -10f;
+    // 마지막 사운드 재생 시간
+    private float _lastSoundTime = -10f;
+    // SoundManager 참조
+    private SoundManager _soundManager;
 
     private void Start()
     {
@@ -50,6 +64,12 @@ public class BouncyObstacle : BaseObstacle
                 new Keyframe(0, 1, 0, -2),
                 new Keyframe(1, 0, 0, 0)
             );
+        }
+
+        // SoundManager 참조 가져오기
+        if (GameManager.Instance != null)
+        {
+            _soundManager = GameManager.Instance.SoundManager;
         }
     }
 
@@ -65,6 +85,9 @@ public class BouncyObstacle : BaseObstacle
         // 쿨타임 체크
         if (Time.time - _lastBounceTime < cooldownTime) return;
         _lastBounceTime = Time.time;
+
+        // 튕김 사운드 재생
+        PlayBounceSound();
 
         // 플레이어 컴포넌트 가져오기
         Player player = collision.gameObject.GetComponent<Player>();
@@ -116,6 +139,30 @@ public class BouncyObstacle : BaseObstacle
 
         // (디버그용) 실제 튕겨낸 방향과 힘 확인
         //Debug.Log($"튕김 방향: {finalBounceDir}, 힘: {bounceForce}, Upward: {upwardForce}");
+    }
+
+    /// <summary>
+    /// 튕김 사운드 재생
+    /// </summary>
+    private void PlayBounceSound()
+    {
+        // 사운드 재생이 비활성화되어 있으면 무시
+        if (!playBounceSound) return;
+
+        // 사운드 쿨타임 체크
+        if (Time.time - _lastSoundTime < soundCooldownTime) return;
+        _lastSoundTime = Time.time;
+
+        // SoundManager가 있으면 사운드 재생
+        if (_soundManager != null)
+        {
+            _soundManager.PlaySFX(SfxType.Bounce, bounceSoundVolume);
+            Debug.Log($"[BouncyObstacle] 튕김 사운드 재생 (볼륨: {bounceSoundVolume})");
+        }
+        else
+        {
+            Debug.LogWarning("[BouncyObstacle] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
+        }
     }
 
     /// <summary>

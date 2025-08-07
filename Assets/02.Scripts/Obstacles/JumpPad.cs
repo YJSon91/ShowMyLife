@@ -9,7 +9,30 @@ public class JumpPad : BaseObstacle
     [SerializeField] private Vector3 forceDirection = Vector3.up;
     [SerializeField] private float padCooldown = 0.3f;
 
+    [Header("사운드 설정")]
+    [Tooltip("점프 패드 사운드 재생 여부")]
+    [SerializeField] private bool playJumpPadSound = true;
+
+    [Tooltip("점프 패드 사운드 볼륨 (0~1)")]
+    [SerializeField] private float jumpPadSoundVolume = 1.0f;
+
+    [Tooltip("점프 패드 사운드 쿨타임 (초) - 너무 자주 재생되지 않도록")]
+    [SerializeField] private float soundCooldownTime = 0.2f;
+
     private float _lastActivateTime = -10f;
+    // 마지막 사운드 재생 시간
+    private float _lastSoundTime = -10f;
+    // SoundManager 참조
+    private SoundManager _soundManager;
+
+    private void Start()
+    {
+        // SoundManager 참조 가져오기
+        if (GameManager.Instance != null)
+        {
+            _soundManager = GameManager.Instance.SoundManager;
+        }
+    }
 
     // Collision 방식만 처리
     protected override void OnCollisionEnter(Collision collision)
@@ -37,6 +60,9 @@ public class JumpPad : BaseObstacle
                 if (Time.time - _lastActivateTime < padCooldown) return;
                 _lastActivateTime = Time.time;
 
+                // 점프 패드 사운드 재생
+                PlayJumpPadSound();
+
                 var playerMoveCtrl = collision.gameObject.GetComponent<PlayerMovementController>();
                 if (playerMoveCtrl != null)
                 {
@@ -45,6 +71,30 @@ public class JumpPad : BaseObstacle
                 }
                 break;
             }
+        }
+    }
+
+    /// <summary>
+    /// 점프 패드 사운드 재생
+    /// </summary>
+    private void PlayJumpPadSound()
+    {
+        // 사운드 재생이 비활성화되어 있으면 무시
+        if (!playJumpPadSound) return;
+
+        // 사운드 쿨타임 체크
+        if (Time.time - _lastSoundTime < soundCooldownTime) return;
+        _lastSoundTime = Time.time;
+
+        // SoundManager가 있으면 사운드 재생
+        if (_soundManager != null)
+        {
+            _soundManager.PlaySFX(SfxType.JumpPad, jumpPadSoundVolume);
+            Debug.Log($"[JumpPad] 점프 패드 사운드 재생 (볼륨: {jumpPadSoundVolume})");
+        }
+        else
+        {
+            Debug.LogWarning("[JumpPad] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
         }
     }
 }
