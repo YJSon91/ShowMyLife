@@ -21,7 +21,9 @@ public enum SfxType
     Run,
     FallShort,  // 추가: 짧은 낙하 사운드 (1.5~2초)
     FallMedium, // 추가: 중간 낙하 사운드 (2~2.5초)
-    FallLong    // 추가: 긴 낙하 사운드 (2.5초 이상)
+    FallLong,   // 추가: 긴 낙하 사운드 (2.5초 이상)
+    Bounce,     // 추가: 튕김 사운드
+    JumpPad     // 추가: 점프 패드 사운드
 }
 
 public enum NarrationType
