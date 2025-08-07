@@ -22,6 +22,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private float _middleHeightThreshold = 50f;
     [SerializeField] private float _highHeightThreshold = 100f;
 
+    private float floatDialogueTime = 3.0f;
+
     private void Start()
     {
         GameManager.Instance.RegisterDialogueManager(this);
@@ -181,10 +183,15 @@ public class DialogueManager : MonoBehaviour
             ShowDialogueUI(randomDialogue.text);
         }
     }
-    private IEnumerator SequentialDialogueRoutine(string[] dialogueIDs)
+    private IEnumerator SequentialDialogueRoutine(string[] dialogueIDs, float startDelay)
     {
+        // 트리거에 설정된 지연 시간만큼 기다립니다.
+        if (startDelay > 0)
+        {
+            yield return new WaitForSeconds(startDelay);
+        }
         // 1. 플레이어의 조작을 잠시 멈춥니다 (선택 사항).
-       // GameManager.Instance.PlayerControls.Player.Disable();
+        // GameManager.Instance.PlayerControls.Player.Disable();
 
         foreach (string id in dialogueIDs)
         {
@@ -193,7 +200,7 @@ public class DialogueManager : MonoBehaviour
 
             // 3. 대사가 끝나기를 기다립니다. 
             //    (여기서는 간단히 3초 + 키 입력 대기로 처리)
-            yield return new WaitForSeconds(3.5f);
+            yield return new WaitForSeconds(floatDialogueTime);
            // yield return new WaitUntil(() => Input.anyKeyDown);
         }
 
@@ -202,11 +209,11 @@ public class DialogueManager : MonoBehaviour
         //GameManager.Instance.PlayerControls.Player.Enable();
     }
     /// </summary>
-    public void StartSequentialDialogue(string[] dialogueIDs)
+    public void StartSequentialDialogue(string[] dialogueIDs, float delay)
     {
         // 이미 다른 대사 시퀀스가 실행 중이라면 중복 실행을 막습니다.
         StopAllCoroutines();
-        StartCoroutine(SequentialDialogueRoutine(dialogueIDs));
+        StartCoroutine(SequentialDialogueRoutine(dialogueIDs, delay));
     }
     private void HandlePlayerFall(float fallDuration)
     {
