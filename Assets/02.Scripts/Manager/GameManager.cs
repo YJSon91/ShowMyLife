@@ -365,10 +365,10 @@ public class GameManager : MonoBehaviour
                     // SoundManager.PlayBGM(BgmType.Lobby);
                     break;
                 case GameState.Playing:
-                    SoundManager.StopBGM();
+                    if (SoundManager != null) SoundManager.StopBGM();
                     break;
                 case GameState.Tutorial:
-                    SoundManager.StopBGM();
+                    if (SoundManager != null) SoundManager.StopBGM();
                     break;
                 case GameState.LevelClear:
                     //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM

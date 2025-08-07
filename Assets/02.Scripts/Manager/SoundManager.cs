@@ -19,7 +19,9 @@ public enum SfxType
     Land,
     Walk,
     Run,
-   
+    FallShort,  // 추가: 짧은 낙하 사운드 (1.5~2초)
+    FallMedium, // 추가: 중간 낙하 사운드 (2~2.5초)
+    FallLong    // 추가: 긴 낙하 사운드 (2.5초 이상)
 }
 
 public enum NarrationType

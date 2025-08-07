@@ -52,6 +52,7 @@ GameObject:
   - component: {fileID: 4799137886782007975}
   - component: {fileID: 1935998127126727668}
   - component: {fileID: 4581047075121214386}
+  - component: {fileID: 9082535315150219341}
   m_Layer: 3
   m_Name: Character_Component
   m_TagString: Player
@@ -135,6 +136,7 @@ MonoBehaviour:
   _inputReader: {fileID: 5576311074807246589}
   _animationEventHandler: {fileID: 0}
   _characterSwitcher: {fileID: 0}
+  _fallSoundController: {fileID: 0}
   _movementController: {fileID: 2859424433754225604}
   _stateController: {fileID: 1997512669615988944}
   _godModeController: {fileID: 4651067884908956247}
@@ -455,6 +457,21 @@ MonoBehaviour:
   schoolBoyModel: {fileID: 4814898281239570640}
   kidAvatar: {fileID: 9000000, guid: d9dbc514e3829c24c90fd23a9446b805, type: 3}
   schoolBoyAvatar: {fileID: 9000000, guid: 4100b6e3ac8df864f983d5bd388f7e4c, type: 3}
+--- !u!114 &9082535315150219341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396409478977973253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30231cdb60a75f44f84b9bca3d00332b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shortFallTime: 1.5
+  _mediumFallTime: 2
+  _longFallTime: 2.5
 --- !u!1 &633377181484479616
 GameObject:
   m_ObjectHideFlags: 0

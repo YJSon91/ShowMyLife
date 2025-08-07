@@ -35,6 +35,9 @@ public class Player : MonoBehaviour
     
     [Tooltip("캐릭터 전환을 관리하는 컴포넌트")]
     [SerializeField] private CharacterSwitcher _characterSwitcher;
+    
+    [Tooltip("낙하 사운드를 관리하는 컴포넌트")]
+    [SerializeField] private PlayerFallSoundController _fallSoundController;
 
     #endregion
 
@@ -60,6 +63,7 @@ public class Player : MonoBehaviour
     public PlayerGodModeController GodModeController => _godModeController;
     public PlayerAnimationEventHandler AnimationEventHandler => _animationEventHandler;
     public CharacterSwitcher CharacterSwitcher => _characterSwitcher;
+    public PlayerFallSoundController FallSoundController => _fallSoundController;
 
     #endregion
 
@@ -149,6 +153,9 @@ public class Player : MonoBehaviour
             
         if (_characterSwitcher == null)
             _characterSwitcher = GetComponent<CharacterSwitcher>();
+            
+        if (_fallSoundController == null)
+            _fallSoundController = GetComponent<PlayerFallSoundController>();
 
         // 카메라 컨트롤러는 다른 게임 오브젝트에 있을 수 있으므로 자동으로 찾지 않음
 
@@ -210,6 +217,9 @@ public class Player : MonoBehaviour
             
         if (_characterSwitcher == null)
             Debug.LogWarning("Player: CharacterSwitcher가 할당되지 않았습니다!");
+            
+        if (_fallSoundController == null)
+            Debug.LogWarning("Player: PlayerFallSoundController가 할당되지 않았습니다!");
     }
 
     #endregion
