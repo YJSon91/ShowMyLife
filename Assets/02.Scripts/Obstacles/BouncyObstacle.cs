@@ -44,7 +44,7 @@ public class BouncyObstacle : BaseObstacle
     [SerializeField] private float bounceSoundVolume = 1.0f;
 
     [Tooltip("튕김 사운드 쿨타임 (초) - 너무 자주 재생되지 않도록")]
-    [SerializeField] private float soundCooldownTime = 0.2f;
+    [SerializeField] private float soundCooldownTime = 3.0f;
 
     // 현재 활성화된 트윈 저장용
     private Tween _currentBounceTween;
@@ -149,15 +149,15 @@ public class BouncyObstacle : BaseObstacle
         // 사운드 재생이 비활성화되어 있으면 무시
         if (!playBounceSound) return;
 
-        // 사운드 쿨타임 체크
-        if (Time.time - _lastSoundTime < soundCooldownTime) return;
-        _lastSoundTime = Time.time;
+        // 개별 쿨타임 체크 제거 (SoundManager에서 전역 관리)
+        // if (Time.time - _lastSoundTime < soundCooldownTime) return;
+        // _lastSoundTime = Time.time;
 
-        // SoundManager가 있으면 사운드 재생
+        // SoundManager가 있으면 사운드 재생 (쿨타임은 SoundManager에서 관리)
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.Bounce, bounceSoundVolume);
-            Debug.Log($"[BouncyObstacle] 튕김 사운드 재생 (볼륨: {bounceSoundVolume})");
+            Debug.Log($"[BouncyObstacle] 튕김 사운드 재생 요청 (볼륨: {bounceSoundVolume})");
         }
         else
         {

@@ -9,6 +9,10 @@ public class PlayerAnimationEventHandler : MonoBehaviour
 {
     private SoundManager _soundManager;
     private bool _isJumping = false;
+    
+    // 착지 사운드 억제 관련 변수
+    private bool _suppressLandSound = false;
+    private float _landSoundSuppressEndTime = 0f;
 
     // 랜딩 애니메이션 이벤트를 위한 델리게이트
     public event Action<PlayerAnimationEventHandler> OnLandingAnimationEvent;
@@ -66,6 +70,14 @@ public class PlayerAnimationEventHandler : MonoBehaviour
     /// </summary>
     public void OnLandAnimationEvent()
     {
+        // 착지 사운드 억제 중이면 재생하지 않음
+        if (_suppressLandSound && Time.time < _landSoundSuppressEndTime)
+        {
+            _suppressLandSound = false; // 한 번 억제 후 해제
+            Debug.Log("[PlayerAnimationEventHandler] 점프 패드 착지로 인한 사운드 억제");
+            return;
+        }
+        
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.Land);
@@ -113,5 +125,16 @@ public class PlayerAnimationEventHandler : MonoBehaviour
             // 달리기 사운드를 50% 볼륨으로 재생
             _soundManager.PlaySFX(SfxType.Run, 0.5f);
         }
+    }
+    
+    /// <summary>
+    /// 점프 패드 사용 후 착지 사운드를 일정 시간 동안 억제합니다
+    /// </summary>
+    /// <param name="duration">억제할 시간 (초)</param>
+    public void SuppressLandSound(float duration)
+    {
+        _suppressLandSound = true;
+        _landSoundSuppressEndTime = Time.time + duration;
+        Debug.Log($"[PlayerAnimationEventHandler] 착지 사운드 억제 설정: {duration}초 동안");
     }
 } 
