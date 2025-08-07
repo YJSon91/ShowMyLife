@@ -12,6 +12,10 @@ public class DialogueTrigger : MonoBehaviour
     [Tooltip("이 트리거의 종류를 선택합니다.")]
     [SerializeField] private DialogueTriggerType _triggerType;
 
+    [Tooltip("이 트리거의 대사가 시작되기 전 딜레이 시간(초)")]
+    [SerializeField] private float startDelay = 0f;
+
+
     [Tooltip("지정 대사를 출력하고 싶을 경우, 여기에 대사 ID를 입력하세요.")]
     [SerializeField] private string _dialogueID = ""; // ID를 저장할 변수
 
@@ -45,7 +49,7 @@ public class DialogueTrigger : MonoBehaviour
             // 1. 순차 대사 목록이 있는지 최우선으로 확인합니다.
             if (_dialogueIDs != null && _dialogueIDs.Length > 0)
             {
-                dialogueManager.StartSequentialDialogue(_dialogueIDs);
+                dialogueManager.StartSequentialDialogue(_dialogueIDs, startDelay);
             }
             // 2. 순차 대사가 없다면, 지정된 단일 ID가 있는지 확인합니다.
             else if (!string.IsNullOrEmpty(_dialogueID))
