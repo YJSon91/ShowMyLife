@@ -193,7 +193,7 @@ public class DialogueManager : MonoBehaviour
 
             // 3. 대사가 끝나기를 기다립니다. 
             //    (여기서는 간단히 3초 + 키 입력 대기로 처리)
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(3.5f);
            // yield return new WaitUntil(() => Input.anyKeyDown);
         }
 
