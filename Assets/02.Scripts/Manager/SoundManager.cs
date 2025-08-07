@@ -23,7 +23,8 @@ public enum SfxType
     FallMedium, // 추가: 중간 낙하 사운드 (2~2.5초)
     FallLong,   // 추가: 긴 낙하 사운드 (2.5초 이상)
     Bounce,     // 추가: 튕김 사운드
-    JumpPad     // 추가: 점프 패드 사운드
+    JumpPad,    // 추가: 점프 패드 사운드
+    Projectile  // 추가: 투사체 충돌 사운드
 }
 
 public enum NarrationType
@@ -45,6 +46,18 @@ public class SoundManager : MonoBehaviour
     private Dictionary<BgmType, List<AudioClip>> bgmClips = new();
     private Dictionary<SfxType, List<AudioClip>> sfxClips = new();
     private Dictionary<NarrationType, AudioClip> narrationClips = new(); // 나레이션 클립을 저장할 딕셔너리
+    
+    // 각 SFX 타입별 마지막 재생 시간 저장
+    private Dictionary<SfxType, float> _lastPlayTimes = new Dictionary<SfxType, float>();
+    
+    // 각 SFX 타입별 쿨타임 설정
+    private Dictionary<SfxType, float> _cooldownTimes = new Dictionary<SfxType, float>()
+    {
+        { SfxType.Bounce, 3.0f },        // 튕김 사운드는 3초 쿨타임
+        { SfxType.Projectile, 0.5f },    // 투사체는 0.5초 쿨타임
+        { SfxType.JumpPad, 0.3f },       // 점프 패드는 0.3초 쿨타임
+        // 다른 타입들은 기본값 사용
+    };
 
 
     // Awake에서는 자신의 내부 컴포넌트만 준비합니다.
@@ -111,6 +124,13 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     public void PlaySFX(SfxType sfxType, float volumeScale = 1.0f)
     {
+        // 쿨타임 체크
+        if (IsOnCooldown(sfxType)) 
+        {
+            Debug.Log($"[SoundManager] {sfxType} 사운드 쿨타임 중 - 재생 건너뜀");
+            return;
+        }
+        
         if (!sfxClips.ContainsKey(sfxType) || sfxClips[sfxType].Count == 0)
         {
             Debug.LogError($"[SoundManager] 재생할 '{sfxType}' SFX 클립이 없습니다! Resources 폴더를 확인해주세요.");
@@ -120,6 +140,10 @@ public class SoundManager : MonoBehaviour
         AudioClip clip = clips[Random.Range(0, clips.Count)];
 
         sfxSource.PlayOneShot(clip, volumeScale);
+        
+        // 재생 시간 기록
+        _lastPlayTimes[sfxType] = Time.time;
+        Debug.Log($"[SoundManager] {sfxType} 사운드 재생 (쿨타임 시작)");
     }
     /// <summary>
     /// 이름으로 나레이션 클립을 찾아 재생합니다.
@@ -230,5 +254,19 @@ public class SoundManager : MonoBehaviour
         SetMasterVolume(master);
         SetBgmVolume(bgm);
         SetSfxVolume(sfx);
+    }
+    
+    /// <summary>
+    /// 해당 SFX 타입이 쿨타임 중인지 확인
+    /// </summary>
+    private bool IsOnCooldown(SfxType sfxType)
+    {
+        if (!_lastPlayTimes.ContainsKey(sfxType)) return false;
+        
+        float cooldownTime = _cooldownTimes.ContainsKey(sfxType) 
+            ? _cooldownTimes[sfxType] 
+            : 0.1f; // 기본 쿨타임
+            
+        return Time.time - _lastPlayTimes[sfxType] < cooldownTime;
     }
 }

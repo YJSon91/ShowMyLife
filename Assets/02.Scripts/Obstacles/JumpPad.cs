@@ -19,6 +19,9 @@ public class JumpPad : BaseObstacle
     [Tooltip("점프 패드 사운드 쿨타임 (초) - 너무 자주 재생되지 않도록")]
     [SerializeField] private float soundCooldownTime = 0.2f;
 
+    [Tooltip("점프 패드 사용 후 착지 사운드 억제 시간 (초)")]
+    [SerializeField] private float suppressLandSoundDuration = 1.0f;
+
     private float _lastActivateTime = -10f;
     // 마지막 사운드 재생 시간
     private float _lastSoundTime = -10f;
@@ -63,6 +66,13 @@ public class JumpPad : BaseObstacle
                 // 점프 패드 사운드 재생
                 PlayJumpPadSound();
 
+                // 플레이어에게 착지 사운드 억제 신호 전달
+                var player = collision.gameObject.GetComponent<Player>();
+                if (player != null && player.AnimationEventHandler != null)
+                {
+                    player.AnimationEventHandler.SuppressLandSound(suppressLandSoundDuration);
+                }
+
                 var playerMoveCtrl = collision.gameObject.GetComponent<PlayerMovementController>();
                 if (playerMoveCtrl != null)
                 {
@@ -82,15 +92,15 @@ public class JumpPad : BaseObstacle
         // 사운드 재생이 비활성화되어 있으면 무시
         if (!playJumpPadSound) return;
 
-        // 사운드 쿨타임 체크
-        if (Time.time - _lastSoundTime < soundCooldownTime) return;
-        _lastSoundTime = Time.time;
+        // 개별 쿨타임 체크 제거 (SoundManager에서 전역 관리)
+        // if (Time.time - _lastSoundTime < soundCooldownTime) return;
+        // _lastSoundTime = Time.time;
 
-        // SoundManager가 있으면 사운드 재생
+        // SoundManager가 있으면 사운드 재생 (쿨타임은 SoundManager에서 관리)
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.JumpPad, jumpPadSoundVolume);
-            Debug.Log($"[JumpPad] 점프 패드 사운드 재생 (볼륨: {jumpPadSoundVolume})");
+            Debug.Log($"[JumpPad] 점프 패드 사운드 재생 요청 (볼륨: {jumpPadSoundVolume})");
         }
         else
         {

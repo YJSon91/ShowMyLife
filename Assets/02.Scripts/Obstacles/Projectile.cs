@@ -24,10 +24,25 @@ public class Projectile : MonoBehaviour
     [Tooltip("입력 비활성화 시간")]
     [SerializeField] private float inputDisableDuration = 0.3f;
 
+    [Header("사운드 설정")]
+    [Tooltip("투사체 충돌 사운드 재생 여부")]
+    [SerializeField] private bool playProjectileSound = true;
+
+    [Tooltip("투사체 충돌 사운드 볼륨 (0~1)")]
+    [SerializeField] private float projectileSoundVolume = 1.0f;
+
+    [Tooltip("투사체 충돌 사운드 쿨타임 (초)")]
+    [SerializeField] private float soundCooldownTime = 0.2f;
+
     private Tween _currentPushTween;
     private bool _hasPushed = false; // 1회만 발동
     private Coroutine _autoDestroyCoroutine;
     private PlayerMovementController _pushedPlayerController;
+    
+    // 마지막 사운드 재생 시간
+    private float _lastSoundTime = -10f;
+    // SoundManager 참조
+    private SoundManager _soundManager;
 
     private void Start()
     {
@@ -42,6 +57,12 @@ public class Projectile : MonoBehaviour
             );
 
         _autoDestroyCoroutine = StartCoroutine(AutoDestroyTimer());
+        
+        // SoundManager 참조 가져오기
+        if (GameManager.Instance != null)
+        {
+            _soundManager = GameManager.Instance.SoundManager;
+        }
     }
 
     private IEnumerator AutoDestroyTimer()
@@ -60,6 +81,9 @@ public class Projectile : MonoBehaviour
         if (player == null) return;
 
         _hasPushed = true;
+
+        // 투사체 충돌 사운드 재생
+        PlayProjectileSound();
 
         // 충돌 시 자동삭제 예약 해제
         if (_autoDestroyCoroutine != null)
@@ -124,5 +148,29 @@ public class Projectile : MonoBehaviour
         // 혹시라도 슬라이드 효과가 남아있는 상황 방지
         _pushedPlayerController?.DeactivateObstacleSlide();
         _pushedPlayerController = null;
+    }
+
+    /// <summary>
+    /// 투사체 충돌 사운드 재생
+    /// </summary>
+    private void PlayProjectileSound()
+    {
+        // 사운드 재생이 비활성화되어 있으면 무시
+        if (!playProjectileSound) return;
+
+        // 개별 쿨타임 체크 제거 (SoundManager에서 전역 관리)
+        // if (Time.time - _lastSoundTime < soundCooldownTime) return;
+        // _lastSoundTime = Time.time;
+
+        // SoundManager가 있으면 사운드 재생 (쿨타임은 SoundManager에서 관리)
+        if (_soundManager != null)
+        {
+            _soundManager.PlaySFX(SfxType.Projectile, projectileSoundVolume);
+            Debug.Log($"[Projectile] 투사체 충돌 사운드 재생 요청 (볼륨: {projectileSoundVolume})");
+        }
+        else
+        {
+            Debug.LogWarning("[Projectile] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
+        }
     }
 }
