@@ -6,7 +6,7 @@ using System.Collections;
 public class DialogueUI : UiBase
 {
     [SerializeField] private TextMeshProUGUI _dialogueText;
-    [SerializeField] private float _displayTime = 3.5f;
+    [SerializeField] private float _displayTime = 3.0f;
 
     private Coroutine _hideCoroutine;
 

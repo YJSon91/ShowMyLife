@@ -7,13 +7,13 @@ public class EnterStage2_2 : MonoBehaviour
     [SerializeField] private EmotionDirector emotionDirector;
 
     [Tooltip("첫번째 연출 속도")]
-    [SerializeField] private float zoomDuration = 3f;
+    [SerializeField] private float zoomDuration = 7f;
 
     [Tooltip("중간 대기 시간")]
-    [SerializeField] private float pauseDuration = 0.5f;
+    [SerializeField] private float pauseDuration = 2f;
 
     [Tooltip("두번째 연출 속도")]
-    [SerializeField] private float sweepDuration = 6f;
+    [SerializeField] private float sweepDuration = 10f;
 
     [Tooltip("훑기 각도")]
     [SerializeField] private float sweepAngle = 90f;

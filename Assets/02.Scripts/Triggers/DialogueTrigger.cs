@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum DialogueTriggerType
 {
-    Fall, Cheer, Process, Reach, Start, End, Mid,
+    Fall, Cheer, Process, Reach, Start, End, Mid,Guide,
     Fall_Low, Fall_Middle, Fall_High // 높이별 낙하 타입을 추가
 }
 
