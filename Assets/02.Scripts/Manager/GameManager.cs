@@ -355,7 +355,7 @@ public class GameManager : MonoBehaviour
                     {                       
                         player.transform.position = data.Position;
                         // player.GetComponent<CharacterController>().enabled = true;
-                        Debug.Log($"[GameManager] 데이터 로드. 플레이어 위치 설정: {data.Position}");
+                       // Debug.Log($"[GameManager] 데이터 로드. 플레이어 위치 설정: {data.Position}");
                     }
                 }              
                 GameLoadState.ShouldLoadGame = false;
