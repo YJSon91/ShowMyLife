@@ -45,7 +45,7 @@ public class MainMenu : UiBase
 
     public void OnQuitGameButton()
     {
-        Debug.Log("게임 종료 버튼 클릭됨!");
+        //Debug.Log("게임 종료 버튼 클릭됨!");
 
 #if UNITY_EDITOR
         // Unity 에디터에서 실행했을 경우, 에디터의 플레이 모드를 중지시킵니다.

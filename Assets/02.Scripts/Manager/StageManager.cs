@@ -21,7 +21,7 @@ public class StageManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[StageManager] GameManager가 씬에 존재하지 않습니다! 등록에 실패했습니다.");
+          //  Debug.LogError("[StageManager] GameManager가 씬에 존재하지 않습니다! 등록에 실패했습니다.");
         }
     }
 
@@ -33,7 +33,7 @@ public class StageManager : MonoBehaviour
     /// </summary>
     public void OnPlayerFell()
     {
-        Debug.Log("[StageManager] 플레이어 낙하 감지! GameManager에 리스폰을 요청합니다.");
+      //  Debug.Log("[StageManager] 플레이어 낙하 감지! GameManager에 리스폰을 요청합니다.");
         // GameManager에게 플레이어 리스폰 절차를 시작하도록 '요청'합니다.
         GameManager.Instance.RequestPlayerRespawn();
     }
@@ -43,10 +43,10 @@ public class StageManager : MonoBehaviour
     /// </summary>
     public void OnPlayerReachedGoal()
     {
-        Debug.Log("[StageManager] 플레이어 목표 지점 도착! GameManager에 레벨 클리어를 요청합니다.");
+      //  Debug.Log("[StageManager] 플레이어 목표 지점 도착! GameManager에 레벨 클리어를 요청합니다.");
         // GameManager에게 게임 상태를 'LevelClear'로 변경하도록 '요청'합니다.
         GameManager.Instance.UpdateGameState(GameManager.GameState.LevelClear);
-        Debug.Log("[StageManager] 레벨 클리어 상태로 변경하도록 요청했습니다.");
+      //  Debug.Log("[StageManager] 레벨 클리어 상태로 변경하도록 요청했습니다.");
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class StageManager : MonoBehaviour
     {
         if (_respawnPoint == null)
         {
-            Debug.LogWarning("[StageManager] 리스폰 위치가 지정되지 않았습니다! (0, 0, 0) 위치를 반환합니다.");
+         //   Debug.LogWarning("[StageManager] 리스폰 위치가 지정되지 않았습니다! (0, 0, 0) 위치를 반환합니다.");
             return Vector3.zero;
         }
         return _respawnPoint.position;
