@@ -39,13 +39,19 @@ public class ShooterObstacle : BaseObstacle
 
     private void FireProjectile()
     {
-        if (_projectilePrefab == null || _shootPoint == null) return;
+        if (_shootPoint == null) return;
 
-        GameObject proj = Instantiate(_projectilePrefab, _shootPoint.position, _shootPoint.rotation);
-        Rigidbody rb = proj.GetComponent<Rigidbody>();
-        if (rb != null)
+        GameObject proj = ObjectPool.Get("Projectile");
+        if (proj != null)
         {
-            rb.velocity = _shootPoint.TransformDirection(_shootDirection.normalized) * _projectileSpeed;
+            proj.transform.position = _shootPoint.position;
+            proj.transform.rotation = _shootPoint.rotation;
+
+            Rigidbody rb = proj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.velocity = _shootPoint.TransformDirection(_shootDirection.normalized) * _projectileSpeed;
+            }
         }
     }
 }

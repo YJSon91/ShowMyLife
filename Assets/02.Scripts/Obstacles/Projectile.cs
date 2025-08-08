@@ -1,26 +1,34 @@
-using DG.Tweening;
-using System.Collections;
 using UnityEngine;
+using System.Collections;
+using DG.Tweening;
 
 public class Projectile : MonoBehaviour
 {
     [Header("투사체 밀림 설정")]
     [Tooltip("플레이어에게 가할 힘의 크기")]
     [SerializeField] private float pushForce = 10f;
+
     [Tooltip("Y축(수직) 추가 힘")]
     [SerializeField] private float upwardForce = 2f;
+
     [Tooltip("밀림 지속 시간")]
     [SerializeField] private float pushDuration = 0.4f;
+
     [Tooltip("입력 저감(1=완전 불가, 0=완전 가능)")]
     [SerializeField] private float inputReduction = 0.8f;
+
     [Tooltip("밀림 종료 후 투사체 삭제까지의 딜레이(초)")]
     [SerializeField] private float destroyDelayAfterPush = 0.0f;
+
     [Tooltip("자동 삭제 시간(초)")]
     [SerializeField] private float lifeTime = 3f;
+
     [Tooltip("힘 감소 커브(없으면 Ease.OutQuad)")]
     [SerializeField] private AnimationCurve pushCurve;
+
     [Tooltip("플레이어 입력 비활성화")]
     [SerializeField] private bool disablePlayerInput = true;
+
     [Tooltip("입력 비활성화 시간")]
     [SerializeField] private float inputDisableDuration = 0.3f;
 
@@ -38,16 +46,34 @@ public class Projectile : MonoBehaviour
     private bool _hasPushed = false; // 1회만 발동
     private Coroutine _autoDestroyCoroutine;
     private PlayerMovementController _pushedPlayerController;
-    
+
     // 마지막 사운드 재생 시간
     private float _lastSoundTime = -10f;
+
     // SoundManager 참조
     private SoundManager _soundManager;
+
+    // 오브젝트가 활성화될 때 초기화
+    private void OnEnable()
+    {
+        _hasPushed = false;
+        _pushedPlayerController = null;
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        _autoDestroyCoroutine = StartCoroutine(AutoDestroyTimer());
+    }
 
     private void Start()
     {
         // 감속이 자연스러운 커브 기본값 제공 (인스펙터에서 없을 때만 세팅)
         if (pushCurve == null || pushCurve.keys.Length == 0)
+        {
             pushCurve = new AnimationCurve(
                 new Keyframe(0f, 1f),     // 시작(100%)
                 new Keyframe(0.1f, 0.6f), // 아주 빠르게 감소
@@ -55,9 +81,8 @@ public class Projectile : MonoBehaviour
                 new Keyframe(0.6f, 0.08f),
                 new Keyframe(1f, 0f)      // 끝(멈춤)
             );
+        }
 
-        _autoDestroyCoroutine = StartCoroutine(AutoDestroyTimer());
-        
         // SoundManager 참조 가져오기
         if (GameManager.Instance != null)
         {
@@ -65,12 +90,18 @@ public class Projectile : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 자동 삭제용 타이머 시작
+    /// </summary>
     private IEnumerator AutoDestroyTimer()
     {
         yield return new WaitForSeconds(lifeTime);
-        Destroy(gameObject);
+        ReturnToPool();
     }
 
+    /// <summary>
+    /// 플레이어와 충돌 시 밀어내기 + 입력 제한
+    /// </summary>
     private void OnCollisionEnter(Collision collision)
     {
         if (_hasPushed) return;
@@ -82,10 +113,10 @@ public class Projectile : MonoBehaviour
 
         _hasPushed = true;
 
-        // 투사체 충돌 사운드 재생
+        // 사운드 재생
         PlayProjectileSound();
 
-        // 충돌 시 자동삭제 예약 해제
+        // 기존 자동 삭제 해제
         if (_autoDestroyCoroutine != null)
         {
             StopCoroutine(_autoDestroyCoroutine);
@@ -94,45 +125,53 @@ public class Projectile : MonoBehaviour
 
         _pushedPlayerController = player.MovementController;
 
-        // 투사체 진행 방향(velocity)으로 밀기 (y는 upwardForce 적용)
+        // 투사체 진행 방향(velocity)로 밀기 (y는 upwardForce 적용)
         Vector3 pushDir = GetComponent<Rigidbody>().velocity;
         pushDir.y = 0;
         if (pushDir.sqrMagnitude < 0.01f)
-            pushDir = transform.forward; // 예외 fallback
+            pushDir = transform.forward;
 
         pushDir.Normalize();
         Vector3 finalPushDir = (pushDir + Vector3.up * upwardForce).normalized;
 
-        // 이전 트윈이 있으면 Kill
+        // 이전 트윈 제거
         _currentPushTween?.Kill();
 
-        // 플레이어 속도 초기화(물리)
+        // 플레이어 속도 초기화
         player.MovementController.Rigidbody.velocity = Vector3.zero;
 
-        // 플레이어 입력 잠시 제한 (선택)
+        // 입력 잠시 제한 (선택)
         if (disablePlayerInput && player.InputReader != null)
             StartCoroutine(DisablePlayerInputTemporarily(player.InputReader));
 
-        // Slide 효과 시작
+        // 밀림 효과 시작
         player.MovementController.ActivateObstacleSlide(finalPushDir, pushForce, pushDuration, inputReduction);
 
-        // DOTween을 통해 힘 점진적 감소 → 연출 끝나면 투사체 삭제
-        _currentPushTween = DOVirtual.Float(pushForce, 0f, pushDuration, (force) => {
+        // DOTween을 통한 점진적 힘 감소
+        _currentPushTween = DOVirtual.Float(pushForce, 0f, pushDuration, (force) =>
+        {
             _pushedPlayerController.UpdateObstacleSlideSpeed(force);
         })
-        .SetEase(pushCurve) // 곡선 적용!
-        .OnComplete(() => {
+        .SetEase(pushCurve)
+        .OnComplete(() =>
+        {
             _pushedPlayerController.DeactivateObstacleSlide();
             StartCoroutine(DestroyAfterDelay(1.0f));
         });
     }
 
+    /// <summary>
+    /// 밀림 종료 후 일정 시간 후 삭제
+    /// </summary>
     private IEnumerator DestroyAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        Destroy(gameObject);
+        ReturnToPool();
     }
 
+    /// <summary>
+    /// 플레이어 입력 일시 제한 코루틴
+    /// </summary>
     private IEnumerator DisablePlayerInputTemporarily(InputReader inputReader)
     {
         inputReader.DisableInput();
@@ -140,14 +179,18 @@ public class Projectile : MonoBehaviour
         inputReader.EnableInput();
     }
 
-    private void OnDestroy()
+    /// <summary>
+    /// 오브젝트 풀로 반환 (삭제 대신 재사용)
+    /// </summary>
+    private void ReturnToPool()
     {
         _currentPushTween?.Kill();
         _currentPushTween = null;
 
-        // 혹시라도 슬라이드 효과가 남아있는 상황 방지
         _pushedPlayerController?.DeactivateObstacleSlide();
         _pushedPlayerController = null;
+
+        ObjectPool.Return("Projectile", gameObject);
     }
 
     /// <summary>
@@ -155,22 +198,11 @@ public class Projectile : MonoBehaviour
     /// </summary>
     private void PlayProjectileSound()
     {
-        // 사운드 재생이 비활성화되어 있으면 무시
         if (!playProjectileSound) return;
 
-        // 개별 쿨타임 체크 제거 (SoundManager에서 전역 관리)
-        // if (Time.time - _lastSoundTime < soundCooldownTime) return;
-        // _lastSoundTime = Time.time;
-
-        // SoundManager가 있으면 사운드 재생 (쿨타임은 SoundManager에서 관리)
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.Projectile, projectileSoundVolume);
-            Debug.Log($"[Projectile] 투사체 충돌 사운드 재생 요청 (볼륨: {projectileSoundVolume})");
-        }
-        else
-        {
-            Debug.LogWarning("[Projectile] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
         }
     }
 }

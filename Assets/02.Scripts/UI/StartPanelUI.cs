@@ -39,7 +39,7 @@ public class StartPanelUI : UiBase
             // 한 번만 실행되도록 플래그를 false로 바꿉니다.
             _keyInputEnabled = false;
 
-            Debug.Log("키 입력 감지! 메인 메뉴로 전환합니다.");
+           // Debug.Log("키 입력 감지! 메인 메뉴로 전환합니다.");
 
             // 페이드 아웃 후 메인메뉴 상태로 전환 요청
             if (_fadePanel != null)
