@@ -336,16 +336,30 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // 1. EventSystem 확인 및 자동 생성
         if (FindObjectOfType<EventSystem>() == null)
         {
             var eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<EventSystem>();
+            eventSystemObj.AddComponent<StandaloneInputModule>();
         }
-        // 2. 로드된 씬이 게임 씬인지 확인합니다.
+       
         if (scene.name == "MainScene")
-        {
-            // 3. 튜토리얼을 아직 안 봤다면 Tutorial 상태로, 봤다면 Playing 상태로 바로 시작합니다.
+        {            
+            if (GameLoadState.ShouldLoadGame)
+            {
+                SaveData data = SaveLoader.Load();
+                if (data != null)
+                {
+                    Player player = FindObjectOfType<Player>();
+                    if (player != null)
+                    {                       
+                        player.transform.position = data.Position;
+                        // player.GetComponent<CharacterController>().enabled = true;
+                        Debug.Log($"[GameManager] 데이터 로드. 플레이어 위치 설정: {data.Position}");
+                    }
+                }              
+                GameLoadState.ShouldLoadGame = false;
+            }
             if (_isTutorialAlreadyShown)
             {
                 UpdateGameState(GameState.Playing);
@@ -355,8 +369,7 @@ public class GameManager : MonoBehaviour
                 UpdateGameState(GameState.Tutorial);
             }
         }
-
-        // 3. 현재 게임 상태에 맞는 BGM 재생
+        
         if (SoundManager != null)
         {
             switch (CurrentState)
@@ -441,8 +454,8 @@ public class GameManager : MonoBehaviour
         // 1. 화면을 어둡게 만듭니다 (Fade In).
         if (fadePanel != null)
         {
-            UIManager?.ShowParticle(ParticleType.Petals1, true);
-            UIManager?.ShowParticle(ParticleType.Petals2, true);            
+            UIManager?.ShowParticle(ParticleType.Petals1, false);
+            UIManager?.ShowParticle(ParticleType.Petals2, false);            
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
         }
         if (tutorialPanel != null)
