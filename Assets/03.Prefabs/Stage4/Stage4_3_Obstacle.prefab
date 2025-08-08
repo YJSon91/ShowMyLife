@@ -1279,6 +1279,7 @@ Transform:
   - {fileID: 6361569358465473837}
   - {fileID: 3980353758357118061}
   - {fileID: 1348879217255264728}
+  - {fileID: 8681044006135793838}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &55203381712527868
@@ -8363,6 +8364,10 @@ MonoBehaviour:
   jumpForce: 30
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!4 &8738146078369517718 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6896299442925481015, guid: 28427767d3ce9c841bdef8c066198a44,
@@ -8612,6 +8617,10 @@ MonoBehaviour:
   jumpForce: 30
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!4 &8680050170266117795 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6896299442925481015, guid: 28427767d3ce9c841bdef8c066198a44,
@@ -9569,6 +9578,10 @@ MonoBehaviour:
   jumpForce: 25
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!1001 &3327299685924954458
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10891,6 +10904,10 @@ MonoBehaviour:
   jumpForce: 30
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!1001 &4367787935681719000
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10992,6 +11009,10 @@ MonoBehaviour:
   jumpForce: 25
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!1001 &4398956868795960164
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11463,6 +11484,10 @@ MonoBehaviour:
   jumpForce: 30
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!1001 &4632429703224228621
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12739,6 +12764,10 @@ MonoBehaviour:
   jumpForce: 30
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!4 &1750149024136451094 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6896299442925481015, guid: 28427767d3ce9c841bdef8c066198a44,
@@ -15910,6 +15939,80 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6408387896548056836}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6431752055387926971
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3869960280187909547}
+    m_Modifications:
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -202.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 214.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 417.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8948237757147409292, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+        type: 3}
+      propertyPath: m_Name
+      value: "\uCD94\uAC004-3"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5, type: 3}
+--- !u!4 &8681044006135793838 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2394630692346214677, guid: 6e696f32e0f42b44ebd1eeb8d1f81fc5,
+    type: 3}
+  m_PrefabInstance: {fileID: 6431752055387926971}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6440846515514607227
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16174,6 +16277,10 @@ MonoBehaviour:
   jumpForce: 26
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!1001 &6615804995046713383
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17214,6 +17321,10 @@ MonoBehaviour:
   jumpForce: 30
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!4 &4348246444146125298 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6896299442925481015, guid: 28427767d3ce9c841bdef8c066198a44,
@@ -19976,6 +20087,10 @@ MonoBehaviour:
   jumpForce: 30
   forceDirection: {x: 0, y: 1, z: 0}
   padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!1001 &8379036908666654622
 PrefabInstance:
   m_ObjectHideFlags: 0
