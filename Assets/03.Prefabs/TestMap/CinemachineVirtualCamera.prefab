@@ -35,6 +35,56 @@ Transform:
   - {fileID: 4757284264420267624}
   m_Father: {fileID: 4150423125987357134}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &491712320229709978
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2931028539205400225}
+  - component: {fileID: 5247758662044263547}
+  m_Layer: 0
+  m_Name: Look Dolly Cart
+  m_TagString: Dolly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2931028539205400225
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491712320229709978}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.29919174, y: -0.008604047, z: -0.00269796, w: 0.95415044}
+  m_LocalPosition: {x: 49.51553, y: 466.92783, z: 25.838806}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4367834423721054928}
+  m_Father: {fileID: 400167354410971381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5247758662044263547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491712320229709978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99a9c787e5d1bbf48a389834c4a9641c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Path: {fileID: 5484500700519541602}
+  m_UpdateMethod: 0
+  m_PositionUnits: 1
+  m_Speed: 0
+  m_Position: 0
 --- !u!1 &1206925978857148769
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,7 +434,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2654784441435904204}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.10386764, y: -0.767225, z: -0.12859201, w: 0.6197108}
+  m_LocalRotation: {x: -0.1083607, y: -0.7163664, z: -0.114200845, w: 0.67973185}
   m_LocalPosition: {x: 692.24506, y: 311.61, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -643,8 +693,66 @@ Transform:
   - {fileID: 5928738146617508957}
   - {fileID: 1010007478581845505}
   - {fileID: 3766654284525287958}
+  - {fileID: 400167354410971381}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3191637832777950161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 214094244727442726}
+  - component: {fileID: 3932691753313842360}
+  m_Layer: 0
+  m_Name: Follow Dolly Track
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &214094244727442726
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3191637832777950161}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 49.7, y: 457.35, z: 16.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 400167354410971381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3932691753313842360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3191637832777950161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Resolution: 20
+  m_Appearance:
+    pathColor: {r: 0, g: 1, b: 0, a: 1}
+    inactivePathColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    width: 0.2
+  m_Looped: 0
+  m_Waypoints:
+  - position: {x: 0, y: 0, z: -5}
+    roll: 0
+  - position: {x: -0.81899166, y: 31.007904, z: 40.27459}
+    roll: 0
+  - position: {x: -1.6379833, y: 39.381165, z: 72.40284}
+    roll: 0
 --- !u!1 &3276722710614317761
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,6 +942,164 @@ MonoBehaviour:
     roll: 0
   - position: {x: 23.22586, y: 143.7944, z: -116.1639}
     roll: 0
+--- !u!1 &4762832626317697018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 285899728411537118}
+  - component: {fileID: 5484500700519541602}
+  m_Layer: 0
+  m_Name: Look Dolly Track
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &285899728411537118
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4762832626317697018}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 49.7, y: 457.35, z: 16.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 400167354410971381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5484500700519541602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4762832626317697018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Resolution: 20
+  m_Appearance:
+    pathColor: {r: 0, g: 1, b: 0, a: 1}
+    inactivePathColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    width: 0.2
+  m_Looped: 0
+  m_Waypoints:
+  - position: {x: -0.18447018, y: 9.57782, z: 9.238808}
+    roll: 0
+  - position: {x: -0.81899166, y: 31.007904, z: 40.27459}
+    roll: 0
+  - position: {x: -1.5301781, y: 38.794434, z: 54.494957}
+    roll: 0
+  - position: {x: -1.637983, y: 39.38116, z: 72.40284}
+    roll: 0
+  - position: {x: -0.46896553, y: 29.762512, z: 99.33735}
+    roll: 0
+  - position: {x: -9.889212, y: 20.212402, z: 113.40067}
+    roll: 0
+  - position: {x: -24.623573, y: 19.509338, z: 110.27096}
+    roll: 0
+  - position: {x: -36.503963, y: 20.212402, z: 85.3328}
+    roll: 0
+  - position: {x: -35.387997, y: 20.212402, z: 37.713478}
+    roll: 0
+  - position: {x: 1.671247, y: 20.212402, z: 16.27552}
+    roll: 0
+  - position: {x: 40.35272, y: 20.212402, z: 41.844704}
+    roll: 0
+  - position: {x: 38.04956, y: 20.212402, z: 97.19872}
+    roll: 0
+  - position: {x: 5.868263, y: 11.80835, z: 116.02819}
+    roll: 0
+--- !u!1 &5087567984291832300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4367834423721054928}
+  - component: {fileID: 3203610400988255436}
+  - component: {fileID: 8987078976545673891}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Dolly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4367834423721054928
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5087567984291832300}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2931028539205400225}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &3203610400988255436
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5087567984291832300}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &8987078976545673891
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5087567984291832300}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5242232881890205009
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,7 +1204,7 @@ Transform:
   m_GameObject: {fileID: 6046604827524475995}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 61.326996, y: 1.8, z: -187.62201}
+  m_LocalPosition: {x: 695.39496, y: 325.44, z: 78.21799}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -998,7 +1264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CollideAgainst:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 1050176
   m_IgnoreTag: Player
   m_TransparentLayers:
     serializedVersion: 2
@@ -1333,6 +1599,55 @@ MonoBehaviour:
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
+--- !u!1 &8156894126869212800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7919594491031462091}
+  - component: {fileID: 4185855781867141643}
+  m_Layer: 0
+  m_Name: Follow Dolly Cart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7919594491031462091
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8156894126869212800}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.3177158, y: -0.007994766, z: -0.002678972, w: 0.94814855}
+  m_LocalPosition: {x: 49.7, y: 457.35, z: 11.599998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 400167354410971381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4185855781867141643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8156894126869212800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99a9c787e5d1bbf48a389834c4a9641c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Path: {fileID: 3932691753313842360}
+  m_UpdateMethod: 0
+  m_PositionUnits: 1
+  m_Speed: 0
+  m_Position: 0
 --- !u!1 &8322256226092916141
 GameObject:
   m_ObjectHideFlags: 0
@@ -1366,6 +1681,41 @@ Transform:
   - {fileID: 2023612243898586045}
   - {fileID: 4398055971946251459}
   - {fileID: 828727171977220148}
+  m_Father: {fileID: 4150423125987357134}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8515485390119231124
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 400167354410971381}
+  m_Layer: 0
+  m_Name: Stage4-2-1 Dolly Track
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &400167354410971381
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8515485390119231124}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 214094244727442726}
+  - {fileID: 7919594491031462091}
+  - {fileID: 285899728411537118}
+  - {fileID: 2931028539205400225}
   m_Father: {fileID: 4150423125987357134}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8636813339180744564
@@ -1421,9 +1771,9 @@ MonoBehaviour:
   m_Waypoints:
   - position: {x: -0.2649536, y: 0, z: -5}
     roll: 0
-  - position: {x: -36.727722, y: 9.33432, z: -10.651482}
+  - position: {x: -36.38971, y: 9.33432, z: -6.300911}
     roll: 0
-  - position: {x: -57.877014, y: 4.2160645, z: 4.4869766}
+  - position: {x: -49.74768, y: 4.2160645, z: 6.561615}
     roll: 0
   - position: {x: -44.676453, y: 5.5784607, z: 51.956787}
     roll: 0
@@ -1443,7 +1793,7 @@ MonoBehaviour:
     roll: 0
   - position: {x: -35.63562, y: 26.122498, z: 197.32974}
     roll: 0
-  - position: {x: -13.562561, y: 20.457886, z: 208.03049}
+  - position: {x: 16.671936, y: 20.457886, z: 206.23871}
     roll: 0
   - position: {x: 2.1854248, y: 8.696991, z: 207.69131}
     roll: 0
