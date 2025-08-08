@@ -25,12 +25,6 @@ public class EnterStage2_1 : MonoBehaviour
         Trigger(other);
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        if (hasTriggered || !other.CompareTag("Player")) return;
-        Trigger(other);
-    }
-
     private void Trigger(Collider other)
     {
         hasTriggered = true;
