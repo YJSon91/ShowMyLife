@@ -494,7 +494,7 @@ public class PlayerMovementController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PlayerMovementController: Player 컴포넌트를 찾을 수 없습니다!");
+            // Player 컴포넌트를 찾을 수 없습니다
         }
 
         ValidateComponents();
@@ -506,16 +506,24 @@ public class PlayerMovementController : MonoBehaviour
     private void ValidateComponents()
     {
         if (_rigidbody == null)
-            Debug.LogError("PlayerMovementController: Rigidbody가 할당되지 않았습니다!");
+        {
+            // Rigidbody가 할당되지 않았습니다
+        }
 
         if (_capsuleCollider == null)
-            Debug.LogError("PlayerMovementController: CapsuleCollider가 할당되지 않았습니다!");
+        {
+            // CapsuleCollider가 할당되지 않았습니다
+        }
 
         if (_inputReader == null)
-            Debug.LogError("PlayerMovementController: InputReader가 할당되지 않았습니다!");
+        {
+            // InputReader가 할당되지 않았습니다
+        }
 
         if (_rearRayPos == null || _frontRayPos == null)
-            Debug.LogError("PlayerMovementController: 지면 확인을 위한 레이 위치가 할당되지 않았습니다!");
+        {
+            // 지면 확인을 위한 레이 위치가 할당되지 않았습니다
+        }
     }
 
     #endregion
@@ -538,7 +546,6 @@ public class PlayerMovementController : MonoBehaviour
         // NaN 체크 및 처리
         if (ContainsNaN(_targetVelocity))
         {
-            //Debug.LogWarning("목표 속도에 NaN 값 감지됨! 초기화합니다.");
             _targetVelocity = Vector3.zero;
         }
         
@@ -559,7 +566,6 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-                //Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
@@ -578,7 +584,6 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-               // Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
@@ -716,7 +721,6 @@ public class PlayerMovementController : MonoBehaviour
         // 벡터가 유효한지 확인 (NaN 체크)
         if (float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z))
         {
-            Debug.LogWarning("NaN 벡터 감지됨! 기본 방향으로 대체합니다.");
             return defaultDirection;
         }
         
@@ -740,7 +744,6 @@ public class PlayerMovementController : MonoBehaviour
         // NaN 값 확인 및 수정
         if (float.IsNaN(_iceVelocity.x) || float.IsNaN(_iceVelocity.y) || float.IsNaN(_iceVelocity.z))
         {
-            Debug.LogWarning("빙판 속도에 NaN 값 감지됨! 초기화합니다.");
             _iceVelocity = Vector3.zero;
             _currentIceSpeed = 0f;
         }
@@ -915,7 +918,6 @@ public class PlayerMovementController : MonoBehaviour
                 // 해당 레이어에서 점프 제한 각도 확인
                 if (((1 << hitLayer) & _jumpBlockLayerMask.value) != 0 && slopeAngle > _jumpBlockAngle)
                 {
-                    Debug.Log($"점프 차단: 경사각({slopeAngle:F1}°) > 제한각도({_jumpBlockAngle}°) - 레이어: {LayerMask.LayerToName(hitLayer)}");
                     return; // 점프 차단
                 }
             }
@@ -929,8 +931,6 @@ public class PlayerMovementController : MonoBehaviour
             _isJumping = true;
             
             jumpRequest = true;
-            
-            Debug.Log("점프 실행!");
         }
     }
 
@@ -1162,8 +1162,6 @@ public class PlayerMovementController : MonoBehaviour
         
         // 빙판 속성 설정
         SetIceProperties(iceObject);
-        
-        Debug.Log($"빙판 진입: 초기 속도 = {_currentIceSpeed}, 감속 비율 = {_currentIceSlowdownRate}, 방향 = {_iceVelocity.normalized}");
     }
 
     /// <summary>
@@ -1205,7 +1203,7 @@ public class PlayerMovementController : MonoBehaviour
                     }
                     catch (System.Exception e)
                     {
-                        Debug.LogWarning($"빙판 속성을 가져오는 중 오류 발생: {e.Message}");
+                        // 빙판 속성을 가져오는 중 오류 발생
                     }
                 }
             }
@@ -1233,8 +1231,6 @@ public class PlayerMovementController : MonoBehaviour
         _currentIceSlowdownRate = _iceSlowdownRate;
         _currentIceAccelerationRate = _iceAccelerationRate;
         _currentIceSpeedMultiplier = 1.0f;
-        
-        Debug.Log("빙판 이탈");
     }
 
     /// <summary>
@@ -1391,11 +1387,11 @@ public class PlayerMovementController : MonoBehaviour
                 // 점프 제한이 활성화되어 있고 해당 레이어라면 점프 제한 상태도 함께 적용
                 if (_enableJumpBlocking && ((1 << hitLayer) & _jumpBlockLayerMask.value) != 0)
                 {
-                    Debug.Log($"슬립 + 점프 제한 활성화: 경사각({slopeAngle:F1}°) > 슬립각도({currentSlipAngle}°) - 레이어: {LayerMask.LayerToName(hitLayer)}");
+                    // 슬립 + 점프 제한 활성화
                 }
                 else
                 {
-                    Debug.Log($"슬립 활성화: 경사각({slopeAngle:F1}°) > 슬립각도({currentSlipAngle}°) - 레이어: {LayerMask.LayerToName(hitLayer)}");
+                    // 슬립 활성화
                 }
             }
             // 이미 미끄러짐 상태라면 방향만 업데이트
@@ -1513,8 +1509,6 @@ public class PlayerMovementController : MonoBehaviour
         _slipForce = force;
         _slipGravityMultiplier = gravityMultiplier;
         _slipInputReduction = Mathf.Clamp01(inputReduction);
-
-        Debug.Log($"슬립 활성화: 방향={_slipDirection}, 힘={_slipForce}, 중력배수={_slipGravityMultiplier}");
     }
 
     /// <summary>
@@ -1527,8 +1521,6 @@ public class PlayerMovementController : MonoBehaviour
         _slipForce = 0f;
         _slipGravityMultiplier = 0f;
         _slipInputReduction = 0f;
-
-        Debug.Log("슬립 비활성화");
     }
 
     /// <summary>
@@ -1540,7 +1532,6 @@ public class PlayerMovementController : MonoBehaviour
         if (_isSlipping)
         {
             _slipForce = newSpeed;
-            Debug.Log($"슬립 속도 업데이트: {_slipForce}");
         }
     }
 
@@ -1583,8 +1574,6 @@ public class PlayerMovementController : MonoBehaviour
         {
             _isSlipping = false;
         }
-
-        Debug.Log($"미끄럼틀 슬라이드 활성화: 방향={_obstacleSlideDirection}, 힘={_obstacleSlideForce}, 중력배수={_obstacleSlideGravityMultiplier}, 입력감소={_obstacleSlideInputReduction}");
     }
 
     /// <summary>
@@ -1605,8 +1594,6 @@ public class PlayerMovementController : MonoBehaviour
             // 빙판 속도 설정
             _iceVelocity = remainingDirection * remainingSpeed;
             _currentIceSpeed = remainingSpeed;
-            
-            Debug.Log($"빙판 위 미끄럼틀 종료: 남은 속도({remainingSpeed})로 빙판 미끄러짐 계속");
         }
         
         // 미끄럼틀 상태 변수 초기화
@@ -1615,8 +1602,6 @@ public class PlayerMovementController : MonoBehaviour
         _obstacleSlideForce = 0f;
         _obstacleSlideGravityMultiplier = 0f;
         _obstacleSlideInputReduction = 0f;
-
-        Debug.Log("미끄럼틀 슬라이드 비활성화");
     }
 
     /// <summary>
@@ -1628,7 +1613,6 @@ public class PlayerMovementController : MonoBehaviour
         if (_isObstacleSliding)
         {
             _obstacleSlideForce = newSpeed;
-            Debug.Log($"미끄럼틀 슬라이드 속도 업데이트: {_obstacleSlideForce}");
         }
     }
     

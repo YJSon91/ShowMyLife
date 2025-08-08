@@ -206,7 +206,7 @@ public class PlayerAnimationController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PlayerAnimationController: Player 컴포넌트를 찾을 수 없습니다!");
+            // Player 컴포넌트를 찾을 수 없습니다
         }
 
         ValidateComponents();
@@ -218,10 +218,14 @@ public class PlayerAnimationController : MonoBehaviour
     private void ValidateComponents()
     {
         if (_player == null)
-            Debug.LogError("PlayerAnimationController: Player 컴포넌트가 할당되지 않았습니다!");
+        {
+            // Player 컴포넌트가 할당되지 않았습니다
+        }
 
         if (_animator == null)
-            Debug.LogError("PlayerAnimationController: Animator 컴포넌트가 할당되지 않았습니다!");
+        {
+            // Animator 컴포넌트가 할당되지 않았습니다
+        }
     }
 
     #endregion
@@ -688,8 +692,6 @@ public class PlayerAnimationController : MonoBehaviour
         // 여기서는 애니메이션 파라미터만 설정하고,
         // 실제 하드 랜딩 애니메이션은 애니메이터 컨트롤러에서
         // 낙하 지속 시간에 따라 다른 착지 애니메이션을 재생하도록 구성해야 함
-        
-        Debug.Log($"하드 랜딩 애니메이션 트리거: 낙하 시간 {fallingDuration}초");
     }
 
     #endregion

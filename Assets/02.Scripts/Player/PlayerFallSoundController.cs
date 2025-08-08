@@ -56,7 +56,7 @@ public class PlayerFallSoundController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PlayerFallSoundController: Player 컴포넌트를 찾을 수 없습니다!");
+            // Player 컴포넌트를 찾을 수 없습니다
         }
     }
     
@@ -125,17 +125,14 @@ public class PlayerFallSoundController : MonoBehaviour
             if (_fallDuration >= _longFallTime)
             {
                 fallType = SfxType.FallLong;
-                Debug.Log($"긴 낙하 사운드 재생: {_fallDuration}초");
             }
             else if (_fallDuration >= _mediumFallTime)
             {
                 fallType = SfxType.FallMedium;
-                Debug.Log($"중간 낙하 사운드 재생: {_fallDuration}초");
             }
             else
             {
                 fallType = SfxType.FallShort;
-                Debug.Log($"짧은 낙하 사운드 재생: {_fallDuration}초");
             }
             
             // 선택된 타입의 사운드 재생

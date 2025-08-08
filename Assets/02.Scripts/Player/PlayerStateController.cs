@@ -113,7 +113,7 @@ public class PlayerStateController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PlayerStateController: Player 컴포넌트를 찾을 수 없습니다!");
+            // Player 컴포넌트를 찾을 수 없습니다
         }
 
         ValidateComponents();
@@ -125,13 +125,19 @@ public class PlayerStateController : MonoBehaviour
     private void ValidateComponents()
     {
         if (_animationController == null)
-            Debug.LogError("PlayerStateController: PlayerAnimationController가 할당되지 않았습니다!");
+        {
+            // PlayerAnimationController가 할당되지 않았습니다
+        }
 
         if (_movementController == null)
-            Debug.LogError("PlayerStateController: PlayerMovementController가 할당되지 않았습니다!");
+        {
+            // PlayerMovementController가 할당되지 않았습니다
+        }
 
         if (_inputReader == null)
-            Debug.LogError("PlayerStateController: InputReader가 할당되지 않았습니다!");
+        {
+            // InputReader가 할당되지 않았습니다
+        }
     }
 
     #endregion

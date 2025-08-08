@@ -124,16 +124,24 @@ public class PlayerGodModeController : MonoBehaviour
     private void ValidateComponents()
     {
         if (_player == null)
-            Debug.LogError("PlayerGodModeController: Player가 할당되지 않았습니다!");
+        {
+            // Player가 할당되지 않았습니다
+        }
             
         if (_rigidbody == null)
-            Debug.LogError("PlayerGodModeController: Rigidbody를 찾을 수 없습니다!");
+        {
+            // Rigidbody를 찾을 수 없습니다
+        }
             
         if (_capsuleCollider == null)
-            Debug.LogError("PlayerGodModeController: CapsuleCollider를 찾을 수 없습니다!");
+        {
+            // CapsuleCollider를 찾을 수 없습니다
+        }
 
         if (_inputReader == null)
-            Debug.LogError("PlayerGodModeController: InputReader를 찾을 수 없습니다!");
+        {
+            // InputReader를 찾을 수 없습니다
+        }
     }
 
     #endregion
@@ -155,8 +163,6 @@ public class PlayerGodModeController : MonoBehaviour
         {
             DisableGodMode();
         }
-        
-        Debug.Log($"갓모드 {(_isGodModeActive ? "활성화" : "비활성화")}");
     }
 
     /// <summary>
