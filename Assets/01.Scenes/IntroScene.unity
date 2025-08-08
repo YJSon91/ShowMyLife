@@ -634,6 +634,24 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!1 &2080903366 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 752745682498903905, guid: a0bb226874f68474e8293b09e4fea13a,
+    type: 3}
+  m_PrefabInstance: {fileID: 6095591543546900718}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2135280811 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5481687634569407682, guid: a0bb226874f68474e8293b09e4fea13a,
+    type: 3}
+  m_PrefabInstance: {fileID: 6095591543546900718}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4732e167722d3d3468e795ffd6a01ec9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6095591543546900718
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -847,6 +865,11 @@ PrefabInstance:
       propertyPath: m_AspectRatio
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 5481687634569407682, guid: a0bb226874f68474e8293b09e4fea13a,
+        type: 3}
+      propertyPath: continueButton
+      value: 
+      objectReference: {fileID: 2080903366}
     - target: {fileID: 6328972356751257721, guid: a0bb226874f68474e8293b09e4fea13a,
         type: 3}
       propertyPath: m_Camera
@@ -996,6 +1019,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8876922937578391813, guid: a0bb226874f68474e8293b09e4fea13a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8876922937578391813, guid: a0bb226874f68474e8293b09e4fea13a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2135280811}
+    - target: {fileID: 8876922937578391813, guid: a0bb226874f68474e8293b09e4fea13a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnContinueButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 8876922937578391813, guid: a0bb226874f68474e8293b09e4fea13a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8876922937578391813, guid: a0bb226874f68474e8293b09e4fea13a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 9203904672986960810, guid: a0bb226874f68474e8293b09e4fea13a,
         type: 3}
