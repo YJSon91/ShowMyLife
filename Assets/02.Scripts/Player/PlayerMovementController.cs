@@ -127,6 +127,14 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("Obstacle 레이어 마스크")]
     [SerializeField] private LayerMask _obstacleLayerMask;
 
+    [Header("점프 제한 설정")]
+    [Tooltip("특정 레이어에서 점프를 막을지 여부")]
+    [SerializeField] private bool _enableJumpBlocking = true;
+    [Tooltip("점프를 막는 레이어 마스크")]
+    [SerializeField] private LayerMask _jumpBlockLayerMask;
+    [Tooltip("점프를 막는 경사 각도")]
+    [SerializeField] private float _jumpBlockAngle = 30f;
+
     private Vector3 _initialPosition; // 경사면 제한을 위한 초기 위치
 
     #endregion
@@ -897,6 +905,21 @@ public class PlayerMovementController : MonoBehaviour
         // 지면에 있거나 코요테 타임 중이면 점프 가능
         if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
+            // 점프 제한 확인
+            if (_enableJumpBlocking && _isGrounded)
+            {
+                // 현재 지면의 경사각 계산
+                float slopeAngle = Vector3.Angle(_groundNormal, Vector3.up);
+                int hitLayer = _groundHit.collider.gameObject.layer;
+                
+                // 해당 레이어에서 점프 제한 각도 확인
+                if (((1 << hitLayer) & _jumpBlockLayerMask.value) != 0 && slopeAngle > _jumpBlockAngle)
+                {
+                    Debug.Log($"점프 차단: 경사각({slopeAngle:F1}°) > 제한각도({_jumpBlockAngle}°) - 레이어: {LayerMask.LayerToName(hitLayer)}");
+                    return; // 점프 차단
+                }
+            }
+            
             // 즉시 지면 상태와 코요테 타임 상태를 false로 변경
             _isGrounded = false;
             _canCoyoteJump = false;
@@ -1364,6 +1387,16 @@ public class PlayerMovementController : MonoBehaviour
             if (!_isSlipping)
             {
                 ActivateSlipping(downSlopeDirection, _slipSpeed, 1f);
+                
+                // 점프 제한이 활성화되어 있고 해당 레이어라면 점프 제한 상태도 함께 적용
+                if (_enableJumpBlocking && ((1 << hitLayer) & _jumpBlockLayerMask.value) != 0)
+                {
+                    Debug.Log($"슬립 + 점프 제한 활성화: 경사각({slopeAngle:F1}°) > 슬립각도({currentSlipAngle}°) - 레이어: {LayerMask.LayerToName(hitLayer)}");
+                }
+                else
+                {
+                    Debug.Log($"슬립 활성화: 경사각({slopeAngle:F1}°) > 슬립각도({currentSlipAngle}°) - 레이어: {LayerMask.LayerToName(hitLayer)}");
+                }
             }
             // 이미 미끄러짐 상태라면 방향만 업데이트
             else

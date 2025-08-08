@@ -307,20 +307,25 @@ MonoBehaviour:
   _frontRayPos: {fileID: 6476181354946296046}
   _groundLayerMask:
     serializedVersion: 2
-    m_Bits: 263745
+    m_Bits: 1312321
   _inclineAngle: 0
   _groundedOffset: -0.2
   _boxCastWidth: 0.6
   _boxCastDepth: 0.6
-  _slopeLimit: 80
+  _slopeLimit: 55
   _slopeLimiting: 1
-  _slipAngle: 75
+  _slipAngle: 55
   _slipSpeed: 5
   _slipInputReduction: 0.7
   _nonObstacleSlopeLimit: 55
   _obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 1536
+  _enableJumpBlocking: 1
+  _jumpBlockLayerMask:
+    serializedVersion: 2
+    m_Bits: 1048576
+  _jumpBlockAngle: 55
   _cannotStandUp: 1
   _iceSlowdownRate: 0.01
   _iceAccelerationRate: 0.4
