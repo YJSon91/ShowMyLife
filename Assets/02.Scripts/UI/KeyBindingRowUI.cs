@@ -82,7 +82,7 @@ public class KeyBindingRowUI : MonoBehaviour
                 // --- 핵심: GameManager의 PlayerControls 전체를 저장 ---
                 string allRebindsJson = GameManager.Instance.PlayerControls.SaveBindingOverridesAsJson();
 
-                Debug.LogError($"[저장 시도] PlayerPrefs에 저장할 데이터: {allRebindsJson}");
+                //Debug.LogError($"[저장 시도] PlayerPrefs에 저장할 데이터: {allRebindsJson}");
 
                 // 데이터를 저장합니다.
                 PlayerPrefs.SetString("AllKeyRebinds", allRebindsJson);

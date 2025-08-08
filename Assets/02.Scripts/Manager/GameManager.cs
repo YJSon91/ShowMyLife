@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            Debug.Log("[GameManager] Awake 호출");
+            //Debug.Log("[GameManager] Awake 호출");
 
             // 1. 컨트롤러 인스턴스를 생성합니다.
             PlayerControls = new Controls();
@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour
             eventSystemObj.AddComponent<EventSystem>();
             eventSystemObj.AddComponent<StandaloneInputModule>(); // 키보드/마우스 입력을 위해 필수
 
-            Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
+            //Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
         }
     }
     public void LoadAllKeybindings()
@@ -247,7 +247,7 @@ public class GameManager : MonoBehaviour
                 {
                     _playtime = 0f; // 새 게임 시작 시 시간 초기화
                     _isTimerRunning = true;
-                    Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
+                   // Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
                 }
                 break;
 
@@ -283,7 +283,7 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = true;
                 _isTimerRunning = false;
                 GameManager.Instance.UIManager.Show<EndingUI>(true);
-                Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
+               // Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }
 
@@ -299,7 +299,7 @@ public class GameManager : MonoBehaviour
         }
 
         OnGameStateChanged?.Invoke(newState);
-        Debug.Log($"[GameManager] Game State Changed to: {newState}");
+        //Debug.Log($"[GameManager] Game State Changed to: {newState}");
     }
     /// <summary>
     /// 게임의 일시정지 상태를 토글합니다.
@@ -396,7 +396,7 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == GameState.Tutorial)
         {
-            Debug.Log("튜토리얼 종료! 게임을 시작합니다.");
+          //  Debug.Log("튜토리얼 종료! 게임을 시작합니다.");
 
             // 튜토리얼을 봤다고 '기억'합니다.
             _isTutorialAlreadyShown = true;
@@ -416,7 +416,7 @@ public class GameManager : MonoBehaviour
         {
             yield break;
         }
-        Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 시작...");
+       // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 시작...");
         _loadingOperation = SceneManager.LoadSceneAsync(sceneName);
         _loadingOperation.allowSceneActivation = false;
 
@@ -427,7 +427,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 완료! 활성화를 기다립니다.");
+       // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 완료! 활성화를 기다립니다.");
     }
 
     /// <summary>

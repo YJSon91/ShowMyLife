@@ -74,7 +74,7 @@ public class SoundManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[SoundManager] 자식 오브젝트에 AudioSource 2개가 필요합니다!", this.gameObject);
+            //Debug.LogError("[SoundManager] 자식 오브젝트에 AudioSource 2개가 필요합니다!", this.gameObject);
         }
     }
 
@@ -127,7 +127,7 @@ public class SoundManager : MonoBehaviour
         // 쿨타임 체크
         if (IsOnCooldown(sfxType)) 
         {
-            Debug.Log($"[SoundManager] {sfxType} 사운드 쿨타임 중 - 재생 건너뜀");
+           // Debug.Log($"[SoundManager] {sfxType} 사운드 쿨타임 중 - 재생 건너뜀");
             return;
         }
         
@@ -162,7 +162,7 @@ public class SoundManager : MonoBehaviour
                 narrationSource.Stop(); // 이전 나레이션 중지
                 narrationSource.clip = clipToPlay;
                 narrationSource.Play();
-                Debug.Log($"[SoundManager] 나레이션 재생: {clipName}");
+               // Debug.Log($"[SoundManager] 나레이션 재생: {clipName}");
             }
             else
             {
@@ -192,7 +192,7 @@ public class SoundManager : MonoBehaviour
         
         // TODO: PlayerController에서 OnLanded 이벤트가 구현되면 여기에 구독 코드를 추가합니다.
         // playerController.OnLanded += HandlePlayerLanded;
-        Debug.Log("[SoundManager] Player 이벤트 구독 완료.");
+        //Debug.Log("[SoundManager] Player 이벤트 구독 완료.");
     }
 
     /// <summary>
@@ -206,7 +206,7 @@ public class SoundManager : MonoBehaviour
         // inputReader.onJumpPerformed -= HandlePlayerJump;
         
         // playerController.OnLanded -= HandlePlayerLanded;
-        Debug.Log("[SoundManager] Player 이벤트 구독 해제.");
+       // Debug.Log("[SoundManager] Player 이벤트 구독 해제.");
     }
 
 
