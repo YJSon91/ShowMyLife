@@ -211,17 +211,17 @@ public class GameManager : MonoBehaviour
 
         if (string.IsNullOrEmpty(rebinds))
         {
-           // Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
+            // Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
             return;
         }
 
         // 2. 어떤 내용이 불러와졌는지 콘솔에 강력한 에러 로그로 출력합니다.
-      //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
-       
+        //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
+
         // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
     }
-        
+
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>
@@ -247,7 +247,7 @@ public class GameManager : MonoBehaviour
                 {
                     _playtime = 0f; // 새 게임 시작 시 시간 초기화
                     _isTimerRunning = true;
-                   // Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
+                    // Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
                 }
                 break;
 
@@ -258,7 +258,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
-               // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
+                // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
             case GameState.Tutorial:
@@ -271,7 +271,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
-                SoundManager?.PlayBGM(BgmType.Main);               
+                SoundManager?.PlayBGM(BgmType.Main);
                 PreloadMainScene();
                 break;
 
@@ -283,7 +283,7 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = true;
                 _isTimerRunning = false;
                 GameManager.Instance.UIManager.Show<EndingUI>(true);
-               // Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
+                // Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }
 
@@ -336,30 +336,38 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // 1. EventSystem 확인 및 자동 생성
         if (FindObjectOfType<EventSystem>() == null)
         {
             var eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<EventSystem>();
-            eventSystemObj.AddComponent<StandaloneInputModule>();
         }
-       
+        // 2. 로드된 씬이 게임 씬인지 확인합니다.
         if (scene.name == "MainScene")
-        {            
+        {
             if (GameLoadState.ShouldLoadGame)
             {
                 SaveData data = SaveLoader.Load();
                 if (data != null)
                 {
+                    // 플레이어를 찾아서 위치를 설정합니다.
+                    // Player는 다른 스크립트에서 RegisterPlayer를 통해 등록되므로,
+                    // 이 시점에는 아직 null일 수 있습니다. 따라서 직접 찾아주는 것이 안전합니다.
                     Player player = FindObjectOfType<Player>();
                     if (player != null)
-                    {                       
+                    {
+                        // 중요: CharacterController를 사용한다면, 순간이동 시 잠시 비활성화했다가
+                        // 위치를 설정하고 다시 활성화하는 것이 안전합니다.
+                        // 예: player.GetComponent<CharacterController>().enabled = false;
                         player.transform.position = data.Position;
                         // player.GetComponent<CharacterController>().enabled = true;
-                       // Debug.Log($"[GameManager] 데이터 로드. 플레이어 위치 설정: {data.Position}");
+                        Debug.Log($"[GameManager] 데이터 로드. 플레이어 위치 설정: {data.Position}");
                     }
-                }              
+                }
+                // 다음을 위해 플래그를 리셋합니다.
                 GameLoadState.ShouldLoadGame = false;
             }
+            // 3. 튜토리얼을 아직 안 봤다면 Tutorial 상태로, 봤다면 Playing 상태로 바로 시작합니다.
             if (_isTutorialAlreadyShown)
             {
                 UpdateGameState(GameState.Playing);
@@ -369,7 +377,8 @@ public class GameManager : MonoBehaviour
                 UpdateGameState(GameState.Tutorial);
             }
         }
-        
+
+        // 3. 현재 게임 상태에 맞는 BGM 재생
         if (SoundManager != null)
         {
             switch (CurrentState)
@@ -409,7 +418,7 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == GameState.Tutorial)
         {
-          //  Debug.Log("튜토리얼 종료! 게임을 시작합니다.");
+            //  Debug.Log("튜토리얼 종료! 게임을 시작합니다.");
 
             // 튜토리얼을 봤다고 '기억'합니다.
             _isTutorialAlreadyShown = true;
@@ -429,7 +438,7 @@ public class GameManager : MonoBehaviour
         {
             yield break;
         }
-       // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 시작...");
+        // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 시작...");
         _loadingOperation = SceneManager.LoadSceneAsync(sceneName);
         _loadingOperation.allowSceneActivation = false;
 
@@ -440,7 +449,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-       // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 완료! 활성화를 기다립니다.");
+        // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 완료! 활성화를 기다립니다.");
     }
 
     /// <summary>
@@ -454,8 +463,8 @@ public class GameManager : MonoBehaviour
         // 1. 화면을 어둡게 만듭니다 (Fade In).
         if (fadePanel != null)
         {
-            UIManager?.ShowParticle(ParticleType.Petals1, false);
-            UIManager?.ShowParticle(ParticleType.Petals2, false);            
+            UIManager?.ShowParticle(ParticleType.Petals1, true);
+            UIManager?.ShowParticle(ParticleType.Petals2, true);
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
         }
         if (tutorialPanel != null)
