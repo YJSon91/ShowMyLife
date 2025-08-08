@@ -143,7 +143,7 @@ public class SoundManager : MonoBehaviour
         
         // 재생 시간 기록
         _lastPlayTimes[sfxType] = Time.time;
-        Debug.Log($"[SoundManager] {sfxType} 사운드 재생 (쿨타임 시작)");
+       // Debug.Log($"[SoundManager] {sfxType} 사운드 재생 (쿨타임 시작)");
     }
     /// <summary>
     /// 이름으로 나레이션 클립을 찾아 재생합니다.
