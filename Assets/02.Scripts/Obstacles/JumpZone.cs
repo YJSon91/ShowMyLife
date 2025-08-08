@@ -55,4 +55,17 @@ public class JumpZone : BaseObstacle
             controller.ExitJumpModifierZone();
         }
     }
+
+     private void OnDrawGizmos()
+    {
+        Collider col = GetComponent<Collider>();
+        if (col is BoxCollider box && box.isTrigger)
+        {
+            Gizmos.color = new Color(0.64f, 0.64f, 0.64f, 0.45f);
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawCube(box.center, box.size);
+            Gizmos.color = new Color(0.64f, 0.64f, 0.64f, 1f);
+            Gizmos.DrawWireCube(box.center, box.size);
+        }
+    }
 }
