@@ -12,21 +12,17 @@ public static class SaveLoader
         {
             string json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(SavePath, json);
-            Debug.Log("[SaveLoader] 저장 성공");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"[SaveLoader] 저장 실패: {e.Message}");
+
         }
     }
 
     public static SaveData Load()
     {
         if (!File.Exists(SavePath))
-        {
-            Debug.LogWarning("[SaveLoader] 저장 파일 없음");
             return null;
-        }
 
         try
         {
@@ -35,7 +31,6 @@ public static class SaveLoader
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"[SaveLoader] 불러오기 실패: {e.Message}");
             return null;
         }
     }
@@ -43,10 +38,7 @@ public static class SaveLoader
     public static void Delete()
     {
         if (File.Exists(SavePath))
-        {
             File.Delete(SavePath);
-            Debug.Log("[SaveLoader] 저장 파일 삭제됨");
-        }
     }
 
     public static bool Exists()
