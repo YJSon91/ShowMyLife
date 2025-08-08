@@ -89,7 +89,7 @@ public class SettingsMenu : UiBase
         _currentDisplayMode = (DisplayMode)PlayerPrefs.GetInt("DisplayMode", (int)DisplayMode.Borderless);
         UpdateDisplayModeText();
 
-        Debug.Log("저장된 설정을 불러왔습니다.");
+       // Debug.Log("저장된 설정을 불러왔습니다.");
     }
     /// <summary>
     /// 현재 UI에 표시된 값들을 '초기 값' 임시 변수에 저장합니다.
@@ -151,7 +151,7 @@ public class SettingsMenu : UiBase
 
     public void OnMasterVolumeChanged()
     {
-        Debug.LogWarning(">>>>> 마스터 볼륨 변경 함수 호출됨! <<<<<");
+       // Debug.LogWarning(">>>>> 마스터 볼륨 변경 함수 호출됨! <<<<<");
         float volume = _masterVolumeSlider.value;
         if (GameManager.Instance?.SoundManager != null)
         {
@@ -161,7 +161,7 @@ public class SettingsMenu : UiBase
 
     public void OnBGMVolumeChanged()
     {
-        Debug.LogWarning(">>>>> BGM 볼륨 변경 함수 호출됨! <<<<<");
+       // Debug.LogWarning(">>>>> BGM 볼륨 변경 함수 호출됨! <<<<<");
         float volume = _bgmVolumeSlider.value;
         if (GameManager.Instance?.SoundManager != null)
         {
@@ -171,7 +171,7 @@ public class SettingsMenu : UiBase
 
     public void OnSFXVolumeChanged()
     {
-        Debug.LogWarning(">>>>> SFX 볼륨 변경 함수 호출됨! <<<<<");
+       // Debug.LogWarning(">>>>> SFX 볼륨 변경 함수 호출됨! <<<<<");
         float volume = _sfxVolumeSlider.value;
         if (GameManager.Instance?.SoundManager != null)
         {
@@ -201,7 +201,7 @@ public class SettingsMenu : UiBase
         // 현재 해상도를 유지하면서 화면 모드만 변경합니다.
         Screen.SetResolution(Screen.width, Screen.height, mode);
         PlayerPrefs.SetInt("DisplayMode", (int)_currentDisplayMode);
-        Debug.Log($"디스플레이 모드를 '{mode}' (으)로 변경 및 저장했습니다.");
+        //Debug.Log($"디스플레이 모드를 '{mode}' (으)로 변경 및 저장했습니다.");
 
         //  현재 슬라이더의 값들을 PlayerPrefs에 저장합니다.
         if (GameManager.Instance?.CameraManager != null)
@@ -222,7 +222,7 @@ public class SettingsMenu : UiBase
         OnSFXVolumeChanged();
         GameManager.Instance.LoadAllKeybindings();
 
-        Debug.Log("변경된 설정이 게임에 즉시 적용되었습니다.");
+        //Debug.Log("변경된 설정이 게임에 즉시 적용되었습니다.");
     }
     /// <summary>
     /// 설정을 적용하고 창을 닫습니다.
@@ -237,7 +237,7 @@ public class SettingsMenu : UiBase
     /// </summary>
     public void OnCancelButton()
     {
-        Debug.Log("설정 변경을 취소합니다. 초기 값으로 되돌립니다.");
+       // Debug.Log("설정 변경을 취소합니다. 초기 값으로 되돌립니다.");
 
         // 1. UI 슬라이더들을 '사진 찍어둔' 초기 값으로 되돌립니다.
         _cameraSensitivitySlider.SetValueWithoutNotify(_initialCameraSensitivity);
@@ -273,7 +273,7 @@ public class SettingsMenu : UiBase
     /// </summary>
     public void OnDefaultsButton()
     {
-        Debug.Log("모든 설정을 기본값으로 초기화합니다.");
+       // Debug.Log("모든 설정을 기본값으로 초기화합니다.");
 
         // 1. PlayerPrefs에 저장된 모든 설정 관련 키를 삭제합니다.
         PlayerPrefs.DeleteKey("CameraSensitivity");
