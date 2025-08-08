@@ -242,14 +242,14 @@ public class DialogueManager : MonoBehaviour
     // "일반 착지" 애니메이션 방송을 들었을 때
     private void HandleNormalLanding(PlayerAnimationEventHandler handler)
     {
-        Debug.Log("<color=yellow>2. [DialogueManager] 일반 착지 신호 수신! 대사를 출력합니다.</color>");
+        //Debug.Log("<color=yellow>2. [DialogueManager] 일반 착지 신호 수신! 대사를 출력합니다.</color>");
         ShowRandomDialogueByType(DialogueTriggerType.Fall);
     }
 
     // "세게 착지" 애니메이션 방송을 들었을 때
     private void HandleHardLanding(PlayerAnimationEventHandler handler)
     {
-        Debug.Log("<color=red>2. [DialogueManager] 세게 착지 신호 수신! 대사를 출력합니다.</color>");
+       // Debug.Log("<color=red>2. [DialogueManager] 세게 착지 신호 수신! 대사를 출력합니다.</color>");
         // 여기서는 예시로 Middle과 High 대사 중 하나를 보여줍니다.
         ShowRandomDialogueByType(DialogueTriggerType.Fall);
     }
