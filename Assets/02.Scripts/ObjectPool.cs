@@ -32,7 +32,7 @@ public static class ObjectPool
     // 등록할 오브젝트 풀 리스트. (추가작성 가능)
     private static List<PoolSetting> settings = new()
     {
-        new PoolSetting("", "", 20)
+        new PoolSetting("Projectile", "Prefabs/Projectile", 20)
     };
 
     //=================================================================================
