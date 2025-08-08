@@ -30,7 +30,7 @@ public class PlayerAnimationEventHandler : MonoBehaviour
         
         if (_soundManager == null)
         {
-            Debug.LogWarning("[PlayerAnimationEventHandler] SoundManager를 찾을 수 없습니다!");
+            // SoundManager를 찾을 수 없습니다
         }
     }
 
@@ -74,7 +74,6 @@ public class PlayerAnimationEventHandler : MonoBehaviour
         if (_suppressLandSound && Time.time < _landSoundSuppressEndTime)
         {
             _suppressLandSound = false; // 한 번 억제 후 해제
-            Debug.Log("[PlayerAnimationEventHandler] 점프 패드 착지로 인한 사운드 억제");
             return;
         }
         
@@ -135,6 +134,5 @@ public class PlayerAnimationEventHandler : MonoBehaviour
     {
         _suppressLandSound = true;
         _landSoundSuppressEndTime = Time.time + duration;
-        Debug.Log($"[PlayerAnimationEventHandler] 착지 사운드 억제 설정: {duration}초 동안");
     }
 } 

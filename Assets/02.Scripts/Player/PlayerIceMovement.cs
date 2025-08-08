@@ -64,8 +64,6 @@ public class PlayerIceMovement : MonoBehaviour
         
         // 경사면 미끄러짐 효과 사용 (PlayerMovementController의 기존 기능 활용)
         _playerMovement.ActivateSlipping(_slideDirection, _slideSpeed, 0.1f, _controlReduceFactor);
-        
-        Debug.Log($"빙판 효과 시작: 방향={_slideDirection}, 속도={_slideSpeed}");
     }
     
     // 빙판 효과 종료
@@ -77,8 +75,6 @@ public class PlayerIceMovement : MonoBehaviour
         
         // 경사면 미끄러짐 효과 비활성화
         _playerMovement.DeactivateSlipping();
-        
-        Debug.Log("빙판 효과 종료");
         
         // 컴포넌트 제거
         Destroy(this);
