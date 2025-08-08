@@ -109,11 +109,10 @@ public class Player : MonoBehaviour
         if (mainCamera != null)
         {
             _mainCameraTransform = mainCamera.transform;
-            Debug.Log($"Player: 메인 카메라를 찾았습니다: {mainCamera.name}");
         }
         else
         {
-            Debug.LogWarning("Player: 메인 카메라를 찾을 수 없습니다. 갓모드에서 월드 좌표계를 사용합니다.");
+            // 메인 카메라를 찾을 수 없습니다. 갓모드에서 월드 좌표계를 사용합니다
         }
     }
     
@@ -192,34 +191,54 @@ public class Player : MonoBehaviour
     private void ValidateComponents()
     {
         if (_rigidbody == null)
-            Debug.LogError("Player: Rigidbody가 할당되지 않았습니다!");
+        {
+            // Rigidbody가 할당되지 않았습니다
+        }
             
         if (_capsuleCollider == null)
-            Debug.LogError("Player: CapsuleCollider가 할당되지 않았습니다!");
+        {
+            // CapsuleCollider가 할당되지 않았습니다
+        }
 
         if (_animationController == null)
-            Debug.LogError("Player: PlayerAnimationController가 할당되지 않았습니다!");
+        {
+            // PlayerAnimationController가 할당되지 않았습니다
+        }
             
         if (_animationEventHandler == null)
-            Debug.LogWarning("Player: PlayerAnimationEventHandler를 찾을 수 없습니다!");
+        {
+            // PlayerAnimationEventHandler를 찾을 수 없습니다
+        }
 
         if (_inputReader == null)
-            Debug.LogError("Player: InputReader가 할당되지 않았습니다!");       
+        {
+            // InputReader가 할당되지 않았습니다
+        }       
 
         if (_movementController == null)
-            Debug.LogError("Player: PlayerMovementController가 할당되지 않았습니다!");
+        {
+            // PlayerMovementController가 할당되지 않았습니다
+        }
 
         if (_stateController == null)
-            Debug.LogError("Player: PlayerStateController가 할당되지 않았습니다!");
+        {
+            // PlayerStateController가 할당되지 않았습니다
+        }
             
         if (_godModeController == null)
-            Debug.LogError("Player: PlayerGodModeController가 할당되지 않았습니다!");
+        {
+            // PlayerGodModeController가 할당되지 않았습니다
+        }
             
         if (_characterSwitcher == null)
-            Debug.LogWarning("Player: CharacterSwitcher가 할당되지 않았습니다!");
+        {
+            // CharacterSwitcher가 할당되지 않았습니다
+        }
             
         if (_fallSoundController == null)
-            Debug.LogWarning("Player: PlayerFallSoundController가 할당되지 않았습니다!");
+        {
+            // PlayerFallSoundController가 할당되지 않았습니다
+        }
     }
 
     #endregion

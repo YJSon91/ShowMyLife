@@ -13,7 +13,6 @@ public class FallTracker : MonoBehaviour
         if (transform.position.y < fallYThreshold)
         {
             fallCount++;
-            Debug.Log($"[FallTracker] 낙하 감지됨 ({fallCount}회)");
 
             if (fallCount >= fallLimit)
             {
@@ -26,12 +25,6 @@ public class FallTracker : MonoBehaviour
     private void TriggerRespawn()
     {
         if (GameManager.Instance?.StageManager != null)
-        {
             GameManager.Instance.StageManager.OnPlayerFell();
-        }
-        else
-        {
-            Debug.LogWarning("[FallTracker] StageManager가 연결되지 않아 리스폰 요청 실패");
-        }
     }
 }

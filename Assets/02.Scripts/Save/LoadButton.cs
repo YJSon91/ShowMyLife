@@ -16,7 +16,6 @@ public class LoadButton : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[LoadButton] Player 태그 오브젝트를 찾을 수 없습니다.");
             loadButton.interactable = false;
             return;
         }
@@ -48,8 +47,6 @@ public class LoadButton : MonoBehaviour
             }
 
             SavePoint.SaveDisableUntil = Time.time + 1f;
-
-            Debug.Log($"[LoadButton] 위치 로드됨 → {saveId} at {pos}");
         }
     }
 }

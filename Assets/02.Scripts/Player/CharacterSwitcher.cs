@@ -35,9 +35,6 @@ public class CharacterSwitcher : MonoBehaviour
         schoolBoyModel.SetActive(false);
         animator.avatar = kidAvatar;
         _isSchoolBoy = false;
-        
-        // 디버그 로그
-        Debug.Log("캐릭터가 Kid로 전환되었습니다.");
     }
     
     /// <summary>
@@ -49,8 +46,5 @@ public class CharacterSwitcher : MonoBehaviour
         schoolBoyModel.SetActive(true);
         animator.avatar = schoolBoyAvatar;
         _isSchoolBoy = true;
-        
-        // 디버그 로그
-        Debug.Log("캐릭터가 School Boy로 전환되었습니다.");
     }
 } 

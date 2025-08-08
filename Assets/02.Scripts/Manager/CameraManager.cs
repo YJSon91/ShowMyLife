@@ -39,7 +39,6 @@ public class CameraManager : MonoBehaviour
 
         if (playerCamera == null || themeCamera == null)
         {
-            Debug.LogError("[CameraManager] 필수 요소가 누락되었습니다.");
             enabled = false;
             return;
         }
@@ -47,7 +46,6 @@ public class CameraManager : MonoBehaviour
         pov = playerCamera.GetCinemachineComponent<CinemachinePOV>();
         if (pov == null)
         {
-            Debug.LogError("[CameraManager] CinemachinePOV 컴포넌트가 없습니다.");
             enabled = false;
             return;
         }
@@ -62,13 +60,7 @@ public class CameraManager : MonoBehaviour
     private void Start()
     {
         if (GameManager.Instance != null)
-        {
             GameManager.Instance.RegisterCameraManager(this);
-        }
-        else
-        {
-            Debug.LogWarning("[CameraManager] GameManager 인스턴스를 찾을 수 없습니다.");
-        }
     }
 
 

@@ -157,11 +157,11 @@ public class BouncyObstacle : BaseObstacle
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.Bounce, bounceSoundVolume);
-            Debug.Log($"[BouncyObstacle] 튕김 사운드 재생 요청 (볼륨: {bounceSoundVolume})");
+            //Debug.Log($"[BouncyObstacle] 튕김 사운드 재생 요청 (볼륨: {bounceSoundVolume})");
         }
         else
         {
-            Debug.LogWarning("[BouncyObstacle] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
+            //Debug.LogWarning("[BouncyObstacle] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
         }
     }
 

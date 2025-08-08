@@ -100,11 +100,11 @@ public class JumpPad : BaseObstacle
         if (_soundManager != null)
         {
             _soundManager.PlaySFX(SfxType.JumpPad, jumpPadSoundVolume);
-            Debug.Log($"[JumpPad] 점프 패드 사운드 재생 요청 (볼륨: {jumpPadSoundVolume})");
+            //Debug.Log($"[JumpPad] 점프 패드 사운드 재생 요청 (볼륨: {jumpPadSoundVolume})");
         }
         else
         {
-            Debug.LogWarning("[JumpPad] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
+            //Debug.LogWarning("[JumpPad] SoundManager를 찾을 수 없어 사운드를 재생할 수 없습니다.");
         }
     }
 }
