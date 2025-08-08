@@ -50,4 +50,17 @@ public class SpeedObstacle : BaseObstacle
         if (controller != null)
             controller.ExitSlowZone();
     }
+
+     private void OnDrawGizmos()
+    {
+        Collider col = GetComponent<Collider>();
+        if (col is BoxCollider box && box.isTrigger)
+        {
+            Gizmos.color = new Color(0.45f, 0.45f, 0.45f, 0.45f);
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawCube(box.center, box.size);
+            Gizmos.color = new Color(0.45f, 0.45f, 0.45f, 1f);
+            Gizmos.DrawWireCube(box.center, box.size);
+        }
+    }
 }
