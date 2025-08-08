@@ -315,7 +315,6 @@ public class EmotionDirector : MonoBehaviour
             if (inputReader != null)
             {
                 inputReader.DisableInput();
-                Debug.Log("입력 비활성화");
             }
 
             var movement = playerComponent.GetComponent<PlayerMovementController>();
@@ -324,7 +323,6 @@ public class EmotionDirector : MonoBehaviour
                 movement.enabled = false;
                 // 이동 중이던 상태를 완전히 초기화
                 movement.ResetMovement();
-                Debug.Log("이동 비활성화 및 초기화");
             }
         }
     }
@@ -342,14 +340,12 @@ public class EmotionDirector : MonoBehaviour
                 // 이동 상태를 초기화하여 이전 입력이 남아있지 않도록 함
                 movement.ResetMovement();
                 movement.enabled = true;
-                Debug.Log("이동 활성화");
             }
 
             var inputReader = playerComponent.GetComponent<InputReader>();
             if (inputReader != null)
             {
                 inputReader.EnableInput();
-                Debug.Log("입력 활성화");
             }
         }
     }
