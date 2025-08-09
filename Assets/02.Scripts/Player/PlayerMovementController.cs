@@ -908,6 +908,10 @@ public class PlayerMovementController : MonoBehaviour
         // 지면에 있거나 코요테 타임 중이면 점프 가능
         if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
+            if(!_enableJumpBlocking)
+            {
+                return;
+            }
             // 점프 제한 확인
             if (_enableJumpBlocking && _isGrounded)
             {
@@ -921,6 +925,7 @@ public class PlayerMovementController : MonoBehaviour
                     return; // 점프 차단
                 }
             }
+            
             
             // 즉시 지면 상태와 코요테 타임 상태를 false로 변경
             _isGrounded = false;
@@ -1203,6 +1208,7 @@ public class PlayerMovementController : MonoBehaviour
                     }
                     catch (System.Exception e)
                     {
+                        throw e;
                         // 빙판 속성을 가져오는 중 오류 발생
                     }
                 }
@@ -1271,6 +1277,9 @@ public class PlayerMovementController : MonoBehaviour
             _isGrounded = true;
             _canCoyoteJump = true;
             _coyoteTimeCounter = _coyoteTimeThreshold;
+
+            // NoJump 태그 확인
+            CheckNoJumpTag();
 
             // 지면에 있을 때 경사 확인
             GroundInclineCheck();
@@ -1705,6 +1714,39 @@ public class PlayerMovementController : MonoBehaviour
         {
             _isRestoringJump = true;
             _jumpRestoreTimer = 0f;
+        }
+    }
+
+    /// <summary>
+    /// GroundedCheck에서 얻은 결과를 사용하여 NoJump 태그를 확인하고 점프 제한을 설정합니다
+    /// </summary>
+    private void CheckNoJumpTag()
+    {
+        
+        
+        // GroundedCheck에서 이미 얻은 _groundHit 결과 사용
+        if (_groundHit.collider != null)
+        {
+            
+            // NoJump 태그를 가진 오브젝트인지 확인
+            if (_groundHit.collider.CompareTag("NoJump"))
+            {
+                // 점프 제한 비활성화
+                _enableJumpBlocking = false;
+                
+            }
+            else
+            {
+                
+                // NoJump 태그가 아니면 점프 제한 활성화 (기본값으로 복원)
+                _enableJumpBlocking = true;
+            }
+        }
+        else
+        {
+            
+            // 지면이 감지되지 않으면 점프 제한 활성화 (기본값으로 복원)
+            _enableJumpBlocking = true;
         }
     }
 }
