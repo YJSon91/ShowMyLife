@@ -15,6 +15,10 @@ public class PlayerFallSoundController : MonoBehaviour
     [Tooltip("긴 낙하 시간 기준 (2.5초 이상)")]
     [SerializeField] private float _longFallTime = 2.5f;
     
+    [Header("사운드 제어")]
+    [Tooltip("낙하 사운드 재생 활성화 여부")]
+    [SerializeField] private bool _soundEnabled = true;
+    
     // 컴포넌트 참조
     private Player _player;
     private PlayerMovementController _movementController;
@@ -70,6 +74,24 @@ public class PlayerFallSoundController : MonoBehaviour
     }
     
     /// <summary>
+    /// 낙하 사운드 재생 활성화/비활성화 설정
+    /// </summary>
+    /// <param name="enabled">사운드 재생 여부</param>
+    public void SetSoundEnabled(bool enabled)
+    {
+        _soundEnabled = enabled;
+    }
+    
+    /// <summary>
+    /// 현재 사운드 활성화 상태 반환
+    /// </summary>
+    /// <returns>사운드 활성화 여부</returns>
+    public bool IsSoundEnabled()
+    {
+        return _soundEnabled;
+    }
+    
+    /// <summary>
     /// 플레이어 상태 변경 처리
     /// </summary>
     private void HandleStateChanged(PlayerAnimationState oldState, PlayerAnimationState newState)
@@ -105,8 +127,11 @@ public class PlayerFallSoundController : MonoBehaviour
         _isFalling = false;
         _fallDuration = Time.time - _fallStartTime;
         
-        // 낙하 시간에 따라 다른 사운드 재생
-        PlayFallSound();
+        // 사운드가 활성화된 경우에만 재생
+        if (_soundEnabled)
+        {
+            PlayFallSound();
+        }
     }
     
     /// <summary>

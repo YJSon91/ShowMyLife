@@ -14,6 +14,21 @@ public class EnterStage3_1_2 : MonoBehaviour
     [SerializeField] private float moveDuration = 5f;
 
     private bool hasTriggered = false;
+    
+    // 사운드 컨트롤러 참조
+    private PlayerFallSoundController _fallSoundController;
+    
+    // 애니메이션 컨트롤러 참조 추가
+    private PlayerAnimationController _animationController;
+
+    private void Start()
+    {
+        // PlayerFallSoundController 찾기
+        _fallSoundController = GameManager.Instance.Player.GetComponent<PlayerFallSoundController>();
+        
+        // 애니메이션 컨트롤러 찾기
+        _animationController = GameManager.Instance.Player.GetComponent<PlayerAnimationController>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -26,6 +41,17 @@ public class EnterStage3_1_2 : MonoBehaviour
 
     private IEnumerator PlaySequence(Transform player)
     {
+        // 연출 시작 시 착지 사운드 및 애니메이션 비활성화
+        if (_fallSoundController != null)
+        {
+            _fallSoundController.SetSoundEnabled(false);
+        }
+        
+        if (_animationController != null)
+        {
+            _animationController.SetAnimationEnabled(false);
+        }
+
         CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
         float originalBlendTime = brain.m_DefaultBlend.m_Time;
         brain.m_DefaultBlend.m_Time = 0.5f;
@@ -106,6 +132,20 @@ public class EnterStage3_1_2 : MonoBehaviour
         }
 
         emotionDirector.EnablePlayerControl(player);
+        
+        // 연출 완전 종료 후 착지 사운드 및 애니메이션 다시 활성화 (약간의 지연 후)
+        yield return new WaitForSeconds(0.5f);
+        
+        if (_fallSoundController != null)
+        {
+            _fallSoundController.SetSoundEnabled(true);
+        }
+        
+        if (_animationController != null)
+        {
+            _animationController.SetAnimationEnabled(true);
+        }
+        
         gameObject.SetActive(false);
     }
 
