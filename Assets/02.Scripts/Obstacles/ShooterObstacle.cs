@@ -47,7 +47,7 @@ public class ShooterObstacle : BaseObstacle
     {
         if (_shootPoint == null)
         {
-            Debug.LogWarning("[ShooterObstacle] _shootPoint is null.");
+            //Debug.LogWarning("[ShooterObstacle] _shootPoint is null.");
             return;
         }
 
@@ -61,7 +61,7 @@ public class ShooterObstacle : BaseObstacle
 
             if (proj == null)
             {
-                Debug.LogError("[ShooterObstacle] Still null after purge. Check prefab registration/path.");
+                //Debug.LogError("[ShooterObstacle] Still null after purge. Check prefab registration/path.");
                 return;
             }
         }
@@ -78,7 +78,7 @@ public class ShooterObstacle : BaseObstacle
         }
         else
         {
-            Debug.LogWarning("[ShooterObstacle] Projectile has no Rigidbody.");
+            //Debug.LogWarning("[ShooterObstacle] Projectile has no Rigidbody.");
         }
     }
 
