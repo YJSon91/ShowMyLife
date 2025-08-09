@@ -127,7 +127,7 @@ public class UIManager : MonoBehaviour
                 ShowParticle(ParticleType.Petals1, true);
                 ShowParticle(ParticleType.Petals2, true);
                 Show<EndingUI>(true);
-                Debug.Log("레벨 클리어! 엔딩 UI를 표시합니다.");
+               // Debug.Log("레벨 클리어! 엔딩 UI를 표시합니다.");
                 break;
         }
     }
