@@ -51,11 +51,11 @@ public class EndingUI : UiBase
         {
             // "Clip_*.mp4" 패턴을 가진 모든 파일의 경로를 찾아 리스트에 추가합니다.
             _videoClipPaths.AddRange(System.IO.Directory.GetFiles(savePath, "Recording_*.mp4"));
-            Debug.Log($"[EndingUI] {_videoClipPaths.Count}개의 녹화 클립을 찾았습니다.");
+            //Debug.Log($"[EndingUI] {_videoClipPaths.Count}개의 녹화 클립을 찾았습니다.");
         }
         else
         {
-            Debug.LogWarning($"[EndingUI] 녹화 파일 저장 경로를 찾을 수 없습니다: {savePath}");
+            //Debug.LogWarning($"[EndingUI] 녹화 파일 저장 경로를 찾을 수 없습니다: {savePath}");
         }
     }
     // 다음 비디오 클립을 재생합니다.
@@ -70,7 +70,7 @@ public class EndingUI : UiBase
         else
         {
             // 모든 영상 재생이 끝나면 메인 메뉴로 돌아가는 등의 로직
-            Debug.Log("모든 매드무비 클립 재생 완료.");
+            //Debug.Log("모든 매드무비 클립 재생 완료.");
         }
     }
     // 비디오 재생이 끝났을 때 호출되는 이벤트 핸들러

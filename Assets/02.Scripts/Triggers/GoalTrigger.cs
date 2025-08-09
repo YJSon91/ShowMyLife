@@ -26,7 +26,9 @@ public class GoalTrigger : MonoBehaviour
             //    Debug.Log("[GoalTrigger] Player has reached the goal!");
             //}
             GameManager.Instance.StageManager.OnPlayerReachedGoal();
-           // Debug.Log("[GoalTrigger] Player has reached the goal!");
+            // SaveLoader의 static Delete 함수를 직접 호출하여 세이브 파일을 삭제합니다.
+            SaveLoader.Delete();
+            // Debug.Log("[GoalTrigger] Player has reached the goal!");
             // 한 번만 작동하도록 트리거를 비활성화합니다.
             gameObject.SetActive(false);
         }
