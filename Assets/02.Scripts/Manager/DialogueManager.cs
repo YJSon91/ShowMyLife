@@ -48,7 +48,7 @@ public class DialogueManager : MonoBehaviour
         // JSON 파일의 정확한 경로를 확인합니다.
         string filePath = Path.Combine(Application.streamingAssetsPath, "dialogue.json");
 
-        Debug.Log($"[DialogueManager] 대사 파일을 로드합니다: {filePath}");
+        //Debug.Log($"[DialogueManager] 대사 파일을 로드합니다: {filePath}");
 
         // 파일이 존재하는지 확인합니다.
         if (File.Exists(filePath))

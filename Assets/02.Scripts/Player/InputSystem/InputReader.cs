@@ -40,7 +40,7 @@ using UnityEngine.Serialization;
         /// <inheritdoc cref="OnEnable" />
         private void OnEnable()
         {
-            Debug.Log("[InputReader] OnEnable 호출");
+            //Debug.Log("[InputReader] OnEnable 호출");
             // GameManager의 PlayerControls가 준비될 때까지 대기
             if (_controls == null)
             {
