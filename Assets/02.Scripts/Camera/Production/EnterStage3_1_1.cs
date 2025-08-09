@@ -46,7 +46,7 @@ public class EnterStage3_1_1 : MonoBehaviour
             Time.timeScale = scale;
             Time.fixedDeltaTime = 0.02f * Time.timeScale;
 
-            Debug.Log($"[슬로우 테스트] TimeScale: {Time.timeScale}, FixedDeltaTime: {Time.fixedDeltaTime}");
+            //Debug.Log($"[슬로우 테스트] TimeScale: {Time.timeScale}, FixedDeltaTime: {Time.fixedDeltaTime}");
 
             yield return null;
         }
