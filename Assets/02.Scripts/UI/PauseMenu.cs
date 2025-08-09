@@ -39,6 +39,7 @@ public class PauseMenu : UiBase
         GameManager.Instance.UIManager.Hide<PauseMenu>();
         SceneManager.LoadScene("IntroScene"); 
         GameManager.Instance.UpdateGameState(GameManager.GameState.Start);
+        ObjectPool.ClearAll();
     }
 
     // '설정(Settings)' 버튼에 연결될 함수
