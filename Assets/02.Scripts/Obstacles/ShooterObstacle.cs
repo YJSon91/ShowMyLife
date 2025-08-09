@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,18 +6,20 @@ using UnityEngine;
 public class ShooterObstacle : BaseObstacle
 {
     [Header("투사체 발사 설정")]
-    [Tooltip("발사할 투사체 프리팹")]
-    [SerializeField] private GameObject _projectilePrefab;
     [Tooltip("발사 위치 (Transform)")]
     [SerializeField] private Transform _shootPoint;
+
     [Tooltip("발사 간격(초)")]
     [SerializeField] private float _shootInterval = 2f;
+
     [Tooltip("투사체 속도")]
     [SerializeField] private float _projectileSpeed = 12f;
+
     [Tooltip("투사체 발사 방향(로컬)")]
     [SerializeField] private Vector3 _shootDirection = Vector3.forward;
+
     [Tooltip("정지/재시작에 사용")]
-    private bool _isPaused = false;
+    [SerializeField] private bool _isPaused = false;
 
     private float _timer = 0f;
 
@@ -37,21 +40,53 @@ public class ShooterObstacle : BaseObstacle
         }
     }
 
+    /// <summary>
+    /// 투사체 1발 발사
+    /// </summary>
     private void FireProjectile()
     {
-        if (_shootPoint == null) return;
-
-        GameObject proj = ObjectPool.Get("Projectile");
-        if (proj != null)
+        if (_shootPoint == null)
         {
-            proj.transform.position = _shootPoint.position;
-            proj.transform.rotation = _shootPoint.rotation;
+            //Debug.LogWarning("[ShooterObstacle] _shootPoint is null.");
+            return;
+        }
 
-            Rigidbody rb = proj.GetComponent<Rigidbody>();
-            if (rb != null)
+        // 풀에서 꺼내기 (없으면 Purge 후 재시도 → 그래도 없으면 로그)
+        GameObject proj = ObjectPool.Get("Projectile");
+        if (proj == null)
+        {
+            Debug.LogWarning("[ShooterObstacle] Pool returned null. Attempting purge & retry.");
+            ObjectPool.PurgeDestroyed();
+            proj = ObjectPool.Get("Projectile");
+
+            if (proj == null)
             {
-                rb.velocity = _shootPoint.TransformDirection(_shootDirection.normalized) * _projectileSpeed;
+                //Debug.LogError("[ShooterObstacle] Still null after purge. Check prefab registration/path.");
+                return;
             }
         }
+
+        // 위치/회전 세팅
+        proj.transform.SetPositionAndRotation(_shootPoint.position, _shootPoint.rotation);
+
+        // 속도 세팅
+        Rigidbody rb = proj.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = _shootPoint.TransformDirection(_shootDirection.normalized) * _projectileSpeed;
+            rb.angularVelocity = Vector3.zero;
+        }
+        else
+        {
+            //Debug.LogWarning("[ShooterObstacle] Projectile has no Rigidbody.");
+        }
+    }
+
+    /// <summary>
+    /// 외부에서 일시 정지/재개
+    /// </summary>
+    public void SetPaused(bool paused)
+    {
+        _isPaused = paused;
     }
 }

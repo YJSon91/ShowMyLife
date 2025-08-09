@@ -23,7 +23,7 @@ public class Projectile : MonoBehaviour
     [Tooltip("자동 삭제 시간(초)")]
     [SerializeField] private float lifeTime = 3f;
 
-    [Tooltip("힘 감소 커브(없으면 Ease.OutQuad)")]
+    [Tooltip("힘 감소 커브(없으면 기본 커브 세팅)")]
     [SerializeField] private AnimationCurve pushCurve;
 
     [Tooltip("플레이어 입력 비활성화")]
@@ -50,7 +50,7 @@ public class Projectile : MonoBehaviour
     // 마지막 사운드 재생 시간
     private float _lastSoundTime = -10f;
 
-    // SoundManager 참조
+    // SoundManager 참조(없으면 사운드 스킵)
     private SoundManager _soundManager;
 
     // 오브젝트가 활성화될 때 초기화
@@ -66,6 +66,7 @@ public class Projectile : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
+        // 자동 삭제 타이머 시작
         _autoDestroyCoroutine = StartCoroutine(AutoDestroyTimer());
     }
 
@@ -83,7 +84,7 @@ public class Projectile : MonoBehaviour
             );
         }
 
-        // SoundManager 참조 가져오기
+        // SoundManager 참조 가져오기(없으면 null)
         if (GameManager.Instance != null)
         {
             _soundManager = GameManager.Instance.SoundManager;
@@ -113,7 +114,7 @@ public class Projectile : MonoBehaviour
 
         _hasPushed = true;
 
-        // 사운드 재생
+        // 사운드 재생(쿨타임 적용)
         PlayProjectileSound();
 
         // 기존 자동 삭제 해제
@@ -126,8 +127,9 @@ public class Projectile : MonoBehaviour
         _pushedPlayerController = player.MovementController;
 
         // 투사체 진행 방향(velocity)로 밀기 (y는 upwardForce 적용)
-        Vector3 pushDir = GetComponent<Rigidbody>().velocity;
-        pushDir.y = 0;
+        var selfRb = GetComponent<Rigidbody>();
+        Vector3 pushDir = (selfRb != null) ? selfRb.velocity : transform.forward;
+        pushDir.y = 0f;
         if (pushDir.sqrMagnitude < 0.01f)
             pushDir = transform.forward;
 
@@ -138,25 +140,26 @@ public class Projectile : MonoBehaviour
         _currentPushTween?.Kill();
 
         // 플레이어 속도 초기화
-        player.MovementController.Rigidbody.velocity = Vector3.zero;
+        if (player.MovementController != null && player.MovementController.Rigidbody != null)
+            player.MovementController.Rigidbody.velocity = Vector3.zero;
 
         // 입력 잠시 제한 (선택)
         if (disablePlayerInput && player.InputReader != null)
             StartCoroutine(DisablePlayerInputTemporarily(player.InputReader));
 
         // 밀림 효과 시작
-        player.MovementController.ActivateObstacleSlide(finalPushDir, pushForce, pushDuration, inputReduction);
+        _pushedPlayerController?.ActivateObstacleSlide(finalPushDir, pushForce, pushDuration, inputReduction);
 
         // DOTween을 통한 점진적 힘 감소
         _currentPushTween = DOVirtual.Float(pushForce, 0f, pushDuration, (force) =>
         {
-            _pushedPlayerController.UpdateObstacleSlideSpeed(force);
+            _pushedPlayerController?.UpdateObstacleSlideSpeed(force);
         })
         .SetEase(pushCurve)
         .OnComplete(() =>
         {
-            _pushedPlayerController.DeactivateObstacleSlide();
-            StartCoroutine(DestroyAfterDelay(1.0f));
+            _pushedPlayerController?.DeactivateObstacleSlide();
+            StartCoroutine(DestroyAfterDelay(destroyDelayAfterPush)); // <- 인스펙터 값 사용
         });
     }
 
@@ -165,7 +168,8 @@ public class Projectile : MonoBehaviour
     /// </summary>
     private IEnumerator DestroyAfterDelay(float delay)
     {
-        yield return new WaitForSeconds(delay);
+        if (delay > 0f)
+            yield return new WaitForSeconds(delay);
         ReturnToPool();
     }
 
@@ -194,11 +198,15 @@ public class Projectile : MonoBehaviour
     }
 
     /// <summary>
-    /// 투사체 충돌 사운드 재생
+    /// 투사체 충돌 사운드 재생(쿨타임 적용)
     /// </summary>
     private void PlayProjectileSound()
     {
         if (!playProjectileSound) return;
+
+        // 쿨타임 체크
+        if (Time.time - _lastSoundTime < soundCooldownTime) return;
+        _lastSoundTime = Time.time;
 
         if (_soundManager != null)
         {
