@@ -23,13 +23,19 @@ public class EnterStage3_1_2 : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(DelayedInitialization());
+       
+    }
+    private IEnumerator DelayedInitialization()
+    {
+        yield return null;
         // PlayerFallSoundController 찾기
         _fallSoundController = GameManager.Instance.Player.GetComponent<PlayerFallSoundController>();
-        
+
         // 애니메이션 컨트롤러 찾기
         _animationController = GameManager.Instance.Player.GetComponent<PlayerAnimationController>();
-    }
 
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered || !other.CompareTag("Player")) return;
