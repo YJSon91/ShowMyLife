@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
     {
         // 게임 시작 시 초기 상태는 '메인 메뉴'입니다.
         UpdateGameState(GameState.Start);
+        SoundManager?.PlayBGM(BgmType.GameOver);
     }
 
     private void Update()
@@ -236,6 +237,10 @@ public class GameManager : MonoBehaviour
         // 새로운 게임 상태에 따라 적절한 액션 맵을 활성화/비활성화하고 커서 상태를 제어합니다.
         switch (newState)
         {
+            case GameState.Start:
+                SoundManager?.PlayBGM(BgmType.Main);
+                break;
+
             case GameState.Playing:
                 // 플레이 중일 때는 플레이어 조작만 가능해야 합니다.
                 UIManager?.Hide<TutorialPanelUI>();
@@ -249,6 +254,7 @@ public class GameManager : MonoBehaviour
                     _isTimerRunning = true;
                     // Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
                 }
+                SoundManager?.PlayBGM(BgmType.Main);
                 break;
 
             case GameState.Paused:
@@ -283,6 +289,7 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = true;
                 _isTimerRunning = false;
                 GameManager.Instance.UIManager.Show<EndingUI>(true);
+                SoundManager?.PlayBGM(BgmType.Ending);
                 // Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }
@@ -376,27 +383,7 @@ public class GameManager : MonoBehaviour
             {
                 UpdateGameState(GameState.Tutorial);
             }
-        }
-
-        // 3. 현재 게임 상태에 맞는 BGM 재생
-        if (SoundManager != null)
-        {
-            switch (CurrentState)
-            {
-                case GameState.MainMenu:
-                    // SoundManager.PlayBGM(BgmType.Lobby);
-                    break;
-                case GameState.Playing:
-                    if (SoundManager != null) SoundManager.StopBGM();
-                    break;
-                case GameState.Tutorial:
-                    if (SoundManager != null) SoundManager.StopBGM();
-                    break;
-                case GameState.LevelClear:
-                    //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
-                    break;
-            }
-        }
+        }       
     }
     /// <summary>
     /// 측정된 플레이 시간을 "00:00:00" 형식의 문자열로 변환하여 반환합니다.
