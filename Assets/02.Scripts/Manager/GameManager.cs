@@ -383,27 +383,7 @@ public class GameManager : MonoBehaviour
             {
                 UpdateGameState(GameState.Tutorial);
             }
-        }
-
-        // 3. 현재 게임 상태에 맞는 BGM 재생
-        if (SoundManager != null)
-        {
-            switch (CurrentState)
-            {
-                case GameState.MainMenu:
-                    // SoundManager.PlayBGM(BgmType.Lobby);
-                    break;
-                case GameState.Playing:
-                    if (SoundManager != null) SoundManager.StopBGM();
-                    break;
-                case GameState.Tutorial:
-                    if (SoundManager != null) SoundManager.StopBGM();
-                    break;
-                case GameState.LevelClear:
-                    //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
-                    break;
-            }
-        }
+        }       
     }
     /// <summary>
     /// 측정된 플레이 시간을 "00:00:00" 형식의 문자열로 변환하여 반환합니다.
