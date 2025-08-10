@@ -135,6 +135,16 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("점프를 막는 경사 각도")]
     [SerializeField] private float _jumpBlockAngle = 30f;
 
+    [Header("NoJump 슬립 설정")]
+    [Tooltip("NoJump 태그에서 강제 슬립 활성화 여부")]
+    [SerializeField] private bool _enableNoJumpSlipping = true;
+    [Tooltip("NoJump 슬립 힘/속도")]
+    [SerializeField] private float _noJumpSlipForce = 8f;
+    [Tooltip("NoJump 슬립 중 중력 배수")]
+    [SerializeField] private float _noJumpSlipGravity = 1.2f;
+    [Tooltip("NoJump 슬립 중 입력 제한 정도 (0-1, 높을수록 입력 제한)")]
+    [SerializeField] private float _noJumpSlipInputReduction = 0.7f;
+
     private Vector3 _initialPosition; // 경사면 제한을 위한 초기 위치
 
     #endregion
@@ -279,6 +289,11 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어가 슬립 중인지 여부
     /// </summary>
     public bool IsSlipping => _isSlipping;
+
+    /// <summary>
+    /// 플레이어가 NoJump 태그로 인한 슬립 중인지 여부
+    /// </summary>
+    public bool IsNoJumpSlipping => _isSlipping && _groundHit.collider != null && _groundHit.collider.CompareTag("NoJump");
 
     /// <summary>
     /// 플레이어가 미끄럼틀 함정에서 슬라이딩 중인지 여부
@@ -1673,6 +1688,23 @@ public class PlayerMovementController : MonoBehaviour
         Gizmos.DrawWireCube(boxCenter, boxHalfExtents * 2);
         Gizmos.DrawWireCube(endPosition, boxHalfExtents * 2);
         Gizmos.DrawLine(boxCenter, endPosition);
+
+        // NoJump 슬립 상태 시각화
+        if (_isSlipping && _groundHit.collider != null && _groundHit.collider.CompareTag("NoJump"))
+        {
+            // NoJump 슬립 중일 때 빨간색 화살표로 슬립 방향 표시
+            Gizmos.color = Color.red;
+            Vector3 slipStart = boxCenter;
+            Vector3 slipEnd = slipStart + _slipDirection * _slipForce;
+            Gizmos.DrawLine(slipStart, slipEnd);
+            
+            // 화살표 머리 그리기
+            Vector3 arrowHead = slipEnd;
+            Vector3 arrowLeft = arrowHead - _slipDirection * 0.5f + Vector3.up * 0.3f;
+            Vector3 arrowRight = arrowHead - _slipDirection * 0.5f - Vector3.up * 0.3f;
+            Gizmos.DrawLine(arrowHead, arrowLeft);
+            Gizmos.DrawLine(arrowHead, arrowRight);
+        }
     }
 
     // 점프 쿨타임 업데이트 메서드 제거됨
@@ -1718,35 +1750,71 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     /// <summary>
-    /// GroundedCheck에서 얻은 결과를 사용하여 NoJump 태그를 확인하고 점프 제한을 설정합니다
+    /// NoJump 태그가 감지되었을 때 강제 슬립을 활성화합니다
+    /// </summary>
+    private void ActivateNoJumpSlipping()
+    {
+        // 이미 슬립 중이면 중복 적용하지 않음
+        if (_isSlipping)
+        {
+            return;
+        }
+
+        // 지면의 경사 방향을 기반으로 슬립 방향 계산
+        Vector3 slopeDirection = Vector3.ProjectOnPlane(_groundNormal, Vector3.up).normalized;
+        
+        // 경사가 거의 없으면 아래쪽 방향으로 슬립
+        if (slopeDirection.magnitude < 0.1f)
+        {
+            slopeDirection = Vector3.down;
+        }
+
+        // NoJump 슬립 활성화
+        ActivateSlipping(slopeDirection, _noJumpSlipForce, _noJumpSlipGravity, _noJumpSlipInputReduction);
+    }
+
+    /// <summary>
+    /// GroundedCheck에서 얻은 결과를 사용하여 NoJump 태그를 확인하고 점프 제한과 강제 슬립을 설정합니다
     /// </summary>
     private void CheckNoJumpTag()
     {
-        
-        
         // GroundedCheck에서 이미 얻은 _groundHit 결과 사용
         if (_groundHit.collider != null)
         {
-            
             // NoJump 태그를 가진 오브젝트인지 확인
             if (_groundHit.collider.CompareTag("NoJump"))
             {
                 // 점프 제한 비활성화
                 _enableJumpBlocking = false;
                 
+                // NoJump 슬립이 활성화되어 있으면 강제 슬립 적용
+                if (_enableNoJumpSlipping)
+                {
+                    ActivateNoJumpSlipping();
+                }
             }
             else
             {
-                
                 // NoJump 태그가 아니면 점프 제한 활성화 (기본값으로 복원)
                 _enableJumpBlocking = true;
+                
+                // NoJump 슬립 해제
+                if (_isSlipping)
+                {
+                    DeactivateSlipping();
+                }
             }
         }
         else
         {
-            
             // 지면이 감지되지 않으면 점프 제한 활성화 (기본값으로 복원)
             _enableJumpBlocking = true;
+            
+            // NoJump 슬립 해제
+            if (_isSlipping)
+            {
+                DeactivateSlipping();
+            }
         }
     }
 }
