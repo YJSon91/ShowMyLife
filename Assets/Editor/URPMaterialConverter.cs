@@ -3,7 +3,7 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 
-public class MaterialFixer : EditorWindow
+public class URPMaterialConverter : EditorWindow
 {
     private const string CORRECTION_PATH = "Assets/99.Externals/Correction";
 

@@ -13,7 +13,14 @@ public class StartPanelUI : UiBase
 
     private bool _isSequencePlaying = false;
     private bool _keyInputEnabled = false;
+    private bool _isInitialized = false; // '준비 완료' 상태를 저장할 변수
 
+    private void Start()
+    {
+        // 이 함수가 호출되는 시점에는 SoundManager를 포함한 모든 매니저의 Awake()가 끝난 상태입니다.
+        // 이제 UI가 동작할 준비가 되었다고 표시합니다.
+        _isInitialized = true;
+    }
     public override void Init()
     {
         GameManager.Instance.UIManager.Add<StartPanelUI>(this);
@@ -33,6 +40,10 @@ public class StartPanelUI : UiBase
 
     private void Update()
     {
+        if (!_isInitialized)
+        {
+            return;
+        }
         // 키 입력이 활성화되었고, 아무 키나 눌렸다면
         if (_keyInputEnabled && Input.anyKeyDown)
         {

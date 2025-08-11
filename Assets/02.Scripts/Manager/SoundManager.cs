@@ -41,7 +41,9 @@ public class SoundManager : MonoBehaviour
 {
     private AudioSource bgmSource;
     private AudioSource sfxSource;
-    private AudioSource narrationSource;
+    private AudioSource narrationSource;    
+    private BgmType _currentBgmType; // 현재 재생 중인 BGM 타입을 기억할 변수
+    private bool _isInitialized = false;
 
     private Dictionary<BgmType, List<AudioClip>> bgmClips = new();
     private Dictionary<SfxType, List<AudioClip>> sfxClips = new();
@@ -63,19 +65,7 @@ public class SoundManager : MonoBehaviour
     // Awake에서는 자신의 내부 컴포넌트만 준비합니다.
     private void Awake()
     {
-        // 자식 오브젝트에서 BGM, SFX용 AudioSource를 찾아 할당합니다.
-        var audioSources = GetComponentsInChildren<AudioSource>();
-        if (audioSources.Length >= 2)
-        {
-            bgmSource = audioSources[0];
-            sfxSource = audioSources[1];
-            narrationSource = audioSources[2];
-            bgmSource.loop = true; // BGM은 반복 재생
-        }
-        else
-        {
-            //Debug.LogError("[SoundManager] 자식 오브젝트에 AudioSource 2개가 필요합니다!", this.gameObject);
-        }
+        Initialize();        
     }
 
     // Start에서 다른 매니저와 소통하고 초기 설정을 진행합니다.
@@ -91,7 +81,23 @@ public class SoundManager : MonoBehaviour
         LoadSounds();
         LoadAndApplyVolume();
     }
-
+    private void Initialize()
+    {
+        // 자식 오브젝트에서 BGM, SFX용 AudioSource를 찾아 할당합니다.
+        var audioSources = GetComponentsInChildren<AudioSource>();
+        if (audioSources.Length >= 2)
+        {
+            bgmSource = audioSources[0];
+            sfxSource = audioSources[1];
+            narrationSource = audioSources[2];
+            bgmSource.loop = true; // BGM은 반복 재생
+        }
+        else
+        {
+            //Debug.LogError("[SoundManager] 자식 오브젝트에 AudioSource 2개가 필요합니다!", this.gameObject);
+        }
+        _isInitialized = true;
+    }
 
     // --- 이벤트 핸들러 ---
     private void HandlePlayerJump() => PlaySFX(SfxType.Jump);
@@ -106,6 +112,14 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     public void PlayBGM(BgmType bgmType)
     {
+        if (!_isInitialized)
+        {
+            Initialize();
+        }
+        if (bgmSource.isPlaying && _currentBgmType == bgmType)
+        {
+            return;
+        }
         if (!bgmClips.ContainsKey(bgmType) || bgmClips[bgmType].Count == 0)
         {
             Debug.LogError($"[SoundManager] 재생할 '{bgmType}' BGM 클립이 없습니다! Resources 폴더를 확인해주세요.");
