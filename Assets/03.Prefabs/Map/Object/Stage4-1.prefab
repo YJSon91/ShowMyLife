@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 6896841374480402314}
   - component: {fileID: 4588223691380298118}
   - component: {fileID: 2421154764682480512}
-  - component: {fileID: 7348736572234437858}
+  - component: {fileID: 5267038580682622056}
   m_Layer: 9
   m_Name: SM_Template_Map_Floor
   m_TagString: Untagged
@@ -116,8 +116,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 21167996743939067}
   m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
---- !u!65 &7348736572234437858
-BoxCollider:
+--- !u!64 &5267038580682622056
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -134,9 +134,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.000004, y: 0.50000125, z: 10.000007}
-  m_Center: {x: 0.0000045299535, y: -0.25006106, z: -0.0000011920935}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
 --- !u!1 &23017358231417032
 GameObject:
   m_ObjectHideFlags: 0
@@ -5839,7 +5840,7 @@ GameObject:
   - component: {fileID: 4187006287327999884}
   - component: {fileID: 6325347614817617454}
   - component: {fileID: 2092219549380474338}
-  - component: {fileID: 5664545222819729109}
+  - component: {fileID: 4276495298064806693}
   m_Layer: 9
   m_Name: SM_Template_Map_Floor
   m_TagString: Untagged
@@ -5912,8 +5913,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1554826482241569337}
   m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
---- !u!65 &5664545222819729109
-BoxCollider:
+--- !u!64 &4276495298064806693
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5930,9 +5931,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.000004, y: 0.50000125, z: 10.000007}
-  m_Center: {x: 0.0000045299535, y: -0.25006106, z: -0.0000011920935}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
 --- !u!1 &1585609725053209060
 GameObject:
   m_ObjectHideFlags: 0
@@ -17557,7 +17559,7 @@ GameObject:
   - component: {fileID: 4813109394937852430}
   - component: {fileID: 1609771935900516017}
   - component: {fileID: 7394990515032578985}
-  - component: {fileID: 4892930412481207090}
+  - component: {fileID: 7016901455895346226}
   m_Layer: 9
   m_Name: SM_Template_Map_Floor
   m_TagString: Untagged
@@ -17630,8 +17632,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4892707469788251348}
   m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
---- !u!65 &4892930412481207090
-BoxCollider:
+--- !u!64 &7016901455895346226
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -17648,9 +17650,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.000004, y: 0.50000125, z: 10.000007}
-  m_Center: {x: -0.000003099441, y: -0.25006106, z: -0.0000011920935}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
 --- !u!1 &4911132373654038258
 GameObject:
   m_ObjectHideFlags: 0
@@ -25651,7 +25654,7 @@ GameObject:
   - component: {fileID: 7142853466816979685}
   - component: {fileID: 4675817851197669434}
   - component: {fileID: 21942034121929423}
-  - component: {fileID: 3710226400230295941}
+  - component: {fileID: 4644025203691916728}
   m_Layer: 9
   m_Name: SM_Template_Map_Floor
   m_TagString: Untagged
@@ -25724,8 +25727,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7395561278133424739}
   m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
---- !u!65 &3710226400230295941
-BoxCollider:
+--- !u!64 &4644025203691916728
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -25742,9 +25745,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.000004, y: 0.50000125, z: 10.000007}
-  m_Center: {x: -0.000003099441, y: -0.25006106, z: -0.00003170967}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
 --- !u!1 &7398036665103623957
 GameObject:
   m_ObjectHideFlags: 0
@@ -26795,7 +26799,7 @@ GameObject:
   - component: {fileID: 54386592369337978}
   - component: {fileID: 1179788124720970720}
   - component: {fileID: 9024376407564270444}
-  - component: {fileID: 7486248093588205917}
+  - component: {fileID: 270450727499849997}
   m_Layer: 9
   m_Name: SM_Template_Map_Floor (1)
   m_TagString: Untagged
@@ -26868,8 +26872,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7631061540195131057}
   m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
---- !u!65 &7486248093588205917
-BoxCollider:
+--- !u!64 &270450727499849997
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -26886,9 +26890,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.000004, y: 0.50000125, z: 10.000007}
-  m_Center: {x: 0.0000007152562, y: -0.25006106, z: 0.000029325485}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
 --- !u!1 &7659730232014748853
 GameObject:
   m_ObjectHideFlags: 0
@@ -29452,7 +29457,7 @@ GameObject:
   - component: {fileID: 9042815882978341635}
   - component: {fileID: 2663679423210702184}
   - component: {fileID: 2180719874965759692}
-  - component: {fileID: 237735280938043774}
+  - component: {fileID: 37674941663872370}
   m_Layer: 9
   m_Name: SM_Template_Map_Floor
   m_TagString: Untagged
@@ -29525,8 +29530,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8396205472870928902}
   m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
---- !u!65 &237735280938043774
-BoxCollider:
+--- !u!64 &37674941663872370
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -29543,9 +29548,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.000004, y: 0.50000125, z: 10.000007}
-  m_Center: {x: 0.0000007152562, y: -0.25006106, z: -0.00003170967}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000015840768045876684276, type: 3}
 --- !u!1 &8419175250828906708
 GameObject:
   m_ObjectHideFlags: 0
