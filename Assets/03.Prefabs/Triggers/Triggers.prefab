@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 5159803604755279884}
   - component: {fileID: 1052667109049619457}
   - component: {fileID: 1212929145977247015}
+  - component: {fileID: 4361368566026861094}
+  - component: {fileID: 8154428670410481300}
   m_Layer: 0
   m_Name: GoalTrigger
   m_TagString: Untagged
@@ -48,7 +50,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -66,6 +68,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e882fdbc75b2c741944f2f291246b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &4361368566026861094
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2434319580065535447}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8154428670410481300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2434319580065535447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 122374ed6cd250641a8c51dd1cb3bde6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetToDeactivate: {fileID: 0}
+  reactivateAfterDelay: 1
+  reactivateDelay: 20
+  oneTimeUse: 0
 --- !u!1 &8117197906909123340
 GameObject:
   m_ObjectHideFlags: 0
@@ -1444,7 +1483,7 @@ PrefabInstance:
     - target: {fileID: 3269306872050708088, guid: eadf2bf58055f4d4c87f8b257af82429,
         type: 3}
       propertyPath: _dialogueIDs.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3269306872050708088, guid: eadf2bf58055f4d4c87f8b257af82429,
         type: 3}
@@ -1470,6 +1509,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _dialogueIDs.Array.data[4]
       value: Start_Middle_04
+      objectReference: {fileID: 0}
+    - target: {fileID: 3269306872050708088, guid: eadf2bf58055f4d4c87f8b257af82429,
+        type: 3}
+      propertyPath: _dialogueIDs.Array.data[5]
+      value: Start_Middle_05
       objectReference: {fileID: 0}
     - target: {fileID: 5829344730863473085, guid: eadf2bf58055f4d4c87f8b257af82429,
         type: 3}
