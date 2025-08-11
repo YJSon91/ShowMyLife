@@ -35,7 +35,7 @@ public class EndingUI : UiBase
                 PlayNextClip();
                 if (_backgroundParticles != null) _backgroundParticles.Play();
                 // 연출 코루틴을 시작합니다.
-                StartCoroutine(StartEndingSequence());                    
+                StartCoroutine(StartEndingSequence());                
         }
     }
     // 저장된 모든 비디오 클립 파일의 경로를 찾아 리스트에 추가합니다.
