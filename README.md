@@ -75,8 +75,68 @@ Unity의 새로운 <b>Input System</b>을 도입하여, InputReader가 입력을
 <b>최종 결과:</b> 총 메모리 사용량을 5.45GB에서 2.34GB로 약 57% 절감하여 안정적인 성능을 확보했습니다.
 </div>
 </details>
+<details>
+<summary><b>📹 시네마틱 연출 시스템 (EmotionDirector 기반)</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+Cinemachine을 활용하여 스크립트 기반 카메라 연출을 완전 제어.  
+
+레일 기반 카메라 연출: 돌리 줌(줌인·줌아웃)과 트랙 이동을 통합 관리하여 장면 전환과 몰입도를 극대화.  
+
+시야 훑기(Sweep), 타겟 응시(POV 연동) 등 다양한 연출 패턴을 모듈화하여 재사용 가능.  
+
+플레이어 시점 카메라와 테마 카메라 간의 전환, 보간 시간 제어, 시야각(FOV) 변화까지 코드로 정밀하게 제어.  
+
+연출 중 플레이어 조작 제한 및 복원, 색상 필터(PostProcessing) 적용, TimeScale 조정 등 복합적인 연출 효과를 하나의 매니저에서 통합 관리.  
+
+스테이지별로 연출 시퀀스를 스크립트로 정의하여 씬 전환 없이도 자연스럽게 이어지는 시네마틱 구현.  
+
+</div>
+</details>
+
+<details>
+<summary><b>💾 세이브 & 로드 시스템</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+JSON 직렬화를 활용하여 플레이어 위치, 스테이지 진행 상태 등을 저장.  
+
+체크포인트 기반 자동 저장 구조로, 씬 전환 없이 게임 중간에 복원 가능.  
+
+MonoBehaviour 기반 매니저 구조로 GameManager와 연동.  
+
+</div>
+</details>
+
+<details>
+<summary><b>🛠 범용 디버그 허브(DebugWindow)</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+카테고리별 디버그 버튼 등록 가능.  
+
+게임 내 다양한 테스트(씬 로드, 오브젝트 토글, 데이터 초기화 등)를 실시간 실행.  
+
+팀 전체가 공용으로 활용할 수 있는 확장 가능한 구조.  
+
+</div>
+</details>
+
+<details>
+<summary><b>🎨 머티리얼 자동 변환 툴 (URPMaterialConverter)</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+에디터 확장 기능(EditorWindow)으로 HDRP/기타 셰이더를 URP 표준 셰이더로 일괄 변환.  
+
+Texture 매핑 자동화 및 손실 최소화.  
+
+대규모 외부 에셋 호환성을 빠르게 확보.  
+
+</div>
+</details>
 
 <br>
+
+
+
 
 🎮 시작하기 (Getting Started)
 조작법
