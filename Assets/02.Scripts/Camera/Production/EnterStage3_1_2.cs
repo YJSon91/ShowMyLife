@@ -47,10 +47,16 @@ public class EnterStage3_1_2 : MonoBehaviour
 
     private IEnumerator PlaySequence(Transform player)
     {
-        // 연출 시작 시 착지 사운드 비활성화
+        // 연출 시작 시 착지 사운드 및 애니메이션 비활성화
         if (_fallSoundController != null)
         {
             _fallSoundController.SetSoundEnabled(false);
+        }
+        
+        // 애니메이션 비활성화 추가
+        if (_animationController != null)
+        {
+            _animationController.SetAnimationEnabled(false);
         }
 
         CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
@@ -134,11 +140,18 @@ public class EnterStage3_1_2 : MonoBehaviour
 
         emotionDirector.EnablePlayerControl(player);
         
-        // 연출 완전 종료 후 착지 사운드 다시 활성화 (약간의 지연 후)
+        // 연출 완전 종료 후 착지 사운드 및 애니메이션 다시 활성화 (약간의 지연 후)
         yield return new WaitForSeconds(0.5f);
+        
         if (_fallSoundController != null)
         {
             _fallSoundController.SetSoundEnabled(true);
+        }
+        
+        // 애니메이션 활성화 추가
+        if (_animationController != null)
+        {
+            _animationController.SetAnimationEnabled(true);
         }
         
         gameObject.SetActive(false);
