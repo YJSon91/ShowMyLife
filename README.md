@@ -66,7 +66,7 @@ Unity의 새로운 <b>Input System</b>을 도입하여, InputReader가 입력을
 
 <b>렌더링 최적화:</b> MSAA, 그림자 해상도, SSAO 품질 설정을 조절하여 GPU 부하 감소.
 
-<b>오브젝트 풀링(Object Pooling)</b>: 짧은 수명·다량 생성되는 오브젝트(투사체, 파편, 히트 이펙트 등)를 사전에 생성·재사용하여 Instantiate/Destroy로 인한 메모리 할당 및 GC 스파이크를 방지.
+<b>오브젝트 풀링(Object Pooling)</b>: 짧은 수명·다량 생성되는 오브젝트를 사전에 생성·재사용하여 Instantiate/Destroy로 인한 메모리 할당 및 GC 스파이크를 방지.
 
 <b>오클루전 컬링(Occlusion Culling)</b>: 카메라에 가려진 오브젝트의 렌더링을 자동으로 생략하여 드로우콜 및 픽셀 연산량 절감.
 
