@@ -69,26 +69,25 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            //Debug.Log("[GameManager] Awake 호출");
-
-            // 1. 컨트롤러 인스턴스를 생성합니다.
             PlayerControls = new Controls();
-
-            // 2. 저장된 키 바인딩을 불러옵니다.
-            LoadAllKeybindings();
         }
         else
         {
             Destroy(gameObject);
         }
-        PlayerControls.Shared.Enable();
+       
     }
 
     private void Start()
     {
         // 게임 시작 시 초기 상태는 '메인 메뉴'입니다.
-        UpdateGameState(GameState.Start);       
+        UpdateGameState(GameState.Start);
+        // 1. 컨트롤러 인스턴스를 생성합니다.
+        
+        PlayerControls.Shared.Enable();
+
+        // 2. 저장된 키 바인딩을 불러옵니다.
+        LoadAllKeybindings();
     }
 
     private void Update()
@@ -192,6 +191,7 @@ public class GameManager : MonoBehaviour
                 inputReader.OnPausePerformed -= TogglePauseState;
             }
         }
+        Instance = null;
     }
     private void CheckEventSystem(Scene scene, LoadSceneMode mode)
     {
@@ -234,8 +234,13 @@ public class GameManager : MonoBehaviour
         GameState previousState = CurrentState;
         CurrentState = newState;
 
-        CurrentState = newState;
-
+        if (previousState == GameState.LevelClear)
+        {
+            // 자기 자신을 포함한 모든 것을 파괴하고 첫 씬부터 다시 시작합니다.
+            Destroy(gameObject);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("IntroScene");
+            return; // 재시작하므로 아래 로직은 더 이상 실행할 필요가 없습니다.
+        }
         // --- 이 부분이 핵심 수정 내용입니다 ---
         // 새로운 게임 상태에 따라 적절한 액션 맵을 활성화/비활성화하고 커서 상태를 제어합니다.
         switch (newState)
