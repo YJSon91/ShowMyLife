@@ -155,45 +155,42 @@ Texture 매핑 자동화 및 손실 최소화.
 
 <table>
   <thead>
-    <tr>
-      <th>이름</th>
-      <th>역할</th>
-      <th>담당 업무</th>
-    </tr>
+    <tr><th>이름</th><th>역할</th><th>담당 업무</th></tr>
   </thead>
   <tbody>
     <tr>
-      <td style="text-align:center; vertical-align:middle;"><a href=""><strong>정재우</strong></a></td>
-      <td style="text-align:center; vertical-align:middle;">메인기획</td>
-      <td style="vertical-align:middle;">내용</td>
+      <td><a href=""><strong>정재우</strong></a><br>&nbsp;</td>
+      <td>메인기획<br>&nbsp;</td>
+      <td>내용<br>&nbsp;</td>
     </tr>
     <tr>
-      <td style="text-align:center; vertical-align:middle;"><a href=""><strong>곽범수</strong></a></td>
-      <td style="text-align:center; vertical-align:middle;">서브기획</td>
-      <td style="vertical-align:middle;">초등학교 &amp; 고등학교 스테이지 기획, 중간피드백, 예산관리(에셋 구매, 피드백 신청자 참가비)</td>
+      <td><a href=""><strong>곽범수</strong></a><br>&nbsp;</td>
+      <td>서브기획<br>&nbsp;</td>
+      <td>초등학교 &amp; 고등학교 스테이지 기획, 중간피드백, 예산관리(에셋 구매, 피드백 신청자 참가비)<br>&nbsp;</td>
     </tr>
     <tr>
-      <td style="text-align:center; vertical-align:middle;"><a href="CONTRIBUTIONS/Youngjun.md"><strong>손영준</strong></a></td>
-      <td style="text-align:center; vertical-align:middle;">메인팀장</td>
-      <td style="vertical-align:middle;">게임 메인시스템 제작, UI 및 대화시스템 제작, 대사 업데이트 툴 제작</td>
+      <td><a href="CONTRIBUTIONS/Youngjun.md"><strong>손영준</strong></a><br>&nbsp;</td>
+      <td>메인팀장<br>&nbsp;</td>
+      <td>게임 메인시스템 제작, UI 및 대화시스템 제작, 대사 업데이트 툴 제작<br>&nbsp;</td>
     </tr>
     <tr>
-      <td style="text-align:center; vertical-align:middle;"><a href="https://github.com/ghdwlsdl1/ShowMyLife-Codes.git"><strong>최홍진</strong></a></td>
-      <td style="text-align:center; vertical-align:middle;">서브팀장</td>
-      <td style="vertical-align:middle;">맵 제작 및 배치, 세이브 시스템 제작, 시네마틱 시스템 제작, 범용 오브젝트 풀링 제작, 범용 디버그 허브 제작, 머티리얼 자동 변환 툴 제작</td>
+      <td><a href="https://github.com/ghdwlsdl1/ShowMyLife-Codes.git"><strong>최홍진</strong></a><br>&nbsp;</td>
+      <td>서브팀장<br>&nbsp;</td>
+      <td>맵 제작 및 배치, 세이브 시스템 제작, 시네마틱 시스템 제작, 범용 오브젝트 풀링 제작, 범용 디버그 허브 제작, 머티리얼 자동 변환 툴 제작<br>&nbsp;</td>
     </tr>
     <tr>
-      <td style="text-align:center; vertical-align:middle;"><a href="CONTRIBUTIONS/Hyunjong.md"><strong>김현종</strong></a></td>
-      <td style="text-align:center; vertical-align:middle;">팀원</td>
-      <td style="vertical-align:middle;">내용</td>
+      <td><a href="CONTRIBUTIONS/Hyunjong.md"><strong>김현종</strong></a><br>&nbsp;</td>
+      <td>팀원<br>&nbsp;</td>
+      <td>내용<br>&nbsp;</td>
     </tr>
     <tr>
-      <td style="text-align:center; vertical-align:middle;"><a href="CONTRIBUTIONS/Sungchan.md"><strong>조성찬</strong></a></td>
-      <td style="text-align:center; vertical-align:middle;">팀원</td>
-      <td style="vertical-align:middle;">내용</td>
+      <td><a href="CONTRIBUTIONS/Sungchan.md"><strong>조성찬</strong></a><br>&nbsp;</td>
+      <td>팀원<br>&nbsp;</td>
+      <td>내용<br>&nbsp;</td>
     </tr>
   </tbody>
 </table>
+
 
 
 <br>
