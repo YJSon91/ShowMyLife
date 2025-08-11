@@ -161,17 +161,13 @@ Texture 매핑 자동화 및 손실 최소화.
 
 개발
 
-| [**손영준**](CONTRIBUTIONS/Youngjun.md) | 팀장 |
+| [**손영준**](CONTRIBUTIONS/Youngjun.md) | 팀장 | 게임 메인시스템 제작, UI 및 대화시스템 제작, 대사 업데이트 툴 제작 |
 
-게임 메인시스템 제작, UI 및 대화시스템 제작, 대사 업데이트 툴 제작
+| [**김현종**](CONTRIBUTIONS/Hyunjong.md) | 팀원 | |
 
-| [**김현종**](CONTRIBUTIONS/Hyunjong.md) | 팀원 |
+| [**조성찬**](CONTRIBUTIONS/Sungchan.md) | 팀원 | |
 
-| [**조성찬**](CONTRIBUTIONS/Sungchan.md) | 팀원 |
-
-| [**최홍진**](https://github.com/ghdwlsdl1/ShowMyLife-Codes.git) | 팀원 |
-
-맵 제작 및 배치 , 세이브 시스템 제작 , 시네마틱 시스템 제작 , 범용 오브젝트 풀링 제작 , 범용 디버그 허브 제작 , 머티리얼 자동 변환 툴 제작
+| [**최홍진**](https://github.com/ghdwlsdl1/ShowMyLife-Codes.git) | 팀원 | 맵 제작 및 배치 , 세이브 시스템 제작 , 시네마틱 시스템 제작 , 범용 오브젝트 풀링 제작 , 범용 디버그 허브 제작 , 머티리얼 자동 변환 툴 제작 |
 
 <br>
 
