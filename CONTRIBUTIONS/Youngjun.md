@@ -65,7 +65,8 @@ public void Show<T>(bool show) where T : UiBase
     {
         // 해당 UI의 Show 함수를 호출
         ui.Show(show);
-    }}
+    }
+ }   
 
 
 </details>
