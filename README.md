@@ -76,7 +76,7 @@ Unity의 새로운 <b>Input System</b>을 도입하여, InputReader가 입력을
 </div>
 </details>
 <details>
-<summary><b>📹 시네마틱 연출 시스템 (EmotionDirector 기반)</b></summary>
+<summary><b>📹 EmotionDirector: 시네마틱 연출 시스템</b></summary>
 <div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
 
 Cinemachine을 활용하여 스크립트 기반 카메라 연출을 완전 제어.  
@@ -108,7 +108,7 @@ MonoBehaviour 기반 매니저 구조로 GameManager와 연동.
 </details>
 
 <details>
-<summary><b>🛠 범용 디버그 허브(DebugWindow)</b></summary>
+<summary><b>🛠 DebugWindow: 범용 디버그 허브</b></summary>
 <div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
 
 카테고리별 디버그 버튼 등록 가능.  
@@ -121,7 +121,7 @@ MonoBehaviour 기반 매니저 구조로 GameManager와 연동.
 </details>
 
 <details>
-<summary><b>🎨 머티리얼 자동 변환 툴 (URPMaterialConverter)</b></summary>
+<summary><b>🎨 URPMaterialConverter: 머티리얼 자동 변환 툴</b></summary>
 <div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
 
 에디터 확장 기능(EditorWindow)으로 HDRP/기타 셰이더를 URP 표준 셰이더로 일괄 변환.  
