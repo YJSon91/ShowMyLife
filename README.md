@@ -80,6 +80,7 @@ Unity의 새로운 <b>Input System</b>을 도입하여, InputReader가 입력을
 
 🎮 시작하기 (Getting Started)
 조작법
+
 이동: W, A, S, D
 
 달리기: Shift
