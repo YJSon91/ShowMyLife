@@ -160,7 +160,7 @@ Texture 매핑 자동화 및 손실 최소화.
 | <nobr>[**손영준**](CONTRIBUTIONS/Youngjun.md)</nobr> | 메인팀장 | 게임 메인시스템 제작, UI 및 대화시스템 제작, 대사 업데이트 툴 제작 |
 | <nobr>[**최홍진**](https://github.com/ghdwlsdl1/ShowMyLife-Codes.git)</nobr> | 서브팀장 | 맵 제작, 세이브 시스템 제작, 시네마틱 시스템 제작, 오브젝트 풀링 제작, 디버그 허브 제작, 머티리얼 자동 변환 툴 제작 |
 | <nobr>[**김현종**](CONTRIBUTIONS/Hyunjong.md)</nobr> | 팀원 | 내용 |
-| <nobr>[**조성찬**](CONTRIBUTIONS/Sungchan.md)</nobr> | 팀원 | 내용 |
+| <nobr>[**조성찬**](CONTRIBUTIONS/Sungchan.md)</nobr> | 팀원 | 플레이어 움직임, 애니메이션, 맵 배치 |
 
 <br>
 
