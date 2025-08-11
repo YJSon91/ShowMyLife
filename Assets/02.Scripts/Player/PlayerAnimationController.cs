@@ -22,6 +22,14 @@ public class PlayerAnimationController : MonoBehaviour
 
     #endregion
 
+    #region 애니메이션 제어
+
+    [Header("애니메이션 제어")]
+    [Tooltip("애니메이션 활성화 여부")]
+    [SerializeField] private bool _animationEnabled = true;
+
+    #endregion
+
     #region 애니메이션 변수 해쉬
     private readonly int _movementInputTappedHash = Animator.StringToHash("MovementInputTapped");
     private readonly int _movementInputPressedHash = Animator.StringToHash("MovementInputPressed");
@@ -230,6 +238,45 @@ public class PlayerAnimationController : MonoBehaviour
 
     #endregion
 
+    #region 애니메이션 제어 메서드
+
+    /// <summary>
+    /// 애니메이션 활성화/비활성화 설정
+    /// </summary>
+    /// <param name="enabled">애니메이션 활성화 여부</param>
+    public void SetAnimationEnabled(bool enabled)
+    {
+        _animationEnabled = enabled;
+        
+        if (!enabled)
+        {
+            // 애니메이션 비활성화 시 현재 애니메이션 정지
+            if (_animator != null)
+            {
+                _animator.enabled = false;
+            }
+        }
+        else
+        {
+            // 애니메이션 활성화 시 애니메이터 다시 활성화
+            if (_animator != null)
+            {
+                _animator.enabled = true;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 현재 애니메이션 활성화 상태 반환
+    /// </summary>
+    /// <returns>애니메이션 활성화 여부</returns>
+    public bool IsAnimationEnabled()
+    {
+        return _animationEnabled;
+    }
+
+    #endregion
+
     #region 이벤트 핸들러
 
     /// <summary>
@@ -279,6 +326,9 @@ public class PlayerAnimationController : MonoBehaviour
     /// </summary>
     private void HandleGaitChanged(PlayerGaitState previousGait, PlayerGaitState newGait)
     {
+        // 애니메이션이 비활성화된 경우 이벤트 처리하지 않음
+        if (!_animationEnabled) return;
+        
         // 걸음걸이 상태에 따른 애니메이션 파라미터 설정
         int gaitValue = 0;
         
@@ -298,7 +348,10 @@ public class PlayerAnimationController : MonoBehaviour
                 break;
         }
         
-        _animator.SetInteger(_currentGaitHash, gaitValue);
+        if (_animator != null)
+        {
+            _animator.SetInteger(_currentGaitHash, gaitValue);
+        }
     }
 
     #endregion
@@ -310,6 +363,9 @@ public class PlayerAnimationController : MonoBehaviour
     /// </summary>
     private void UpdateAnimationParameters()
     {
+        // 애니메이션이 비활성화된 경우 업데이트하지 않음
+        if (!_animationEnabled) return;
+        
         UpdateMovementInputState();
         UpdateStrafeDirection();
         CheckIfStarting();
@@ -336,36 +392,39 @@ public class PlayerAnimationController : MonoBehaviour
             isStrafing = _movementController.IsStrafing;
         }
         
-        _animator.SetFloat(_moveSpeedHash, speed);
-        _animator.SetFloat(_fallingDurationHash, fallingDuration);
-        _animator.SetFloat(_inclineAngleHash, inclineAngle);
-        _animator.SetBool(_isGroundedHash, isGrounded);
-        _animator.SetBool(_isCrouchingHash, isCrouching);
-        _animator.SetBool(_isWalkingHash, isWalking);
-        
-        _animator.SetFloat(_leanValueHash, _leanValue);
-        _animator.SetFloat(_headLookXHash, _headLookX);
-        _animator.SetFloat(_headLookYHash, _headLookY);
-        _animator.SetFloat(_bodyLookXHash, _bodyLookX);
-        _animator.SetFloat(_bodyLookYHash, _bodyLookY);
+        if (_animator != null)
+        {
+            _animator.SetFloat(_moveSpeedHash, speed);
+            _animator.SetFloat(_fallingDurationHash, fallingDuration);
+            _animator.SetFloat(_inclineAngleHash, inclineAngle);
+            _animator.SetBool(_isGroundedHash, isGrounded);
+            _animator.SetBool(_isCrouchingHash, isCrouching);
+            _animator.SetBool(_isWalkingHash, isWalking);
+            
+            _animator.SetFloat(_leanValueHash, _leanValue);
+            _animator.SetFloat(_headLookXHash, _headLookX);
+            _animator.SetFloat(_headLookYHash, _headLookY);
+            _animator.SetFloat(_bodyLookXHash, _bodyLookX);
+            _animator.SetFloat(_bodyLookYHash, _bodyLookY);
 
-        _animator.SetFloat(_isStrafingHash, isStrafing ? 1f : 0f);
-        
-        _animator.SetFloat(_strafeDirectionXHash, _strafeDirectionX);
-        _animator.SetFloat(_strafeDirectionZHash, _strafeDirectionZ);
-        
-        _animator.SetFloat(_shuffleDirectionXHash, _shuffleDirectionX);
-        _animator.SetFloat(_shuffleDirectionZHash, _shuffleDirectionZ);
-        
-        _animator.SetBool(_movementInputTappedHash, _movementInputTapped);
-        _animator.SetBool(_movementInputPressedHash, _movementInputPressed);
-        _animator.SetBool(_movementInputHeldHash, _movementInputHeld);
-        
-        _animator.SetBool(_isStoppedHash, _isStopped);
-        _animator.SetBool(_isStartingHash, _isStarting);
-        _animator.SetBool(_isTurningInPlaceHash, _isTurningInPlace);
-        
-        _animator.SetFloat(_movementStartDirectionHash, _movementStartDirection);
+            _animator.SetFloat(_isStrafingHash, isStrafing ? 1f : 0f);
+            
+            _animator.SetFloat(_strafeDirectionXHash, _strafeDirectionX);
+            _animator.SetFloat(_strafeDirectionZHash, _strafeDirectionZ);
+            
+            _animator.SetFloat(_shuffleDirectionXHash, _shuffleDirectionX);
+            _animator.SetFloat(_shuffleDirectionZHash, _shuffleDirectionZ);
+            
+            _animator.SetBool(_movementInputTappedHash, _movementInputTapped);
+            _animator.SetBool(_movementInputPressedHash, _movementInputPressed);
+            _animator.SetBool(_movementInputHeldHash, _movementInputHeld);
+            
+            _animator.SetBool(_isStoppedHash, _isStopped);
+            _animator.SetBool(_isStartingHash, _isStarting);
+            _animator.SetBool(_isTurningInPlaceHash, _isTurningInPlace);
+            
+            _animator.SetFloat(_movementStartDirectionHash, _movementStartDirection);
+        }
     }
 
     #endregion
@@ -641,7 +700,10 @@ public class PlayerAnimationController : MonoBehaviour
     /// <param name="isJumping">점프 중인지 여부</param>
     public void SetJumping(bool isJumping)
     {
-        _animator.SetBool(_isJumpingAnimHash, isJumping);
+        if (_animator != null && _animationEnabled)
+        {
+            _animator.SetBool(_isJumpingAnimHash, isJumping);
+        }
     }
 
     /// <summary>
@@ -650,7 +712,10 @@ public class PlayerAnimationController : MonoBehaviour
     /// <param name="isCrouching">웅크리고 있는지 여부</param>
     public void SetCrouching(bool isCrouching)
     {
-        _animator.SetBool(_isCrouchingHash, isCrouching);
+        if (_animator != null && _animationEnabled)
+        {
+            _animator.SetBool(_isCrouchingHash, isCrouching);
+        }
     }
 
     /// <summary>
@@ -659,7 +724,10 @@ public class PlayerAnimationController : MonoBehaviour
     /// <param name="duration">낙하 지속 시간</param>
     public void SetFallingDuration(float duration)
     {
-        _animator.SetFloat(_fallingDurationHash, duration);
+        if (_animator != null && _animationEnabled)
+        {
+            _animator.SetFloat(_fallingDurationHash, duration);
+        }
     }
 
     /// <summary>
@@ -668,7 +736,10 @@ public class PlayerAnimationController : MonoBehaviour
     /// <param name="isGrounded">지면에 있는지 여부</param>
     public void SetGrounded(bool isGrounded)
     {
-        _animator.SetBool(_isGroundedHash, isGrounded);
+        if (_animator != null && _animationEnabled)
+        {
+            _animator.SetBool(_isGroundedHash, isGrounded);
+        }
     }
 
     /// <summary>
@@ -677,7 +748,10 @@ public class PlayerAnimationController : MonoBehaviour
     /// <param name="speed">이동 속도</param>
     public void SetMoveSpeed(float speed)
     {
-        _animator.SetFloat(_moveSpeedHash, speed);
+        if (_animator != null && _animationEnabled)
+        {
+            _animator.SetFloat(_moveSpeedHash, speed);
+        }
     }
     
     /// <summary>
@@ -686,12 +760,15 @@ public class PlayerAnimationController : MonoBehaviour
     /// <param name="fallingDuration">낙하 지속 시간</param>
     public void TriggerHardLanding(float fallingDuration)
     {
-        // 애니메이션 파라미터 설정
-        _animator.SetFloat(_fallingDurationHash, fallingDuration);
-        
-        // 여기서는 애니메이션 파라미터만 설정하고,
-        // 실제 하드 랜딩 애니메이션은 애니메이터 컨트롤러에서
-        // 낙하 지속 시간에 따라 다른 착지 애니메이션을 재생하도록 구성해야 함
+        if (_animator != null && _animationEnabled)
+        {
+            // 애니메이션 파라미터 설정
+            _animator.SetFloat(_fallingDurationHash, fallingDuration);
+            
+            // 여기서는 애니메이션 파라미터만 설정하고,
+            // 실제 하드 랜딩 애니메이션은 애니메이터 컨트롤러에서
+            // 낙하 지속 시간에 따라 다른 착지 애니메이션을 재생하도록 구성해야 함
+        }
     }
 
     #endregion

@@ -8350,6 +8350,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2298961345861795627}
   m_Mesh: {fileID: 4300000, guid: abc00000000005338521103948817466, type: 3}
+--- !u!1 &2322757961655228201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6790416040454811591}
+  - component: {fileID: 2364670889575659081}
+  - component: {fileID: 173135648611781672}
+  m_Layer: 9
+  m_Name: PlayerChangeTrigger (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6790416040454811591
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2322757961655228201}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 29.78, z: 6.52}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1434698400473027346}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2364670889575659081
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2322757961655228201}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3, y: 2.29, z: 7.39}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &173135648611781672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2322757961655228201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25ab111ca2e447f4faa5ca80e5da3c5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  switchToSchoolBoy: 1
+  switchToKid: 0
+  triggerOnce: 1
 --- !u!1 &2389303935494680040
 GameObject:
   m_ObjectHideFlags: 0
@@ -9360,9 +9429,9 @@ GameObject:
   - component: {fileID: 7034698566081311834}
   - component: {fileID: 124192263970243234}
   - component: {fileID: 6140107553693144655}
-  m_Layer: 6
+  m_Layer: 20
   m_Name: SM_School_Backpack_01b_LOD0 (5)
-  m_TagString: Untagged
+  m_TagString: NoJump
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -24005,6 +24074,7 @@ Transform:
   - {fileID: 447387309325448633}
   - {fileID: 4298840350069010426}
   - {fileID: 7769839302283897081}
+  - {fileID: 6790416040454811591}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &7324550228470691281
