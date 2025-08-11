@@ -88,8 +88,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // 게임 시작 시 초기 상태는 '메인 메뉴'입니다.
-        UpdateGameState(GameState.Start);
-        SoundManager?.PlayBGM(BgmType.GameOver);
+        UpdateGameState(GameState.Start);       
     }
 
     private void Update()
@@ -232,6 +231,9 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == newState) return;
 
+        GameState previousState = CurrentState;
+        CurrentState = newState;
+
         CurrentState = newState;
 
         // --- 이 부분이 핵심 수정 내용입니다 ---
@@ -255,7 +257,10 @@ public class GameManager : MonoBehaviour
                     _isTimerRunning = true;
                     // Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
                 }
-                SoundManager?.PlayBGM(BgmType.Main);
+                if (previousState != GameState.Paused)
+                {
+                    SoundManager?.PlayBGM(BgmType.Main);
+                }
                 break;
 
             case GameState.Paused:
@@ -264,8 +269,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.Player.Disable();
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
-                Cursor.visible = true;
-                // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
+                Cursor.visible = true;                
                 break;
 
             case GameState.Tutorial:
