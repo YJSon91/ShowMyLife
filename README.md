@@ -8,7 +8,7 @@
 <br>
 
 📖 프로젝트 소개 (Introduction)
-Show My Life는 한 남자의 유년기부터 시작되는 인생의 여정을 따라가는 3D 플랫포머 게임입니다. 플레이어는 주인공이 되어 각 시대를 대표하는 스테이지를 탐험하며 성장과 삶의 의미를 경험하게 됩니다. 이 프로젝트는 Unity 엔진을 사용하여 개발되었으며, 안정적인 시스템 아키텍처 설계와 데이터 기반의 성능 최적화에 중점을 두었습니다.
+Show My Life는 한 남자의 유년기부터 시작되는 인생의 여정을 따라가는 3D 플랫포머 게임입니다. 플레이어는 주인공이 되어 각 시대를 대표하는 스테이지를 탐험하며 성장과 삶의 의미를 경험하게 됩니다. 이 프로젝트는 Unity 엔진과 URP(Universal Render Pipeline)를 사용하여 개발되었으며, 안정적인 시스템 아키텍처 설계와 데이터 기반의 성능 최적화에 중점을 두었습니다.
 
 <br>
 
@@ -47,6 +47,16 @@ Show My Life는 한 남자의 유년기부터 시작되는 인생의 여정을 �
 </details>
 
 <details>
+<summary><b>⌨️ Input System: 이벤트 기반의 입력 처리</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+Unity의 새로운 <b>Input System</b>을 도입하여, InputReader가 입력을 감지하고 C# <b>이벤트(event)</b>를 통해 다른 시스템에 알리는 방식을 사용했습니다.
+
+이를 통해 입력 처리 로직과 실제 동작 로직(PlayerMovement, SoundManager 등)을 분리하여 코드의 결합도를 낮췄습니다.
+</div>
+</details>
+
+<details>
 <summary><b>📊 성능 최적화: 데이터 기반의 최적화</b></summary>
 <div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
 
@@ -81,7 +91,6 @@ Show My Life는 한 남자의 유년기부터 시작되는 인생의 여정을 �
 정재우
 
 곽범수
-
 
 개발
 
