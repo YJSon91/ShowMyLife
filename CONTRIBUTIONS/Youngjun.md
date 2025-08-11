@@ -24,7 +24,7 @@ DialogueTool (에디터 툴): EditorWindow를 상속받아 기획자가 JSON 데
 코드 샘플
 
 GameManager: 상태 머신
-
+```
 // GameManager.cs
 // 게임의 상태를 변경하고, 상태에 맞는 로직을 실행하는 핵심 메서드
 public void UpdateGameState(GameState newState)
@@ -52,10 +52,10 @@ public void UpdateGameState(GameState newState)
     // 상태 변경 사실을 다른 시스템에 알림 (이벤트 기반)
     OnGameStateChanged?.Invoke(newState);
 }
-
+```
 
 UIManager: 제네릭 기반 UI 관리
-
+```
 // UIManager.cs
 // 제네릭을 사용하여 어떤 타입의 UI든 일관된 방식으로 보여주는 메서드
 public void Show<T>(bool show) where T : UiBase
@@ -66,8 +66,45 @@ public void Show<T>(bool show) where T : UiBase
         // 해당 UI의 Show 함수를 호출
         ui.Show(show);
     }
- }   
+}
+```
+KeyBinding: 키 리바인딩
+```
+// KeyBindingRowUI.cs
+// 키 변경을 시작하고, 완료되면 PlayerPrefs에 저장하는 로직
+private void StartRebinding()
+{
+    // 기존 바인딩 작업을 취소하고, 새로운 리바인딩 작업을 시작
+    _rebindingOperation?.Cancel();
+    _rebindingOperation = _inputAction.PerformInteractiveRebinding()
+        .OnComplete(operation =>
+        {
+            operation.Dispose();
+            // 리바인딩이 완료되면 전체 키 설정을 JSON으로 변환하여 저장
+            string rebinds = GameManager.Instance.PlayerControls.SaveBindingOverridesAsJson();
+            PlayerPrefs.SetString("AllKeyRebinds", rebinds);
+            PlayerPrefs.Save();
+        })
+        .Start();
+}
+```
 
+UI Effect: 버튼 호버 효과
+```
+// ButtonHoverEffect.cs
+// 마우스 포인터 이벤트에 따라 DOTween을 이용해 버튼 크기를 조절하는 로직
+public void OnPointerEnter(PointerEventData eventData)
+{
+    // 마우스가 버튼 위에 올라오면 0.2초 동안 1.1배로 커짐
+    transform.DOScale(1.1f, 0.2f).SetUpdate(true);
+}
+
+public void OnPointerExit(PointerEventData eventData)
+{
+    // 마우스가 버튼에서 벗어나면 0.2초 동안 원래 크기로 돌아옴
+    transform.DOScale(1.0f, 0.2f).SetUpdate(true);
+}
+```
 
 </details>
 
