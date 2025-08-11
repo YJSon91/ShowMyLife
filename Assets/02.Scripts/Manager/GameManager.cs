@@ -239,7 +239,7 @@ public class GameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.Start:
-                SoundManager?.PlayBGM(BgmType.Main);
+                SoundManager?.PlayBGM(BgmType.Lobby);
                 break;
 
             case GameState.Playing:
@@ -278,7 +278,7 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
                 Cursor.visible = true;
-                SoundManager?.PlayBGM(BgmType.Main);
+                SoundManager?.PlayBGM(BgmType.Lobby);
                 PreloadMainScene();
                 break;
 
