@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 플레이어의 낙하를 감지하여 StageManager에게 보고하는 트리거입니다.

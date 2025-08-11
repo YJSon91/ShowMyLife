@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 플레이어의 점프력을 증가/감소시키는 존 (트리거 방식)

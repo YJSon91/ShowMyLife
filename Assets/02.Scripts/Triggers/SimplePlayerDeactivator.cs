@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 플레이어가 트리거에 닿으면 게임오브젝트를 비활성화하는 간단한 컴포넌트

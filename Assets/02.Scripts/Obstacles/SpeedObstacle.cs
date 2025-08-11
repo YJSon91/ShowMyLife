@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 플레이어 이속 증가/감소 발판 (충돌 방식, 한 스크립트에서 토글)

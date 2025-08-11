@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 using System.Collections;
 
 public class EnterStage1_2 : MonoBehaviour

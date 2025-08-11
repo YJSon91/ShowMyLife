@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 플레이어가 착지했을 때 대화 UI를 표시하는 장애물

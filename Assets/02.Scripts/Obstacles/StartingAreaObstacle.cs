@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 플레이어가 착지했을 때 시작 지점 기능을 제공하는 장애물

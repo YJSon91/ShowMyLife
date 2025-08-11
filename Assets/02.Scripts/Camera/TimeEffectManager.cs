@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 // 시간 연출 제어 스크립트
 public class TimeEffectManager : MonoBehaviour

@@ -1,4 +1,4 @@
-#if UNITY_EDITOR // 이 스크립트의 모든 내용은 에디터에서만 컴파일됩니다.
+ #if UNITY_EDITOR // 이 스크립트의 모든 내용은 에디터에서만 컴파일됩니다.
 using UnityEngine;
 using UnityEditor.Recorder; // Unity Recorder를 제어하기 위해 필수
 using UnityEditor.Recorder.Input; // Recorder의 입력 설정을 위해 필수
