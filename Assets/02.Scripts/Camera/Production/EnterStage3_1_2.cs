@@ -17,11 +17,23 @@ public class EnterStage3_1_2 : MonoBehaviour
     
     // 사운드 컨트롤러 참조
     private PlayerFallSoundController _fallSoundController;
+    
+    // 애니메이션 컨트롤러 참조
+    private PlayerAnimationController _animationController;
 
     private void Start()
     {
+        StartCoroutine(DelayedInitialization());
+    }
+    
+    private IEnumerator DelayedInitialization()
+    {
+        yield return null;
         // PlayerFallSoundController 찾기
         _fallSoundController = GameManager.Instance.Player.GetComponent<PlayerFallSoundController>();
+
+        // 애니메이션 컨트롤러 찾기
+        _animationController = GameManager.Instance.Player.GetComponent<PlayerAnimationController>();
     }
 
     private void OnTriggerEnter(Collider other)
