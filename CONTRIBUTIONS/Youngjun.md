@@ -1,1 +1,97 @@
+🧑‍💻 손영준 (SonYeongJun) - 개발
+🚀 주요 기여 및 역할
+저는 Show My Life 프로젝트에서 개발팀의 일원으로서 프로젝트의 핵심 아키텍처를 설계하고, 성능 최적화와 주요 시스템의 구현 및 안정화를 주도적으로 담당했습니다. Unity 프로파일러를 기반으로 한 데이터 중심의 문제 해결을 통해 프로젝트의 기술적 완성도를 높이고, 팀원들과의 긴밀한 협업을 통해 발생한 여러 버그를 해결하며 안정적인 플레이 경험을 구축하는 데 기여했습니다.
 
+<details>
+<summary><b>🏛️ 아키텍처 및 시스템 설계 (Architecture & System Design)</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+❗️ 문제 사항
+
+게임의 복잡한 상태(메인 메뉴, 플레이 등)와 다수의 하위 시스템(UI, 사운드, 세이브 등)을 체계적으로 관리할 중앙 컨트롤 타워가 부재하여, 시스템 간의 의존성이 높아지고 유지보수가 어려워질 위험이 있었습니다.
+
+🆕 개선 방식
+
+매니저 시스템 설계: GameManager를 중심으로 UIManager, SoundManager, SaveManager 등 각자의 명확한 책임을 가진 8개의 하위 매니저 클래스를 설계하여 관심사 분리(SoC) 원칙을 적용했습니다.
+
+GameManager (상태 머신): 싱글톤 패턴과 상태 머신을 적용하여 게임의 전체 흐름을 총괄하고, 하위 매니저들이 스스로를 등록하는 시스템으로 매니저 간의 **느슨한 결합(Loose Coupling)**을 유지했습니다.
+
+UIManager (모듈식 UI): 제네릭 메서드(Show<T>, Hide<T>)와 UiBase 기반 클래스를 활용하여, MainMenu, FadePanel 등 13개의 UI 스크립트를 모듈화하여 관리의 효율성과 확장성을 극대화했습니다.
+
+DialogueTool (에디터 툴): EditorWindow를 상속받아, 기획자가 JSON 데이터를 쉽게 수정하고 게임 내 프리팹과 동기화할 수 있는 커스텀 에디터 툴을 제작하여 작업 효율성을 높였습니다.
+
+⭐ 개선 결과
+
+각 시스템의 책임이 명확하고, 확장이 용이하며, 유지보수가 편리한 안정적인 프로젝트 아키텍처를 구축했습니다.
+
+</div>
+</details>
+
+<details>
+<summary><b>📊 성능 최적화 (메모리 및 렌더링 부하 감소)</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+❗️ 문제 사항
+
+프로젝트 초기, 5.45GB에 달하는 높은 메모리 사용량을 확인했으며, 이로 인한 잠재적인 성능 저하 및 시스템 요구 사양 증가가 우려되었습니다.
+
+Memory Profiler 분석 결과, 고해상도 텍스처(3.06GB) 및 렌더 텍스처(MSAA, 고해상도 그림자, SSAO)가 메모리 점유의 주된 원인임을 파악했습니다.
+
+🆕 개선 방식
+
+데이터 기반의 단계적 최적화: Unity 프로파일러와 프레임 디버거를 활용하여 가장 큰 병목 지점부터 순차적으로 해결하는 과학적인 접근법을 채택했습니다.
+
+텍스처 최적화: Max Texture Size 조절 및 Crunch Compression을 적용하여 텍스처 메모리를 대폭 감소시켰습니다.
+
+렌더링 최적화: MSAA(4x→2x), 그림자 해상도(4096→512), SSAO 품질(High→Medium) 등 URP 설정을 하향 조정하여 GPU 부하를 줄였습니다.
+
+⭐ 개선 결과
+
+총 메모리 사용량을 5.45GB에서 2.34GB로 약 57% 절감하여, 더 넓은 범위의 PC 사양에서 쾌적하게 플레이할 수 있는 안정적인 성능을 확보했습니다.
+
+</div>
+</details>
+
+<details>
+<summary><b>💾 세이브 & 로드 시스템 구현 및 통합</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+❗️ 문제 사항
+
+게임 진행 상황을 저장하고 이어하는 핵심 기능이 부재했으며, GameManager의 복잡한 생명주기와 씬 전환 로직에 안전하게 통합될 필요가 있었습니다.
+
+🆕 개선 방식
+
+책임 분리 원칙(SRP) 적용: 파일 입출력을 전담하는 static 클래스 SaveLoader와 씬 전환 간 상태를 전달하는 GameLoadState를 설계하여 각 기능의 책임을 명확히 분리했습니다.
+
+안전한 통합: GameManager의 OnSceneLoaded 이벤트를 활용하여, 씬 로딩이 완료된 가장 이상적인 시점에 로드 로직이 실행되도록 구현하여 시스템 간의 충돌을 방지했습니다.
+
+⭐ 개선 결과
+
+안정적인 이어하기 기능을 완성했으며, 세이브 데이터 유무에 따라 '이어하기' 버튼을 동적으로 활성화하여 사용자 경험(UX)을 개선했습니다.
+
+</div>
+</details>
+
+<details>
+<summary><b>🐛 시스템 디버깅 및 안정화</b></summary>
+<div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
+
+❗️ 문제 사항
+
+씬 전환 시 BGM이 초기화되는 현상, 재시작 시 오브젝트 풀 참조 오류, 스크립트 실행 순서에 따른 NullReferenceException 등 프로젝트의 안정성을 저해하는 다수의 버그가 발생했습니다.
+
+🆕 개선 방식
+
+BGM 끊김: GameManager의 상태 변화 로직을 분석하여, Paused 상태에서 돌아올 때는 BGM 재생 명령을 내리지 않도록 수정하여 문제를 해결했습니다.
+
+오브젝트 풀 오류: SceneManager.sceneUnloaded 이벤트를 구독하여 씬이 닫힐 때 오브젝트 풀이 자동으로 초기화되도록 구현, 파괴된 오브젝트에 대한 참조 오류를 근본적으로 해결했습니다.
+
+실행 순서 문제: Unity 생명주기에 대한 깊은 이해를 바탕으로 Awake, Start, 코루틴 등을 활용하여 NullReferenceException이 간헐적으로 발생하는 문제를 해결했습니다.
+
+⭐ 개선 결과
+
+주요 버그들을 체계적으로 해결하여 프로젝트의 전반적인 안정성과 완성도를 크게 향상시켰습니다.
+
+</div>
+</details>
