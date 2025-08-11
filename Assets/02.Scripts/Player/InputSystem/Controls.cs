@@ -82,15 +82,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Pause"",
-                    ""type"": ""Button"",
-                    ""id"": ""6710ac58-c04c-4132-a4d4-670f2222b285"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""GodMode"",
                     ""type"": ""Button"",
                     ""id"": ""7f8e4b3c-1d5a-4c8b-a7b9-d6a5e2c8f3e9"",
@@ -268,17 +259,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""a0e14641-a55c-48ad-980c-219ea777e3e8"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard and Mouse"",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""b5c7e9d1-4a7b-4f2d-8e9c-5d8a3f7c2e3b"",
                     ""path"": ""<Keyboard>/1"",
                     ""interactions"": """",
@@ -337,6 +317,34 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Shared"",
+            ""id"": ""9cd62303-09b1-4980-b332-bb8e16d8d190"",
+            ""actions"": [
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""eb312661-c3a1-452c-bcce-f1f3337eca96"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5a3dce9e-40c3-4d62-b295-ca335061fd19"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -377,12 +385,14 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_ToggleWalk = m_Player.FindAction("ToggleWalk", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
-        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_GodMode = m_Player.FindAction("GodMode", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
+        // Shared
+        m_Shared = asset.FindActionMap("Shared", throwIfNotFound: true);
+        m_Shared_Pause = m_Shared.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -450,7 +460,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_ToggleWalk;
     private readonly InputAction m_Player_Crouch;
-    private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_GodMode;
     public struct PlayerActions
     {
@@ -462,7 +471,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @ToggleWalk => m_Wrapper.m_Player_ToggleWalk;
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
-        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @GodMode => m_Wrapper.m_Player_GodMode;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
@@ -491,9 +499,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Crouch.started += instance.OnCrouch;
             @Crouch.performed += instance.OnCrouch;
             @Crouch.canceled += instance.OnCrouch;
-            @Pause.started += instance.OnPause;
-            @Pause.performed += instance.OnPause;
-            @Pause.canceled += instance.OnPause;
             @GodMode.started += instance.OnGodMode;
             @GodMode.performed += instance.OnGodMode;
             @GodMode.canceled += instance.OnGodMode;
@@ -519,9 +524,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Crouch.started -= instance.OnCrouch;
             @Crouch.performed -= instance.OnCrouch;
             @Crouch.canceled -= instance.OnCrouch;
-            @Pause.started -= instance.OnPause;
-            @Pause.performed -= instance.OnPause;
-            @Pause.canceled -= instance.OnPause;
             @GodMode.started -= instance.OnGodMode;
             @GodMode.performed -= instance.OnGodMode;
             @GodMode.canceled -= instance.OnGodMode;
@@ -596,6 +598,52 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // Shared
+    private readonly InputActionMap m_Shared;
+    private List<ISharedActions> m_SharedActionsCallbackInterfaces = new List<ISharedActions>();
+    private readonly InputAction m_Shared_Pause;
+    public struct SharedActions
+    {
+        private @Controls m_Wrapper;
+        public SharedActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Pause => m_Wrapper.m_Shared_Pause;
+        public InputActionMap Get() { return m_Wrapper.m_Shared; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(SharedActions set) { return set.Get(); }
+        public void AddCallbacks(ISharedActions instance)
+        {
+            if (instance == null || m_Wrapper.m_SharedActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SharedActionsCallbackInterfaces.Add(instance);
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
+        }
+
+        private void UnregisterCallbacks(ISharedActions instance)
+        {
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
+        }
+
+        public void RemoveCallbacks(ISharedActions instance)
+        {
+            if (m_Wrapper.m_SharedActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ISharedActions instance)
+        {
+            foreach (var item in m_Wrapper.m_SharedActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_SharedActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public SharedActions @Shared => new SharedActions(this);
     private int m_KeyboardandMouseSchemeIndex = -1;
     public InputControlScheme KeyboardandMouseScheme
     {
@@ -622,12 +670,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnToggleWalk(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
-        void OnPause(InputAction.CallbackContext context);
         void OnGodMode(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
         void OnSubmit(InputAction.CallbackContext context);
         void OnCancel(InputAction.CallbackContext context);
+    }
+    public interface ISharedActions
+    {
+        void OnPause(InputAction.CallbackContext context);
     }
 }

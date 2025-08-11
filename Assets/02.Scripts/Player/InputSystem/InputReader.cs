@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 
-    public class InputReader : MonoBehaviour, Controls.IPlayerActions
-    {
+    public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ISharedActions
+{
         public Vector2 _mouseDelta;
         public Vector2 _moveComposite;
 
@@ -50,9 +50,10 @@ using UnityEngine.Serialization;
 
             _controls.Player.SetCallbacks(this);
             _controls.Player.Enable();
-            
-          //  Debug.Log("[InputReader] GameManager의 PlayerControls를 사용하여 입력 시스템을 초기화했습니다.");
-        }
+            _controls.Shared.SetCallbacks(this);
+
+        //  Debug.Log("[InputReader] GameManager의 PlayerControls를 사용하여 입력 시스템을 초기화했습니다.");
+    }
 
         /// <inheritdoc cref="OnDisable" />
         private void OnDisable()

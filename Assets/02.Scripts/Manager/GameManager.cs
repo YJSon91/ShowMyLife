@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        PlayerControls.Shared.Enable();
     }
 
     private void Start()
