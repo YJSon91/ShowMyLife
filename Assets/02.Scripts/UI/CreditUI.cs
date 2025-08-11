@@ -32,15 +32,18 @@ public class CreditUI : UiBase
         // DOTween을 사용하여 정해진 시간 동안 목표 위치(화면 위)까지 부드럽게 이동
         _creditTextRect.DOAnchorPosY(_creditTextRect.rect.height, _scrollDuration)
                      .SetEase(Ease.Linear)
-                     .OnComplete(() => {
+                     .OnComplete(() =>
+                     {
                          // 1. 게임 상태를 MainMenu로 변경하도록 요청합니다.
                          GameManager.Instance.UpdateGameState(GameManager.GameState.MainMenu);
 
+                         GameManager.Instance.UpdateGameState(GameManager.GameState.MainMenu);
                          // 2. UIManager에게 MainMenuUI를 직접 활성화하도록 요청합니다.
                          GameManager.Instance.UIManager.Show<MainMenu>(true);
 
                          // 3. 자신의 역할은 끝났으니, 크레딧 UI는 숨깁니다.
-                         GameManager.Instance.UIManager.Hide<CreditUI>();
+                         GameManager.Instance.UIManager.Hide<CreditUI>();                        
                      });
+        
     }
 }
