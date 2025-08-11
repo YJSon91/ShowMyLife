@@ -100,13 +100,14 @@ Unity의 새로운 <b>Input System</b>을 도입하여, InputReader가 입력을
 
 개발
 
-| [**손영준**](CONTRIBUTIONS/Youngjun.md) | 팀장 | 
+| [**손영준**](CONTRIBUTIONS/Youngjun.md) | 팀장 | 게임 메인시스템 제작, UI 및 대화시스템 제작, 대사 업데이트 툴 제작
 
-김현종
+| [**김현종**](CONTRIBUTIONS/Hyunjong.md) | 팀원 |
 
-조성찬
+| [**조성찬**](CONTRIBUTIONS/Sungchan.md) | 팀원 |
 
-최홍진 : 맵 제작 및 배치 , 세이브 시스탬 제작 , 시네마틱 시스템 제작 , 범용 오브젝트 풀링 제작 , 범용 디버그 허브 제작 , 머티리얼 자동 변환 툴 제작
+| [**최홍진**](CONTRIBUTIONS/Hongjin.md) | 팀원 | 
+맵 제작 및 배치 , 세이브 시스템 제작 , 시네마틱 시스템 제작 , 범용 오브젝트 풀링 제작 , 범용 디버그 허브 제작 , 머티리얼 자동 변환 툴 제작
 
 <br>
 
