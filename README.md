@@ -95,7 +95,7 @@ Cinemachine을 활용하여 스크립트 기반 카메라 연출을 완전 제�
 </details>
 
 <details>
-<summary><b>💾 세이브 & 로드 시스템</b></summary>
+<summary><b>💾 SaveManager: 세이브 & 로드 시스템</b></summary>
 <div style="padding-left: 20px; border-left: 2px solid #e0e0e0; margin-left: 10px;">
 
 JSON 직렬화를 활용하여 플레이어 위치, 스테이지 진행 상태 등을 저장.  
