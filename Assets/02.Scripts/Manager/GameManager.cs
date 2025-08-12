@@ -69,25 +69,25 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            Debug.Log("[GameManager] Awake 호출");
+
+            // 1. 컨트롤러 인스턴스를 생성합니다.
             PlayerControls = new Controls();
+
+            // 2. 저장된 키 바인딩을 불러옵니다.
+            LoadAllKeybindings();
         }
         else
         {
             Destroy(gameObject);
         }
-       
     }
 
     private void Start()
     {
         // 게임 시작 시 초기 상태는 '메인 메뉴'입니다.
         UpdateGameState(GameState.Start);
-        // 1. 컨트롤러 인스턴스를 생성합니다.
-        
-        PlayerControls.Shared.Enable();
-
-        // 2. 저장된 키 바인딩을 불러옵니다.
-        LoadAllKeybindings();
     }
 
     private void Update()
@@ -191,7 +191,6 @@ public class GameManager : MonoBehaviour
                 inputReader.OnPausePerformed -= TogglePauseState;
             }
         }
-        Instance = null;
     }
     private void CheckEventSystem(Scene scene, LoadSceneMode mode)
     {
@@ -203,7 +202,7 @@ public class GameManager : MonoBehaviour
             eventSystemObj.AddComponent<EventSystem>();
             eventSystemObj.AddComponent<StandaloneInputModule>(); // 키보드/마우스 입력을 위해 필수
 
-            //Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
+            Debug.LogWarning($"[GameManager] 씬 '{scene.name}'에 EventSystem이 없어 자동으로 생성했습니다.");
         }
     }
     public void LoadAllKeybindings()
@@ -212,17 +211,17 @@ public class GameManager : MonoBehaviour
 
         if (string.IsNullOrEmpty(rebinds))
         {
-            // Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
+           // Debug.LogWarning("[불러오기 시도] PlayerPrefs에 저장된 키 설정이 없습니다.");
             return;
         }
 
         // 2. 어떤 내용이 불러와졌는지 콘솔에 강력한 에러 로그로 출력합니다.
-        //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
-
+      //  Debug.LogError($"[불러오기 시도] PlayerPrefs에서 불러온 데이터: {rebinds}");
+       
         // 불러온 데이터로 컨트롤러 설정을 시도합니다.
         PlayerControls.LoadBindingOverridesFromJson(rebinds);
     }
-
+        
     /// <summary>
     /// 게임의 상태를 변경하고, 이 사실을 모든 구독자에게 알립니다.
     /// </summary>
@@ -231,24 +230,12 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == newState) return;
 
-        GameState previousState = CurrentState;
         CurrentState = newState;
 
-        if (previousState == GameState.LevelClear)
-        {
-            // 자기 자신을 포함한 모든 것을 파괴하고 첫 씬부터 다시 시작합니다.
-            Destroy(gameObject);
-            UnityEngine.SceneManagement.SceneManager.LoadScene("IntroScene");
-            return; // 재시작하므로 아래 로직은 더 이상 실행할 필요가 없습니다.
-        }
         // --- 이 부분이 핵심 수정 내용입니다 ---
         // 새로운 게임 상태에 따라 적절한 액션 맵을 활성화/비활성화하고 커서 상태를 제어합니다.
         switch (newState)
         {
-            case GameState.Start:
-                SoundManager?.PlayBGM(BgmType.Lobby);
-                break;
-
             case GameState.Playing:
                 // 플레이 중일 때는 플레이어 조작만 가능해야 합니다.
                 UIManager?.Hide<TutorialPanelUI>();
@@ -260,11 +247,7 @@ public class GameManager : MonoBehaviour
                 {
                     _playtime = 0f; // 새 게임 시작 시 시간 초기화
                     _isTimerRunning = true;
-                    // Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
-                }
-                if (previousState != GameState.Paused)
-                {
-                    SoundManager?.PlayBGM(BgmType.Main);
+                    Debug.Log("[GameManager] 플레이 타임 측정을 시작합니다.");
                 }
                 break;
 
@@ -274,7 +257,8 @@ public class GameManager : MonoBehaviour
                 PlayerControls?.Player.Disable();
                 PlayerControls?.UI.Enable();
                 Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
-                Cursor.visible = true;                
+                Cursor.visible = true;
+               // SoundManager?.PlayBGM(BgmType.Lobby); // 일시정지 상태에서도 로비 BGM을 재생합니다.
                 break;
 
             case GameState.Tutorial:
@@ -283,11 +267,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.MainMenu:
-                PlayerControls?.Player.Disable();
-                PlayerControls?.UI.Enable();
-                Cursor.lockState = CursorLockMode.None; // 커서 잠금 해제
-                Cursor.visible = true;
-                SoundManager?.PlayBGM(BgmType.Lobby);
+                SoundManager?.PlayBGM(BgmType.Main);               
                 PreloadMainScene();
                 break;
 
@@ -299,8 +279,7 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = true;
                 _isTimerRunning = false;
                 GameManager.Instance.UIManager.Show<EndingUI>(true);
-                SoundManager?.PlayBGM(BgmType.Ending);
-                // Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
+                Debug.Log($"[GameManager] 최종 플레이 타임: {_playtime}초");
                 break;
         }
 
@@ -316,7 +295,7 @@ public class GameManager : MonoBehaviour
         }
 
         OnGameStateChanged?.Invoke(newState);
-        //Debug.Log($"[GameManager] Game State Changed to: {newState}");
+        Debug.Log($"[GameManager] Game State Changed to: {newState}");
     }
     /// <summary>
     /// 게임의 일시정지 상태를 토글합니다.
@@ -362,28 +341,6 @@ public class GameManager : MonoBehaviour
         // 2. 로드된 씬이 게임 씬인지 확인합니다.
         if (scene.name == "MainScene")
         {
-            if (GameLoadState.ShouldLoadGame)
-            {
-                SaveData data = SaveLoader.Load();
-                if (data != null)
-                {
-                    // 플레이어를 찾아서 위치를 설정합니다.
-                    // Player는 다른 스크립트에서 RegisterPlayer를 통해 등록되므로,
-                    // 이 시점에는 아직 null일 수 있습니다. 따라서 직접 찾아주는 것이 안전합니다.
-                    Player player = FindObjectOfType<Player>();
-                    if (player != null)
-                    {
-                        // 중요: CharacterController를 사용한다면, 순간이동 시 잠시 비활성화했다가
-                        // 위치를 설정하고 다시 활성화하는 것이 안전합니다.
-                        // 예: player.GetComponent<CharacterController>().enabled = false;
-                        player.transform.position = data.Position;
-                        // player.GetComponent<CharacterController>().enabled = true;
-                        Debug.Log($"[GameManager] 데이터 로드. 플레이어 위치 설정: {data.Position}");
-                    }
-                }
-                // 다음을 위해 플래그를 리셋합니다.
-                GameLoadState.ShouldLoadGame = false;
-            }
             // 3. 튜토리얼을 아직 안 봤다면 Tutorial 상태로, 봤다면 Playing 상태로 바로 시작합니다.
             if (_isTutorialAlreadyShown)
             {
@@ -393,7 +350,27 @@ public class GameManager : MonoBehaviour
             {
                 UpdateGameState(GameState.Tutorial);
             }
-        }       
+        }
+
+        // 3. 현재 게임 상태에 맞는 BGM 재생
+        if (SoundManager != null)
+        {
+            switch (CurrentState)
+            {
+                case GameState.MainMenu:
+                    // SoundManager.PlayBGM(BgmType.Lobby);
+                    break;
+                case GameState.Playing:
+                    SoundManager.StopBGM();
+                    break;
+                case GameState.Tutorial:
+                    SoundManager.StopBGM();
+                    break;
+                case GameState.LevelClear:
+                    //  SoundManager.PlayBGM(BgmType.GameOver); // 엔딩/크레딧용 BGM
+                    break;
+            }
+        }
     }
     /// <summary>
     /// 측정된 플레이 시간을 "00:00:00" 형식의 문자열로 변환하여 반환합니다.
@@ -415,7 +392,7 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == GameState.Tutorial)
         {
-            //  Debug.Log("튜토리얼 종료! 게임을 시작합니다.");
+            Debug.Log("튜토리얼 종료! 게임을 시작합니다.");
 
             // 튜토리얼을 봤다고 '기억'합니다.
             _isTutorialAlreadyShown = true;
@@ -435,7 +412,7 @@ public class GameManager : MonoBehaviour
         {
             yield break;
         }
-        // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 시작...");
+        Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 시작...");
         _loadingOperation = SceneManager.LoadSceneAsync(sceneName);
         _loadingOperation.allowSceneActivation = false;
 
@@ -446,7 +423,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 완료! 활성화를 기다립니다.");
+        Debug.Log($"[GameManager] '{sceneName}' 씬 미리 로딩 완료! 활성화를 기다립니다.");
     }
 
     /// <summary>
@@ -461,7 +438,7 @@ public class GameManager : MonoBehaviour
         if (fadePanel != null)
         {
             UIManager?.ShowParticle(ParticleType.Petals1, false);
-            UIManager?.ShowParticle(ParticleType.Petals2, false);
+            UIManager?.ShowParticle(ParticleType.Petals2, false);            
             yield return fadePanel.FadeIn(0.5f).WaitForCompletion();
         }
         if (tutorialPanel != null)
