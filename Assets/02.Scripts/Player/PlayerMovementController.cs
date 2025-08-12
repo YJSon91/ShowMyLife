@@ -72,16 +72,13 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("공중에 있을 때의 중력 배수")]
     [SerializeField] private float _gravityMultiplier = 2f;
     [Tooltip("지면 체크를 위한 레이캐스트 거리")]
-    [SerializeField] private float _groundCheckDistance = 0.25f;
-    [Tooltip("점프 쿨타임 (초)")]
-    [SerializeField] private float _jumpCooldown = 0.1f;
+    [SerializeField] private float _groundCheckDistance = 0.05f; // 0.25f에서 0.15f로 감소
+    // 점프 쿨타임 제거됨
     [Tooltip("코요테 타임 길이 (초)")]
     [SerializeField] private float _coyoteTimeThreshold = 0.25f;
 
 
-    // 점프 쿨타임 관련 변수
-    private float _jumpCooldownTimer = 0f;
-    private bool _isJumpOnCooldown = false;
+    // 점프 쿨타임 제거됨
 
     // 코요테 타임 관련 변수
     private float _coyoteTimeCounter;
@@ -130,6 +127,37 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("Obstacle 레이어 마스크")]
     [SerializeField] private LayerMask _obstacleLayerMask;
 
+    [Header("점프 제한 설정")]
+    [Tooltip("특정 레이어에서 점프를 막을지 여부")]
+    [SerializeField] private bool _enableJumpBlocking = true;
+    [Tooltip("점프를 막는 레이어 마스크")]
+    [SerializeField] private LayerMask _jumpBlockLayerMask;
+    [Tooltip("점프를 막는 경사 각도")]
+    [SerializeField] private float _jumpBlockAngle = 30f;
+
+    [Header("NoJump 슬립 설정")]
+    [Tooltip("NoJump 태그에서 강제 슬립 활성화 여부")]
+    [SerializeField] private bool _enableNoJumpSlipping = true;
+    [Tooltip("NoJump 슬립 힘/속도")]
+    [SerializeField] private float _noJumpSlipForce = 8f;
+    [Tooltip("NoJump 슬립 중 중력 배수")]
+    [SerializeField] private float _noJumpSlipGravity = 1.2f;
+    [Tooltip("NoJump 슬립 중 입력 제한 정도 (0-1, 높을수록 입력 제한)")]
+    [SerializeField] private float _noJumpSlipInputReduction = 0.7f;
+
+    // 전방 NoJump 감지를 위한 설정 추가
+    [Header("전방 NoJump 감지 설정")]
+    [Tooltip("전방 NoJump 감지 거리")]
+    [SerializeField] private float _noJumpDetectionDistance = 2f;
+    [Tooltip("전방 NoJump 감지 레이 높이 (플레이어 중심에서 위로)")]
+    [SerializeField] private float _noJumpDetectionHeight = 0.5f;
+    [Tooltip("전방 NoJump 감지 활성화 여부")]
+    [SerializeField] private bool _enableForwardNoJumpDetection = true;
+    [Tooltip("전방 NoJump 감지 박스 너비 (x축)")]
+    [SerializeField] private float _noJumpDetectionBoxWidth = 0.6f;
+    [Tooltip("전방 NoJump 감지 박스 높이 (y축)")]
+    [SerializeField] private float _noJumpDetectionBoxHeight = 0.6f;
+
     private Vector3 _initialPosition; // 경사면 제한을 위한 초기 위치
 
     #endregion
@@ -145,12 +173,20 @@ public class PlayerMovementController : MonoBehaviour
     private bool _isLockedOn;
     public bool _cannotStandUp;
     private bool _isSliding;
+    private bool _isJumping; // 점프 중인지 여부를 추적하는 변수 추가
 
     // 슬립 관련 변수
     private bool _isSlipping;
     private Vector3 _slipDirection;
     private float _slipForce;
     private float _slipGravityMultiplier;
+
+    // NoJump 슬립 관련 변수 (별도 상태로 분리)
+    private bool _isNoJumpSlipping;
+    private Vector3 _noJumpSlipDirection;
+    private float _noJumpSlipForceValue;
+    private float _noJumpSlipGravityMultiplier;
+    private float _noJumpSlipInputReductionValue;
 
     // --- 슬로우존 관리 ---
     private float _baseRunSpeed;
@@ -200,7 +236,15 @@ public class PlayerMovementController : MonoBehaviour
     private float _obstacleSlideGravityMultiplier;
     private float _obstacleSlideInputReduction;
 
-    
+    // 점프존 관련 변수 추가
+    private float _baseJumpForce;
+    private float _currentJumpMultiplier = 1f;
+    private int _jumpZoneCount = 0;
+    private bool _isRestoringJump = false;
+    private float _jumpRestoreTimer = 0f;
+    private float _jumpRestoreDuration = 0f;
+
+
 
     #endregion
 
@@ -240,6 +284,11 @@ public class PlayerMovementController : MonoBehaviour
     /// 플레이어가 스트레이핑 중인지 여부
     /// </summary>
     public bool IsStrafing => _isStrafing;
+    
+    /// <summary>
+    /// 플레이어가 점프 중인지 여부
+    /// </summary>
+    public bool IsJumping => _isJumping;
 
     /// <summary>
     /// 플레이어의 이동 방향 벡터
@@ -262,6 +311,11 @@ public class PlayerMovementController : MonoBehaviour
     public bool IsSlipping => _isSlipping;
 
     /// <summary>
+    /// 플레이어가 NoJump 태그로 인한 슬립 중인지 여부
+    /// </summary>
+    public bool IsNoJumpSlipping => _isNoJumpSlipping;
+
+    /// <summary>
     /// 플레이어가 미끄럼틀 함정에서 슬라이딩 중인지 여부
     /// </summary>
     public bool IsObstacleSliding => _isObstacleSliding;
@@ -274,14 +328,14 @@ public class PlayerMovementController : MonoBehaviour
     public Rigidbody Rigidbody => _rigidbody;
 
     /// <summary>
-    /// 점프 쿨타임이 활성화되어 있는지 확인합니다
+    /// 점프 쿨타임 제거됨
     /// </summary>
-    public bool IsJumpOnCooldown => _isJumpOnCooldown;
+    public bool IsJumpOnCooldown => false;
     
     /// <summary>
-    /// 현재 점프 쿨타임 타이머 값을 반환합니다 (0~1 사이의 값, 1이 쿨타임 시작, 0이 쿨타임 종료)
+    /// 점프 쿨타임 제거됨
     /// </summary>
-    public float JumpCooldownNormalized => _isJumpOnCooldown ? _jumpCooldownTimer / _jumpCooldown : 0f;
+    public float JumpCooldownNormalized => 0f;
 
     #endregion
 
@@ -297,6 +351,9 @@ public class PlayerMovementController : MonoBehaviour
         _currentIceSlowdownRate = _iceSlowdownRate;
         _currentIceAccelerationRate = _iceAccelerationRate;
         _currentIceSpeedMultiplier = 1.0f;
+
+        //점프존 관련
+        _baseJumpForce = _jumpForce;
     }
 
     private void Start()
@@ -325,8 +382,7 @@ public class PlayerMovementController : MonoBehaviour
             FaceMoveDirection();
         }
         
-        // 점프 쿨타임 업데이트
-        UpdateJumpCooldown();
+        // 점프 쿨타임 제거됨
         
         // 코요테 타임 업데이트
         if (!_isGrounded && _canCoyoteJump)
@@ -338,7 +394,8 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
         
-
+        // 전방 NoJump 감지 추가
+        CheckNoJumpAhead();
         
         // 슬로우 복구 처리
         if (_isRestoringSpeed)
@@ -366,6 +423,30 @@ public class PlayerMovementController : MonoBehaviour
                 _currentSlowMultiplier = 1f;
             }
         }
+
+        // 점프 복구 처리
+        if (_isRestoringJump)
+        {
+            if (_jumpRestoreDuration > 0f)
+            {
+                _jumpRestoreTimer += Time.deltaTime;
+                float t = Mathf.Clamp01(_jumpRestoreTimer / _jumpRestoreDuration);
+                _jumpForce = Mathf.Lerp(_jumpForce, _baseJumpForce, t);
+
+                if (t >= 1f || Mathf.Abs(_jumpForce - _baseJumpForce) < 0.01f)
+                {
+                    _jumpForce = _baseJumpForce;
+                    _isRestoringJump = false;
+                    _currentJumpMultiplier = 1f;
+                }
+            }
+            else
+            {
+                _jumpForce = _baseJumpForce;
+                _isRestoringJump = false;
+                _currentJumpMultiplier = 1f;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -389,6 +470,7 @@ public class PlayerMovementController : MonoBehaviour
             velocity.y = _jumpForce;
             _rigidbody.velocity = velocity;
             _isGrounded = false;
+            _isJumping = true; // 점프 상태 설정 확실하게
             jumpRequest = false;
         }
 
@@ -448,7 +530,7 @@ public class PlayerMovementController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PlayerMovementController: Player 컴포넌트를 찾을 수 없습니다!");
+            // Player 컴포넌트를 찾을 수 없습니다
         }
 
         ValidateComponents();
@@ -460,16 +542,24 @@ public class PlayerMovementController : MonoBehaviour
     private void ValidateComponents()
     {
         if (_rigidbody == null)
-            Debug.LogError("PlayerMovementController: Rigidbody가 할당되지 않았습니다!");
+        {
+            // Rigidbody가 할당되지 않았습니다
+        }
 
         if (_capsuleCollider == null)
-            Debug.LogError("PlayerMovementController: CapsuleCollider가 할당되지 않았습니다!");
+        {
+            // CapsuleCollider가 할당되지 않았습니다
+        }
 
         if (_inputReader == null)
-            Debug.LogError("PlayerMovementController: InputReader가 할당되지 않았습니다!");
+        {
+            // InputReader가 할당되지 않았습니다
+        }
 
         if (_rearRayPos == null || _frontRayPos == null)
-            Debug.LogError("PlayerMovementController: 지면 확인을 위한 레이 위치가 할당되지 않았습니다!");
+        {
+            // 지면 확인을 위한 레이 위치가 할당되지 않았습니다
+        }
     }
 
     #endregion
@@ -492,7 +582,6 @@ public class PlayerMovementController : MonoBehaviour
         // NaN 체크 및 처리
         if (ContainsNaN(_targetVelocity))
         {
-            Debug.LogWarning("목표 속도에 NaN 값 감지됨! 초기화합니다.");
             _targetVelocity = Vector3.zero;
         }
         
@@ -513,7 +602,6 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
@@ -532,7 +620,6 @@ public class PlayerMovementController : MonoBehaviour
             // NaN 체크
             if (ContainsNaN(newVelocity))
             {
-                Debug.LogError("리지드바디에 NaN 속도가 할당되려고 합니다! 현재 속도를 유지합니다.");
                 return;
             }
             
@@ -590,21 +677,34 @@ public class PlayerMovementController : MonoBehaviour
             _lastInputDirection = playerInputDirection.normalized;
         }
         
-        // 빙판 처리 (최우선 순위)
-        if (_isOnIce)
+        // NoJump 슬립이 최우선 (미끄럼틀보다도 우선)
+        if (_isNoJumpSlipping)
         {
-            HandleIceMovement(playerInputDirection);
-            return;
+            // NoJump 슬립에서는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
+            _moveDirection = Vector3.Lerp(_noJumpSlipDirection, playerInputDirection, 1f - _noJumpSlipInputReductionValue);
+            _targetMaxSpeed = _noJumpSlipForceValue;
         }
-
-        // 미끄럼틀 함정 슬라이드가 우선순위가 가장 높음
-        if (_isObstacleSliding)
+        // 미끄럼틀 함정 슬라이드가 두 번째 우선순위
+        else if (_isObstacleSliding)
         {
             // 미끄럼틀에서는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
             _moveDirection = Vector3.Lerp(_obstacleSlideDirection, playerInputDirection, 1f - _obstacleSlideInputReduction);
             _targetMaxSpeed = _obstacleSlideForce;
+            
+            // 미끄럼틀 상태에서는 빙판 속도 업데이트를 위해 빙판 속도도 함께 설정
+            if (_isOnIce)
+            {
+                _iceVelocity = _moveDirection * _targetMaxSpeed;
+                _currentIceSpeed = _targetMaxSpeed;
+            }
         }
-        // 다음으로 자연 경사면 슬립 확인
+        // 빙판 처리 (세 번째 우선순위)
+        else if (_isOnIce)
+        {
+            HandleIceMovement(playerInputDirection);
+            return;
+        }
+        // 마지막으로 자연 경사면 슬립 확인
         else if (_isSlipping)
         {
             // 슬립 중에는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
@@ -664,7 +764,6 @@ public class PlayerMovementController : MonoBehaviour
         // 벡터가 유효한지 확인 (NaN 체크)
         if (float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z))
         {
-            Debug.LogWarning("NaN 벡터 감지됨! 기본 방향으로 대체합니다.");
             return defaultDirection;
         }
         
@@ -681,14 +780,13 @@ public class PlayerMovementController : MonoBehaviour
     }
     
     /// <summary>
-    /// 빙판 위에서의 이동을 처리합니다
+    /// 빙판 위에서의 이동을 처리합니다 (방향 전환 시 새 이동 속도 적용)
     /// </summary>
     private void HandleIceMovement(Vector3 inputDirection)
     {
         // NaN 값 확인 및 수정
         if (float.IsNaN(_iceVelocity.x) || float.IsNaN(_iceVelocity.y) || float.IsNaN(_iceVelocity.z))
         {
-            Debug.LogWarning("빙판 속도에 NaN 값 감지됨! 초기화합니다.");
             _iceVelocity = Vector3.zero;
             _currentIceSpeed = 0f;
         }
@@ -696,37 +794,33 @@ public class PlayerMovementController : MonoBehaviour
         // 입력이 있을 때 (방향 전환 시도)
         if (inputDirection.magnitude > 0.1f)
         {
-            // 현재 빙판 속도 방향과 입력 방향을 혼합 (서서히 방향 전환)
-            Vector3 currentDir;
-            Vector3 targetDir;
+            // 방향 즉시 변경
+            Vector3 newDir = inputDirection.normalized;
             
-            if (_iceVelocity.magnitude > 0.1f)
+            // 새로운 속도 계산 (입력 강도에 따라)
+            float inputMagnitude = inputDirection.magnitude;
+            float targetSpeed;
+            
+            if (_isSprinting)
             {
-                currentDir = SafeNormalize(_iceVelocity, inputDirection.normalized);
+                targetSpeed = _sprintSpeed * inputMagnitude;
+            }
+            else if (_isWalking)
+            {
+                targetSpeed = _walkSpeed * inputMagnitude;
             }
             else
             {
-                currentDir = inputDirection.normalized;
+                targetSpeed = _runSpeed * inputMagnitude;
             }
             
-            targetDir = inputDirection.normalized;
+            // 빙판 속도 배율 적용
+            targetSpeed *= _currentIceSpeedMultiplier;
             
-            // 입력 방향으로 서서히 전환 (낮은 가속률)
-            Vector3 newDir = Vector3.Lerp(currentDir, targetDir, _currentIceAccelerationRate * Time.deltaTime);
+            // 새 속도로 즉시 변경 (약간의 보간만 적용)
+            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, targetSpeed, 0.8f);
             
-            // 추가 안전 검사
-            if (newDir.magnitude < 0.001f)
-            {
-                newDir = targetDir;
-            }
-            
-            // 현재 속도에 약간의 가속/감속 적용
-            float targetSpeed = _isSprinting ? _sprintSpeed : (_isWalking ? _walkSpeed : _runSpeed);
-            targetSpeed *= _currentIceSpeedMultiplier; // 속도 배율 적용
-            
-            _currentIceSpeed = Mathf.Lerp(_currentIceSpeed, targetSpeed, _currentIceAccelerationRate * 0.5f * Time.deltaTime);
-            
-            // 새 속도 계산
+            // 새 방향과 새 속도로 벡터 계산
             _iceVelocity = newDir * _currentIceSpeed;
         }
         // 입력이 없을 때 (관성으로 미끄러짐)
@@ -776,8 +870,13 @@ public class PlayerMovementController : MonoBehaviour
         // 중력 배수 결정
         float gravityMultiplier = _gravityMultiplier;
 
-        // 미끄럼틀 함정이 우선
-        if (_isObstacleSliding)
+        // NoJump 슬립이 최우선
+        if (_isNoJumpSlipping)
+        {
+            gravityMultiplier = _noJumpSlipGravityMultiplier;
+        }
+        // 미끄럼틀 함정이 두 번째
+        else if (_isObstacleSliding)
         {
             gravityMultiplier = _obstacleSlideGravityMultiplier;
         }
@@ -854,27 +953,37 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        // 쿨타임 중이면 점프할 수 없음
-        if (_isJumpOnCooldown)
-        {
-            if (_isJumpOnCooldown)
-            {
-                Debug.Log($"점프 쿨타임 중: {_jumpCooldownTimer:F1}초 남음");
-            }
-            return;
-        }
-
         // 지면에 있거나 코요테 타임 중이면 점프 가능
-        if (_isGrounded || _canCoyoteJump)
+        if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
+            if(!_enableJumpBlocking)
+            {
+                return;
+            }
+            // 점프 제한 확인
+            if (_enableJumpBlocking && _isGrounded)
+            {
+                // 현재 지면의 경사각 계산
+                float slopeAngle = Vector3.Angle(_groundNormal, Vector3.up);
+                int hitLayer = _groundHit.collider.gameObject.layer;
+                
+                // 해당 레이어에서 점프 제한 각도 확인
+                if (((1 << hitLayer) & _jumpBlockLayerMask.value) != 0 && slopeAngle > _jumpBlockAngle)
+                {
+                    return; // 점프 차단
+                }
+            }
+            
+            
+            // 즉시 지면 상태와 코요테 타임 상태를 false로 변경
             _isGrounded = false;
             _canCoyoteJump = false;
-            jumpRequest = true;
+            _coyoteTimeCounter = 0f; // 코요테 타임 즉시 종료
             
-            // 쿨타임 시작
-            _isJumpOnCooldown = true;
-            _jumpCooldownTimer = _jumpCooldown;
-            Debug.Log($"점프 실행! 쿨타임 {_jumpCooldown}초 시작");
+            // 점프 중 상태 설정
+            _isJumping = true;
+            
+            jumpRequest = true;
         }
     }
 
@@ -889,6 +998,8 @@ public class PlayerMovementController : MonoBehaviour
         _rigidbody.velocity = v;
 
         _isGrounded = false;
+        _isJumping = true; // 외부 점프도 점프 상태로 설정
+        _canCoyoteJump = false; // 코요테 타임 비활성화
         jumpRequest = false;
         // 필요하면 점프 애니메이션 등도 여기서 처리
     }
@@ -1068,15 +1179,15 @@ public class PlayerMovementController : MonoBehaviour
         float minimumSpeed = 0f;
         if (_isSprinting)
         {
-            minimumSpeed = _sprintSpeed * 0.8f; // 스프린트 속도의 80%
+            minimumSpeed = _sprintSpeed * 0.95f; // 스프린트 속도의 95%
         }
         else if (_isWalking)
         {
-            minimumSpeed = _walkSpeed * 0.7f; // 걷기 속도의 70%
+            minimumSpeed = _walkSpeed * 0.95f; // 걷기 속도의 95%
         }
         else
         {
-            minimumSpeed = _runSpeed * 0.7f; // 달리기 속도의 70%
+            minimumSpeed = _runSpeed * 0.95f; // 달리기 속도의 95%
         }
         
         // 최종 속도 결정 (실제 속도와 최소 보장 속도 중 큰 값)
@@ -1104,8 +1215,6 @@ public class PlayerMovementController : MonoBehaviour
         
         // 빙판 속성 설정
         SetIceProperties(iceObject);
-        
-        Debug.Log($"빙판 진입: 초기 속도 = {_currentIceSpeed}, 감속 비율 = {_currentIceSlowdownRate}, 방향 = {_iceVelocity.normalized}");
     }
 
     /// <summary>
@@ -1147,7 +1256,8 @@ public class PlayerMovementController : MonoBehaviour
                     }
                     catch (System.Exception e)
                     {
-                        Debug.LogWarning($"빙판 속성을 가져오는 중 오류 발생: {e.Message}");
+                        throw e;
+                        // 빙판 속성을 가져오는 중 오류 발생
                     }
                 }
             }
@@ -1175,8 +1285,6 @@ public class PlayerMovementController : MonoBehaviour
         _currentIceSlowdownRate = _iceSlowdownRate;
         _currentIceAccelerationRate = _iceAccelerationRate;
         _currentIceSpeedMultiplier = 1.0f;
-        
-        Debug.Log("빙판 이탈");
     }
 
     /// <summary>
@@ -1207,9 +1315,19 @@ public class PlayerMovementController : MonoBehaviour
         if (groundHit)
         {
             _groundNormal = _groundHit.normal;
+            
+            // 이전에 점프 중이었다면 착지 상태로 변경
+            if (_isJumping)
+            {
+                _isJumping = false;
+            }
+            
             _isGrounded = true;
             _canCoyoteJump = true;
             _coyoteTimeCounter = _coyoteTimeThreshold;
+
+            // NoJump 태그 확인
+            CheckNoJumpTag();
 
             // 지면에 있을 때 경사 확인
             GroundInclineCheck();
@@ -1322,6 +1440,16 @@ public class PlayerMovementController : MonoBehaviour
             if (!_isSlipping)
             {
                 ActivateSlipping(downSlopeDirection, _slipSpeed, 1f);
+                
+                // 점프 제한이 활성화되어 있고 해당 레이어라면 점프 제한 상태도 함께 적용
+                if (_enableJumpBlocking && ((1 << hitLayer) & _jumpBlockLayerMask.value) != 0)
+                {
+                    // 슬립 + 점프 제한 활성화
+                }
+                else
+                {
+                    // 슬립 활성화
+                }
             }
             // 이미 미끄러짐 상태라면 방향만 업데이트
             else
@@ -1438,8 +1566,6 @@ public class PlayerMovementController : MonoBehaviour
         _slipForce = force;
         _slipGravityMultiplier = gravityMultiplier;
         _slipInputReduction = Mathf.Clamp01(inputReduction);
-
-        Debug.Log($"슬립 활성화: 방향={_slipDirection}, 힘={_slipForce}, 중력배수={_slipGravityMultiplier}");
     }
 
     /// <summary>
@@ -1452,8 +1578,6 @@ public class PlayerMovementController : MonoBehaviour
         _slipForce = 0f;
         _slipGravityMultiplier = 0f;
         _slipInputReduction = 0f;
-
-        Debug.Log("슬립 비활성화");
     }
 
     /// <summary>
@@ -1465,7 +1589,6 @@ public class PlayerMovementController : MonoBehaviour
         if (_isSlipping)
         {
             _slipForce = newSpeed;
-            Debug.Log($"슬립 속도 업데이트: {_slipForce}");
         }
     }
 
@@ -1508,8 +1631,6 @@ public class PlayerMovementController : MonoBehaviour
         {
             _isSlipping = false;
         }
-
-        Debug.Log($"미끄럼틀 슬라이드 활성화: 방향={_obstacleSlideDirection}, 힘={_obstacleSlideForce}, 중력배수={_obstacleSlideGravityMultiplier}, 입력감소={_obstacleSlideInputReduction}");
     }
 
     /// <summary>
@@ -1517,13 +1638,27 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public void DeactivateObstacleSlide()
     {
+        // 빙판 위에 있을 경우, 현재 미끄럼틀 속도와 방향을 빙판 속도로 전환
+        if (_isOnIce)
+        {
+            // 현재 미끄럼틀 방향과 속도를 빙판 속도로 전환
+            float remainingSpeed = _obstacleSlideForce;
+            Vector3 remainingDirection = _obstacleSlideDirection;
+            
+            // 최소 속도 보장 (너무 느리면 의미 없음)
+            remainingSpeed = Mathf.Max(remainingSpeed, 3.0f);
+            
+            // 빙판 속도 설정
+            _iceVelocity = remainingDirection * remainingSpeed;
+            _currentIceSpeed = remainingSpeed;
+        }
+        
+        // 미끄럼틀 상태 변수 초기화
         _isObstacleSliding = false;
         _obstacleSlideDirection = Vector3.zero;
         _obstacleSlideForce = 0f;
         _obstacleSlideGravityMultiplier = 0f;
         _obstacleSlideInputReduction = 0f;
-
-        Debug.Log("미끄럼틀 슬라이드 비활성화");
     }
 
     /// <summary>
@@ -1535,7 +1670,6 @@ public class PlayerMovementController : MonoBehaviour
         if (_isObstacleSliding)
         {
             _obstacleSlideForce = newSpeed;
-            Debug.Log($"미끄럼틀 슬라이드 속도 업데이트: {_obstacleSlideForce}");
         }
     }
     
@@ -1587,34 +1721,241 @@ public class PlayerMovementController : MonoBehaviour
         Gizmos.DrawWireCube(boxCenter, boxHalfExtents * 2);
         Gizmos.DrawWireCube(endPosition, boxHalfExtents * 2);
         Gizmos.DrawLine(boxCenter, endPosition);
-    }
 
-    /// <summary>
-    /// 점프 쿨타임을 업데이트합니다
-    /// </summary>
-    private void UpdateJumpCooldown()
-    {
-        if (_isJumpOnCooldown)
+        // NoJump 슬립 상태 시각화
+        if (_isNoJumpSlipping)
         {
-            _jumpCooldownTimer -= Time.deltaTime;
+            // NoJump 슬립 중일 때 빨간색 화살표로 슬립 방향 표시
+            Gizmos.color = Color.red;
+            Vector3 slipStart = boxCenter;
+            Vector3 slipEnd = slipStart + _noJumpSlipDirection * _noJumpSlipForceValue;
+            Gizmos.DrawLine(slipStart, slipEnd);
             
-            if (_jumpCooldownTimer <= 0f)
-            {
-                _isJumpOnCooldown = false;
-                _jumpCooldownTimer = 0f;
-            }
+            // 화살표 머리 그리기
+            Vector3 arrowHead = slipEnd;
+            Vector3 arrowLeft = arrowHead - _noJumpSlipDirection * 0.5f + Vector3.up * 0.3f;
+            Vector3 arrowRight = arrowHead - _noJumpSlipDirection * 0.5f - Vector3.up * 0.3f;
+            Gizmos.DrawLine(arrowHead, arrowLeft);
+            Gizmos.DrawLine(arrowHead, arrowRight);
+        }
+        // 자연 경사면 슬립 상태 시각화
+        else if (_isSlipping)
+        {
+            // 자연 경사면 슬립 중일 때 파란색 화살표로 슬립 방향 표시
+            Gizmos.color = Color.blue;
+            Vector3 slipStart = boxCenter;
+            Vector3 slipEnd = slipStart + _slipDirection * _slipForce;
+            Gizmos.DrawLine(slipStart, slipEnd);
+            
+            // 화살표 머리 그리기
+            Vector3 arrowHead = slipEnd;
+            Vector3 arrowLeft = arrowHead - _slipDirection * 0.5f + Vector3.up * 0.3f;
+            Vector3 arrowRight = arrowHead - _slipDirection * 0.5f - Vector3.up * 0.3f;
+            Gizmos.DrawLine(arrowHead, arrowLeft);
+            Gizmos.DrawLine(arrowHead, arrowRight);
+        }
+        
+        // 전방 NoJump 감지 박스캐스트 시각화
+        if (_enableForwardNoJumpDetection)
+        {
+            Gizmos.color = Color.yellow;
+            Vector3 noJumpBoxCenter = transform.position + Vector3.up * _noJumpDetectionHeight;
+            Vector3 noJumpBoxHalfExtents = new Vector3(_noJumpDetectionBoxWidth / 2f, _noJumpDetectionBoxHeight / 2f, 0.05f);
+            
+            // 시작 박스 그리기
+            Gizmos.DrawWireCube(noJumpBoxCenter, noJumpBoxHalfExtents * 2);
+            
+            // 끝점 박스 그리기
+            Vector3 noJumpEndBoxCenter = noJumpBoxCenter + transform.forward * _noJumpDetectionDistance;
+            Gizmos.DrawWireCube(noJumpEndBoxCenter, noJumpBoxHalfExtents * 2);
+            
+            // 시작과 끝을 연결하는 선 그리기
+            Gizmos.DrawLine(noJumpBoxCenter, noJumpEndBoxCenter);
         }
     }
+
+    // 점프 쿨타임 업데이트 메서드 제거됨
 
     /// <summary>
     /// 점프 입력을 받았을 때 호출되는 함수
     /// </summary>
     private void OnJumpInput()
     {
-        // 지면에 있거나 코요테 타임 중이고 쿨다운이 아니면 점프 실행
-        if ((_isGrounded || _canCoyoteJump) && !_isJumpOnCooldown)
+        // 지면에 있거나 코요테 타임 중이고 점프 중이 아닐 때만 점프 실행
+        if ((_isGrounded || _canCoyoteJump) && !_isJumping)
         {
             Jump();
+        }
+    }
+
+    /// <summary>
+    /// 점프력 증가/감소 존 진입 시 호출
+    /// </summary>
+    public void EnterJumpModifierZone(float multiplier, float restoreDuration)
+    {
+        _jumpZoneCount++;
+        if (_jumpZoneCount == 1 || multiplier != _currentJumpMultiplier)
+        {
+            _currentJumpMultiplier = multiplier;
+            _jumpForce = _baseJumpForce * _currentJumpMultiplier;
+            _isRestoringJump = false;
+        }
+        _jumpRestoreDuration = restoreDuration;
+    }
+
+    /// <summary>
+    /// 점프력 변화 존 이탈 시 복구 처리 시작
+    /// </summary>
+    public void ExitJumpModifierZone()
+    {
+        _jumpZoneCount = Mathf.Max(0, _jumpZoneCount - 1);
+        if (_jumpZoneCount == 0)
+        {
+            _isRestoringJump = true;
+            _jumpRestoreTimer = 0f;
+        }
+    }
+
+    /// <summary>
+    /// NoJump 태그가 감지되었을 때 강제 슬립을 활성화합니다
+    /// </summary>
+    private void ActivateNoJumpSlipping()
+    {
+        // 이미 NoJump 슬립 중이면 중복 적용하지 않음
+        if (_isNoJumpSlipping)
+        {
+            return;
+        }
+
+        // 슬립 방향 결정
+        Vector3 slipDirection;
+        
+        // 지면에 있을 때는 경사 방향을 기반으로 슬립 방향 계산
+        if (_isGrounded && _groundNormal != Vector3.zero)
+        {
+            slipDirection = Vector3.ProjectOnPlane(_groundNormal, Vector3.up).normalized;
+            
+            // 경사가 거의 없으면 아래쪽 방향으로 슬립
+            if (slipDirection.magnitude < 0.1f)
+            {
+                slipDirection = Vector3.down;
+            }
+        }
+        else
+        {
+            // 지면에 없거나 경사 정보가 없으면 플레이어가 바라보는 방향의 아래쪽으로 슬립
+            slipDirection = Vector3.down;
+        }
+
+        // NoJump 슬립 상태로 설정
+        _isNoJumpSlipping = true;
+        _noJumpSlipDirection = slipDirection.normalized;
+        _noJumpSlipForceValue = _noJumpSlipForce;
+        _noJumpSlipGravityMultiplier = _noJumpSlipGravity;
+        _noJumpSlipInputReductionValue = _noJumpSlipInputReduction;
+        
+        // 기존 슬립 상태 해제
+        if (_isSlipping)
+        {
+            DeactivateSlipping();
+        }
+    }
+
+    /// <summary>
+    /// NoJump 슬립 상태를 비활성화합니다
+    /// </summary>
+    public void DeactivateNoJumpSlipping()
+    {
+        _isNoJumpSlipping = false;
+        _noJumpSlipDirection = Vector3.zero;
+        _noJumpSlipForceValue = 0f;
+        _noJumpSlipGravityMultiplier = 0f;
+        _noJumpSlipInputReductionValue = 0f;
+    }
+
+    /// <summary>
+    /// GroundedCheck에서 얻은 결과를 사용하여 NoJump 태그를 확인하고 점프 제한과 강제 슬립을 설정합니다
+    /// </summary>
+    private void CheckNoJumpTag()
+    {
+        // GroundedCheck에서 이미 얻은 _groundHit 결과 사용
+        if (_groundHit.collider != null)
+        {
+            // NoJump 태그를 가진 오브젝트인지 확인
+            if (_groundHit.collider.CompareTag("NoJump"))
+            {
+                // 점프 제한 비활성화
+                _enableJumpBlocking = false;
+                
+                // NoJump 슬립이 활성화되어 있으면 강제 슬립 적용
+                if (_enableNoJumpSlipping && !_isNoJumpSlipping)
+                {
+                    ActivateNoJumpSlipping();
+                }
+                
+                // 자연 경사면 슬립은 비활성화 (NoJump 슬립이 우선)
+                if (_isSlipping)
+                {
+                    DeactivateSlipping();
+                }
+            }
+            else
+            {
+                // NoJump 태그가 아니면 점프 제한 활성화 (기본값으로 복원)
+                _enableJumpBlocking = true;
+                
+                // NoJump 슬립 해제
+                if (_isNoJumpSlipping)
+                {
+                    DeactivateNoJumpSlipping();
+                }
+            }
+        }
+        else
+        {
+            // 지면이 감지되지 않으면 점프 제한 활성화 (기본값으로 복원)
+            _enableJumpBlocking = true;
+            
+            // NoJump 슬립 해제
+            if (_isNoJumpSlipping)
+            {
+                DeactivateNoJumpSlipping();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 플레이어 중심에서 앞쪽으로 박스캐스트를 쏘아 NoJump 태그를 미리 감지합니다
+    /// </summary>
+    private void CheckNoJumpAhead()
+    {
+        if (!_enableForwardNoJumpDetection || _isNoJumpSlipping)
+        {
+            return;
+        }
+
+        // 플레이어 중심에서 약간 위로 올린 위치에서 시작
+        Vector3 boxCenter = transform.position + Vector3.up * _noJumpDetectionHeight;
+        
+        // 박스 크기 설정 (플레이어 캡슐과 비슷한 크기)
+        Vector3 boxHalfExtents = new Vector3(_noJumpDetectionBoxWidth / 2f, _noJumpDetectionBoxHeight / 2f, 0.05f);
+        
+        // 플레이어가 바라보는 방향으로 박스캐스트
+        Vector3 boxDirection = transform.forward;
+        
+        // 전방으로 박스캐스트 수행 (트리거 콜라이더도 감지)
+        if (Physics.BoxCast(boxCenter, boxHalfExtents, boxDirection, out RaycastHit hit, 
+            transform.rotation, _noJumpDetectionDistance, _groundLayerMask, QueryTriggerInteraction.Collide))
+        {
+            // NoJump 태그가 있는지 확인
+            if (hit.collider.CompareTag("NoJump"))
+            {
+                // 전방에 NoJump 태그가 감지되면 미리 슬립 준비
+                if (_enableNoJumpSlipping)
+                {
+                    ActivateNoJumpSlipping();
+                }
+            }
         }
     }
 }

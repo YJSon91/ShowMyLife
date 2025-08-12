@@ -82,3 +82,4 @@ Shader "Custom/PlayerShadowProjector"
     
     Fallback "Transparent/VertexLit"
 }
+
