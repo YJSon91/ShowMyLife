@@ -140410,7 +140410,7 @@ PrefabInstance:
     - target: {fileID: 4121013545344933855, guid: e3459bdec99752b4dbdfa80ec85f7724,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 80.130005
+      value: 80.76
       objectReference: {fileID: 0}
     - target: {fileID: 4121013545344933855, guid: e3459bdec99752b4dbdfa80ec85f7724,
         type: 3}
@@ -140461,6 +140461,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4597336079961944123, guid: e3459bdec99752b4dbdfa80ec85f7724,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -151062,11 +151067,42 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4613231961412427750}
+    - targetCorrespondingSourceObject: {fileID: 6785288755874631497, guid: 1661560513d53f64c934aec14bd09e24,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2836081814579002781}
     - targetCorrespondingSourceObject: {fileID: 1224918317349206655, guid: 1661560513d53f64c934aec14bd09e24,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 551341558203763939}
   m_SourcePrefab: {fileID: 100100000, guid: 1661560513d53f64c934aec14bd09e24, type: 3}
+--- !u!1 &2416585938509973156 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6785288755874631497, guid: 1661560513d53f64c934aec14bd09e24,
+    type: 3}
+  m_PrefabInstance: {fileID: 9197265472918866413}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2836081814579002781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2416585938509973156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1541a1e6f769ee4d8a8e4ade585ab9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _senseMode: 0
+  enablePlayerCarry: 1
+  jumpForce: 30
+  forceDirection: {x: 0, y: 1, z: 0}
+  padCooldown: 0.3
+  playJumpPadSound: 1
+  jumpPadSoundVolume: 1
+  soundCooldownTime: 0.2
+  suppressLandSoundDuration: 1
 --- !u!4 &5338907858479348806 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3869960280187909547, guid: 1661560513d53f64c934aec14bd09e24,
