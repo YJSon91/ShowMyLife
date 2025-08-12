@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.IO;
 
 public class EnterStage : MonoBehaviour
 {
@@ -24,34 +23,15 @@ public class EnterStage : MonoBehaviour
 
     private void Start()
     {
-        string path = Path.Combine(Application.persistentDataPath, "SaveData.json");
-        bool hasSave = File.Exists(path);
-
-        // 세이브가 없으면(첫 진입) 시네마틱 실행, 있으면 스킵
-        if (!hasSave)
-        {
-            StartCoroutine(PlayWakeUpSequence());
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
+        StartCoroutine(PlayWakeUpSequence());
     }
 
     private IEnumerator PlayWakeUpSequence()
     {
-        if (emotionDirector == null)
-            yield break;
-        
-
         if (player == null)
         {
-            // GameManager에서 플레이어 자동 탐색 보조
-            var gmPlayer = GameManager.Instance != null ? GameManager.Instance.Player : null;
-            player = gmPlayer != null ? gmPlayer.transform : player;
-
-            if (player == null)
-                yield break;
+            Debug.LogWarning("[EnterStage] Player가 연결되지 않았습니다.");
+            yield break;
         }
 
         // 조작 비활성화 + 캐릭터 숨김
@@ -59,14 +39,12 @@ public class EnterStage : MonoBehaviour
         emotionDirector.SetPlayerVisible(player, false);
 
         // 0. 화면 검정
-        if (emotionDirector.PostProcessing != null)
-            emotionDirector.PostProcessing.ApplyColorFilter(Color.black, 0f);
+        emotionDirector.PostProcessing.ApplyColorFilter(Color.black, 0f);
         yield return null;
 
         // 1. 시작 위치
         Transform startTarget = emotionDirector.GetLookTargetTransform(5);
-        if (startTarget == null)
-            yield break;
+        if (startTarget == null) yield break;
 
         // 2. 카메라 초기화
         emotionDirector.ResetThemeCamera();
@@ -75,8 +53,7 @@ public class EnterStage : MonoBehaviour
         yield return new WaitForSeconds(lookDuration);
 
         // 3. 화면 밝히기
-        if (emotionDirector.PostProcessing != null)
-            emotionDirector.PostProcessing.ResetToDefault(fadeDuration);
+        emotionDirector.PostProcessing.ResetToDefault(fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
 
         // 4. 일어나는 이동 연출
@@ -95,8 +72,8 @@ public class EnterStage : MonoBehaviour
             yield return new WaitForSeconds(1.5f);
             yield return new WaitForEndOfFrame();
 
-            Vector3 fromPos2 = Camera.main != null ? Camera.main.transform.position : emotionDirector.ThemeCamera.transform.position;
-            Quaternion fromRot2 = Camera.main != null ? Camera.main.transform.rotation : emotionDirector.ThemeCamera.transform.rotation;
+            Vector3 fromPos2 = Camera.main.transform.position;
+            Quaternion fromRot2 = Camera.main.transform.rotation;
 
             Vector3 toPos = endLookTarget.position;
             Quaternion toRot = fromRot2;
