@@ -32064,6 +32064,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _senseMode: 0
   enablePlayerCarry: 1
+  _useEnhancedTrigger: 0
+  _triggerRadius: 2
+  _playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   _playerTag: Player
   _activateOnNormalLanding: 0
   _activateOnHardLanding: 1
@@ -58720,7 +58725,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6048047958503185616
 Transform:
   m_ObjectHideFlags: 0
