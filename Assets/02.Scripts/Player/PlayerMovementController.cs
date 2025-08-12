@@ -145,6 +145,19 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("NoJump 슬립 중 입력 제한 정도 (0-1, 높을수록 입력 제한)")]
     [SerializeField] private float _noJumpSlipInputReduction = 0.7f;
 
+    // 전방 NoJump 감지를 위한 설정 추가
+    [Header("전방 NoJump 감지 설정")]
+    [Tooltip("전방 NoJump 감지 거리")]
+    [SerializeField] private float _noJumpDetectionDistance = 2f;
+    [Tooltip("전방 NoJump 감지 레이 높이 (플레이어 중심에서 위로)")]
+    [SerializeField] private float _noJumpDetectionHeight = 0.5f;
+    [Tooltip("전방 NoJump 감지 활성화 여부")]
+    [SerializeField] private bool _enableForwardNoJumpDetection = true;
+    [Tooltip("전방 NoJump 감지 박스 너비 (x축)")]
+    [SerializeField] private float _noJumpDetectionBoxWidth = 0.6f;
+    [Tooltip("전방 NoJump 감지 박스 높이 (y축)")]
+    [SerializeField] private float _noJumpDetectionBoxHeight = 0.6f;
+
     private Vector3 _initialPosition; // 경사면 제한을 위한 초기 위치
 
     #endregion
@@ -167,6 +180,13 @@ public class PlayerMovementController : MonoBehaviour
     private Vector3 _slipDirection;
     private float _slipForce;
     private float _slipGravityMultiplier;
+
+    // NoJump 슬립 관련 변수 (별도 상태로 분리)
+    private bool _isNoJumpSlipping;
+    private Vector3 _noJumpSlipDirection;
+    private float _noJumpSlipForceValue;
+    private float _noJumpSlipGravityMultiplier;
+    private float _noJumpSlipInputReductionValue;
 
     // --- 슬로우존 관리 ---
     private float _baseRunSpeed;
@@ -293,7 +313,7 @@ public class PlayerMovementController : MonoBehaviour
     /// <summary>
     /// 플레이어가 NoJump 태그로 인한 슬립 중인지 여부
     /// </summary>
-    public bool IsNoJumpSlipping => _isSlipping && _groundHit.collider != null && _groundHit.collider.CompareTag("NoJump");
+    public bool IsNoJumpSlipping => _isNoJumpSlipping;
 
     /// <summary>
     /// 플레이어가 미끄럼틀 함정에서 슬라이딩 중인지 여부
@@ -374,7 +394,8 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
         
-
+        // 전방 NoJump 감지 추가
+        CheckNoJumpAhead();
         
         // 슬로우 복구 처리
         if (_isRestoringSpeed)
@@ -656,8 +677,15 @@ public class PlayerMovementController : MonoBehaviour
             _lastInputDirection = playerInputDirection.normalized;
         }
         
-        // 미끄럼틀 함정 슬라이드가 가장 높은 우선순위를 가짐 (빙판보다 우선)
-        if (_isObstacleSliding)
+        // NoJump 슬립이 최우선 (미끄럼틀보다도 우선)
+        if (_isNoJumpSlipping)
+        {
+            // NoJump 슬립에서는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
+            _moveDirection = Vector3.Lerp(_noJumpSlipDirection, playerInputDirection, 1f - _noJumpSlipInputReductionValue);
+            _targetMaxSpeed = _noJumpSlipForceValue;
+        }
+        // 미끄럼틀 함정 슬라이드가 두 번째 우선순위
+        else if (_isObstacleSliding)
         {
             // 미끄럼틀에서는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
             _moveDirection = Vector3.Lerp(_obstacleSlideDirection, playerInputDirection, 1f - _obstacleSlideInputReduction);
@@ -670,13 +698,13 @@ public class PlayerMovementController : MonoBehaviour
                 _currentIceSpeed = _targetMaxSpeed;
             }
         }
-        // 빙판 처리 (미끄럼틀 다음 우선순위)
+        // 빙판 처리 (세 번째 우선순위)
         else if (_isOnIce)
         {
             HandleIceMovement(playerInputDirection);
             return;
         }
-        // 다음으로 자연 경사면 슬립 확인
+        // 마지막으로 자연 경사면 슬립 확인
         else if (_isSlipping)
         {
             // 슬립 중에는 강제 방향으로 이동하고 플레이어 입력을 크게 제한
@@ -842,8 +870,13 @@ public class PlayerMovementController : MonoBehaviour
         // 중력 배수 결정
         float gravityMultiplier = _gravityMultiplier;
 
-        // 미끄럼틀 함정이 우선
-        if (_isObstacleSliding)
+        // NoJump 슬립이 최우선
+        if (_isNoJumpSlipping)
+        {
+            gravityMultiplier = _noJumpSlipGravityMultiplier;
+        }
+        // 미끄럼틀 함정이 두 번째
+        else if (_isObstacleSliding)
         {
             gravityMultiplier = _obstacleSlideGravityMultiplier;
         }
@@ -1690,10 +1723,26 @@ public class PlayerMovementController : MonoBehaviour
         Gizmos.DrawLine(boxCenter, endPosition);
 
         // NoJump 슬립 상태 시각화
-        if (_isSlipping && _groundHit.collider != null && _groundHit.collider.CompareTag("NoJump"))
+        if (_isNoJumpSlipping)
         {
             // NoJump 슬립 중일 때 빨간색 화살표로 슬립 방향 표시
             Gizmos.color = Color.red;
+            Vector3 slipStart = boxCenter;
+            Vector3 slipEnd = slipStart + _noJumpSlipDirection * _noJumpSlipForceValue;
+            Gizmos.DrawLine(slipStart, slipEnd);
+            
+            // 화살표 머리 그리기
+            Vector3 arrowHead = slipEnd;
+            Vector3 arrowLeft = arrowHead - _noJumpSlipDirection * 0.5f + Vector3.up * 0.3f;
+            Vector3 arrowRight = arrowHead - _noJumpSlipDirection * 0.5f - Vector3.up * 0.3f;
+            Gizmos.DrawLine(arrowHead, arrowLeft);
+            Gizmos.DrawLine(arrowHead, arrowRight);
+        }
+        // 자연 경사면 슬립 상태 시각화
+        else if (_isSlipping)
+        {
+            // 자연 경사면 슬립 중일 때 파란색 화살표로 슬립 방향 표시
+            Gizmos.color = Color.blue;
             Vector3 slipStart = boxCenter;
             Vector3 slipEnd = slipStart + _slipDirection * _slipForce;
             Gizmos.DrawLine(slipStart, slipEnd);
@@ -1704,6 +1753,24 @@ public class PlayerMovementController : MonoBehaviour
             Vector3 arrowRight = arrowHead - _slipDirection * 0.5f - Vector3.up * 0.3f;
             Gizmos.DrawLine(arrowHead, arrowLeft);
             Gizmos.DrawLine(arrowHead, arrowRight);
+        }
+        
+        // 전방 NoJump 감지 박스캐스트 시각화
+        if (_enableForwardNoJumpDetection)
+        {
+            Gizmos.color = Color.yellow;
+            Vector3 noJumpBoxCenter = transform.position + Vector3.up * _noJumpDetectionHeight;
+            Vector3 noJumpBoxHalfExtents = new Vector3(_noJumpDetectionBoxWidth / 2f, _noJumpDetectionBoxHeight / 2f, 0.05f);
+            
+            // 시작 박스 그리기
+            Gizmos.DrawWireCube(noJumpBoxCenter, noJumpBoxHalfExtents * 2);
+            
+            // 끝점 박스 그리기
+            Vector3 noJumpEndBoxCenter = noJumpBoxCenter + transform.forward * _noJumpDetectionDistance;
+            Gizmos.DrawWireCube(noJumpEndBoxCenter, noJumpBoxHalfExtents * 2);
+            
+            // 시작과 끝을 연결하는 선 그리기
+            Gizmos.DrawLine(noJumpBoxCenter, noJumpEndBoxCenter);
         }
     }
 
@@ -1754,23 +1821,56 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     private void ActivateNoJumpSlipping()
     {
-        // 이미 슬립 중이면 중복 적용하지 않음
-        if (_isSlipping)
+        // 이미 NoJump 슬립 중이면 중복 적용하지 않음
+        if (_isNoJumpSlipping)
         {
             return;
         }
 
-        // 지면의 경사 방향을 기반으로 슬립 방향 계산
-        Vector3 slopeDirection = Vector3.ProjectOnPlane(_groundNormal, Vector3.up).normalized;
+        // 슬립 방향 결정
+        Vector3 slipDirection;
         
-        // 경사가 거의 없으면 아래쪽 방향으로 슬립
-        if (slopeDirection.magnitude < 0.1f)
+        // 지면에 있을 때는 경사 방향을 기반으로 슬립 방향 계산
+        if (_isGrounded && _groundNormal != Vector3.zero)
         {
-            slopeDirection = Vector3.down;
+            slipDirection = Vector3.ProjectOnPlane(_groundNormal, Vector3.up).normalized;
+            
+            // 경사가 거의 없으면 아래쪽 방향으로 슬립
+            if (slipDirection.magnitude < 0.1f)
+            {
+                slipDirection = Vector3.down;
+            }
+        }
+        else
+        {
+            // 지면에 없거나 경사 정보가 없으면 플레이어가 바라보는 방향의 아래쪽으로 슬립
+            slipDirection = Vector3.down;
         }
 
-        // NoJump 슬립 활성화
-        ActivateSlipping(slopeDirection, _noJumpSlipForce, _noJumpSlipGravity, _noJumpSlipInputReduction);
+        // NoJump 슬립 상태로 설정
+        _isNoJumpSlipping = true;
+        _noJumpSlipDirection = slipDirection.normalized;
+        _noJumpSlipForceValue = _noJumpSlipForce;
+        _noJumpSlipGravityMultiplier = _noJumpSlipGravity;
+        _noJumpSlipInputReductionValue = _noJumpSlipInputReduction;
+        
+        // 기존 슬립 상태 해제
+        if (_isSlipping)
+        {
+            DeactivateSlipping();
+        }
+    }
+
+    /// <summary>
+    /// NoJump 슬립 상태를 비활성화합니다
+    /// </summary>
+    public void DeactivateNoJumpSlipping()
+    {
+        _isNoJumpSlipping = false;
+        _noJumpSlipDirection = Vector3.zero;
+        _noJumpSlipForceValue = 0f;
+        _noJumpSlipGravityMultiplier = 0f;
+        _noJumpSlipInputReductionValue = 0f;
     }
 
     /// <summary>
@@ -1788,9 +1888,15 @@ public class PlayerMovementController : MonoBehaviour
                 _enableJumpBlocking = false;
                 
                 // NoJump 슬립이 활성화되어 있으면 강제 슬립 적용
-                if (_enableNoJumpSlipping)
+                if (_enableNoJumpSlipping && !_isNoJumpSlipping)
                 {
                     ActivateNoJumpSlipping();
+                }
+                
+                // 자연 경사면 슬립은 비활성화 (NoJump 슬립이 우선)
+                if (_isSlipping)
+                {
+                    DeactivateSlipping();
                 }
             }
             else
@@ -1799,9 +1905,9 @@ public class PlayerMovementController : MonoBehaviour
                 _enableJumpBlocking = true;
                 
                 // NoJump 슬립 해제
-                if (_isSlipping)
+                if (_isNoJumpSlipping)
                 {
-                    DeactivateSlipping();
+                    DeactivateNoJumpSlipping();
                 }
             }
         }
@@ -1811,9 +1917,44 @@ public class PlayerMovementController : MonoBehaviour
             _enableJumpBlocking = true;
             
             // NoJump 슬립 해제
-            if (_isSlipping)
+            if (_isNoJumpSlipping)
             {
-                DeactivateSlipping();
+                DeactivateNoJumpSlipping();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 플레이어 중심에서 앞쪽으로 박스캐스트를 쏘아 NoJump 태그를 미리 감지합니다
+    /// </summary>
+    private void CheckNoJumpAhead()
+    {
+        if (!_enableForwardNoJumpDetection || _isNoJumpSlipping)
+        {
+            return;
+        }
+
+        // 플레이어 중심에서 약간 위로 올린 위치에서 시작
+        Vector3 boxCenter = transform.position + Vector3.up * _noJumpDetectionHeight;
+        
+        // 박스 크기 설정 (플레이어 캡슐과 비슷한 크기)
+        Vector3 boxHalfExtents = new Vector3(_noJumpDetectionBoxWidth / 2f, _noJumpDetectionBoxHeight / 2f, 0.05f);
+        
+        // 플레이어가 바라보는 방향으로 박스캐스트
+        Vector3 boxDirection = transform.forward;
+        
+        // 전방으로 박스캐스트 수행 (트리거 콜라이더도 감지)
+        if (Physics.BoxCast(boxCenter, boxHalfExtents, boxDirection, out RaycastHit hit, 
+            transform.rotation, _noJumpDetectionDistance, _groundLayerMask, QueryTriggerInteraction.Collide))
+        {
+            // NoJump 태그가 있는지 확인
+            if (hit.collider.CompareTag("NoJump"))
+            {
+                // 전방에 NoJump 태그가 감지되면 미리 슬립 준비
+                if (_enableNoJumpSlipping)
+                {
+                    ActivateNoJumpSlipping();
+                }
             }
         }
     }

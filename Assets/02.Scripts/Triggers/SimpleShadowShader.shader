@@ -57,3 +57,4 @@ Shader "Custom/SimpleShadow"
     
     Fallback "Transparent/VertexLit"
 }
+
