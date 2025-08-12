@@ -282,3 +282,4 @@ public class PlayerShadowManager : MonoBehaviour
         GUILayout.EndArea();
     }
 }
+
