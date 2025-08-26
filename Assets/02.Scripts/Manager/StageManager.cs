@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 현재 스테이지의 규칙(시작, 클리어, 실패)을 정의하고,

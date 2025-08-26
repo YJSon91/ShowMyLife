@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 플레이어가 닿으면 지정된 AppearingObstacle을 비활성화하는 컴포넌트

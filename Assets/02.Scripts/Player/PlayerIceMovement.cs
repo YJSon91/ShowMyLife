@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 빙판 효과를 플레이어에게 적용하는 컴포넌트

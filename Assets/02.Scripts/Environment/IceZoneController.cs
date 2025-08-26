@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 
 /// <summary>
 /// 빙판 구역의 속성을 제어하는 컴포넌트
